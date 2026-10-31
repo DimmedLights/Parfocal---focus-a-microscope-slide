@@ -12,11 +12,18 @@ Designed by Destiny, coded with Claude (Anthropic) as a collaborator.
 - **Fluorescence**: drawn cultured cells labelled with DAPI, Alexa 488 (tubulin) and phalloidin-568 (actin), or a real three-channel field of HT29 cells (DNA, phospho-histone H3, cell body). Pick the right filter cube for each target and close the shutter to limit photobleaching.
 - **Confocal**: thick epithelial organoids with nuclear, membrane-GFP and lysosome layers at different depths. Out-of-focus planes go dark; the pinhole trades brightness against section thickness.
 
-Each mode has a shared daily slide plus random practice slides, timed or timeless play, and its own guided tutorial:
+Each mode has a shared daily slide plus random practice slides, timed or timeless play, and its own guided tutorial. Tutorials alternate between full-page lessons (big type beside a lit illustration of the microscope or a live diagram) and hands-on steps at the bench; the page morphs between the two.
 
 - **Brightfield tutorial**: coarse and fine focus, the dust trap, parfocal objectives and immersion oil.
 - **Fluorescence tutorial**: how epi-illumination and filter cubes work, why you focus on DAPI first, photobleaching and the shutter, indirect immunofluorescence (Alexa 488 on α-tubulin) and phalloidin for F-actin, one cube per label, then merging channels.
 - **Confocal tutorial**: laser scanning and optical sectioning in a thick organoid, what the pinhole does and what an Airy unit is, finding layers by depth, a hands-on 1 AU vs 2 AU comparison, membrane-GFP and LysoTracker, and z-stacks.
+
+## Microscopy guide
+
+A guide, reachable from the title menu, the pause menu, the results screen, each tutorial lesson and the "What is a … microscope?" link under the microscope tabs:
+
+- **Microscope pages** for brightfield, epifluorescence and confocal: a lit illustration with every part clickable and explained, the light path, how the instrument is used in a real lab, and its strengths and limits.
+- **Concept pages**, each with something to play with: numerical aperture, immersion oil, depth of field, parfocal objectives, Gram and acid-fast stains, DAPI, immunofluorescence, phalloidin, GFP, LysoTracker, fluorescence and the Stokes shift, the filter cube, photobleaching, the pinhole and Airy units, z-stacks and organoids.
 
 The site opens on a start screen: browsers only allow sound after a click or key press, so that first press switches the music and sound effects on.
 

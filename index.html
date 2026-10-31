@@ -230,12 +230,12 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .mode-ind { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 10px; background: var(--acc); transform: skewX(var(--skew)); transition: transform .32s var(--e-snap), width .32s var(--e-snap), left .32s var(--e-snap), background-color .4s; box-shadow: 4px 0 0 var(--acc-2); }
 
 /* menu */
-.menu { --sel-shift: 26px; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 52px 0 8px; transform: rotate(var(--tilt)); transform-origin: 0 50%; padding-left: 6px; }
+.menu { --sel-shift: 26px; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: clamp(30px, 6svh, 52px) 0 8px; transform: rotate(var(--tilt)); transform-origin: 0 50%; padding-left: 6px; }
 .m-item { position: relative; z-index: 1; display: inline-flex; align-items: baseline; gap: 14px; margin-left: calc(var(--i) * 15px); padding: 7px 20px 8px 12px; border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer;
   transition: transform .2s var(--e-snap), color .14s, opacity .2s; opacity: .78; -webkit-tap-highlight-color: transparent; }
 .m-item:focus-visible { outline: none; }
 .m-idx { font: 500 11.5px var(--f-mono); letter-spacing: .08em; color: var(--muted); transform: translateY(-.35em); transition: color .14s; }
-.m-name { display: inline-block; font: italic 800 clamp(26px, 3.3vw, 46px)/1 var(--f-display); font-stretch: 86%; letter-spacing: -0.02em; text-transform: uppercase; transform-origin: 0 60%; white-space: nowrap; }
+.m-name { display: inline-block; font: italic 800 clamp(24px, min(3.3vw, 4.7svh), 46px)/1 var(--f-display); font-stretch: 86%; letter-spacing: -0.02em; text-transform: uppercase; transform-origin: 0 60%; white-space: nowrap; }
 .m-item.is-sel { opacity: 1; color: var(--acc-ink); transform: translateX(var(--sel-shift)); }
 .m-item.is-sel .m-idx { color: var(--acc-ink); }
 .m-item.is-sel .m-name { font-stretch: 120%; font-weight: 900; animation: nameStretch .3s var(--e-pop); }
@@ -298,6 +298,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
   .hero-ep { width: min(calc((100svh - 64px) * .8), 46vw, 680px); right: -4%; }
 }
 @media (min-width: 981px) and (max-height: 820px) { .t-keys { display: none; } .m-caption { font-size: 14px; } }
+@media (min-width: 981px) and (max-height: 780px) { .t-left { padding-bottom: 4px; } .wordmark { font-size: clamp(54px, min(8.2vw, 14svh), 124px); } .menu { gap: 1px; } .m-item { padding-block: 4px 5px; } .modes { margin-top: 18px; } }
 /* Desktop game: the side view scales with the window height so the loupe never drops below the fold */
 @media (min-width: 981px) {
   .g-scope .scope-art { height: clamp(180px, calc(100svh - 468px), 340px); width: auto; max-width: 100%; aspect-ratio: 3 / 4; margin-inline: auto; }
@@ -1041,6 +1042,232 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 </style>
+<style>
+/* ============ ART: lit microscope illustrations ============ */
+.art-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.art-svg [data-part], .art-svg .decor { transition: opacity .5s var(--e-snap), filter .5s; }
+.art-svg.focus [data-part]:not(.hl), .art-svg.focus .decor { opacity: .22; }
+.art-svg .hl { filter: drop-shadow(0 0 2px rgba(255, 255, 255, .9)) drop-shadow(0 0 14px color-mix(in srgb, var(--hlc, #fff) 70%, transparent)); }
+.art-svg .lp { transition: opacity .6s; }
+.art-svg.focus:not(.lit) .lp { opacity: 0; }
+.art-svg .lp-flow, .art-svg .lp-fiber { animation: lpFlow 1.1s linear infinite; }
+.art-svg .lp-fiber { stroke-dasharray: 10 8; }
+@keyframes lpFlow { to { stroke-dashoffset: -32; } }
+.art-svg .co { animation: coIn .5s var(--e-snap) both; animation-delay: var(--d); }
+.art-svg .co circle { fill: var(--hlc, #fff); }
+.art-svg .co .co-ring { fill: none; stroke: var(--hlc, #fff); stroke-width: 1.5; opacity: .6; animation: coPulse 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.art-svg .co path { stroke: rgba(255, 246, 232, .7); stroke-width: 1.2; fill: none; }
+.art-svg .co text { font: 600 14px var(--f-mono); fill: #f6eee2; letter-spacing: .06em; text-transform: uppercase; paint-order: stroke; stroke: rgba(10, 8, 7, .85); stroke-width: 4px; }
+@keyframes coIn { from { opacity: 0; } }
+@keyframes coPulse { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .art-svg .lp-flow, .art-svg .lp-fiber, .art-svg .co-ring { animation: none; } }
+
+/* ============ DIAGRAMS ============ */
+.dg { display: flex; flex-direction: column; gap: 14px; width: 100%; height: 100%; min-height: 0; }
+.dg-svg { flex: 1 1 auto; min-height: 0; position: relative; }
+.dg-svg > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+.dg-svg .dg-flow { stroke-dasharray: 9 9; animation: lpFlow 1s linear infinite; }
+.dg-ctl { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+.dg-ctl[hidden] { display: none; }
+.dg-seg { display: inline-flex; flex-wrap: wrap; gap: 3px; padding: 4px; border-radius: 999px; background: rgba(255, 244, 230, .07); border: 1px solid rgba(255, 244, 230, .12); }
+.dg-seg button { border: 0; background: none; color: rgba(243, 234, 220, .7); padding: 8px 14px; border-radius: 999px; font: 700 12px var(--f-body); letter-spacing: .05em; text-transform: uppercase; transition: background-color .2s, color .2s; }
+.dg-seg button:hover { color: #f3eadc; }
+.dg-seg button[aria-pressed="true"] { background: #f3eadc; color: #1a1412; }
+.dg-slider { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 999px; background: rgba(255, 244, 230, .07); border: 1px solid rgba(255, 244, 230, .12); color: rgba(243, 234, 220, .75); font: 600 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
+.dg-slider input { width: min(260px, 40vw); accent-color: #f3eadc; }
+.dg-slider b { color: #f3eadc; min-width: 7ch; text-align: right; font-weight: 600; }
+
+/* ============ LESSON: big type left, lit microscope right ============ */
+.lesson { position: fixed; left: 0; right: 0; bottom: 0; top: 64px; z-index: 26; display: grid; grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); gap: clamp(20px, 3vw, 48px);
+  padding: clamp(12px, 2.4vh, 28px) max(24px, calc((100vw - 1320px) / 2)) clamp(18px, 3vh, 36px); background: var(--bg); overflow: hidden; }
+.lesson[hidden] { display: none; }
+.lesson::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+  background: radial-gradient(60vw 50vw at 0% 100%, color-mix(in srgb, var(--acc) 10%, transparent), transparent 70%); }
+.lesson.ls-enter .ls-copy > * { animation: lsUp .7s var(--e-snap) both; }
+.lesson.ls-enter .ls-copy > *:nth-child(2) { animation-delay: .05s; } .lesson.ls-enter .ls-copy > *:nth-child(3) { animation-delay: .1s; }
+.lesson.ls-enter .ls-copy > *:nth-child(4) { animation-delay: .15s; } .lesson.ls-enter .ls-copy > *:nth-child(n+5) { animation-delay: .2s; }
+.lesson.ls-enter .ls-stage { animation: lsStageIn .8s var(--e-snap) both; }
+@keyframes lsUp { from { opacity: 0; transform: translateY(18px); } }
+@keyframes lsStageIn { from { opacity: 0; transform: translateX(40px) scale(.97); } }
+.ls-copy { display: flex; flex-direction: column; justify-content: center; gap: clamp(10px, 1.8vh, 20px); min-height: 0; overflow-y: auto; padding: 6px 4px 6px 2px; scrollbar-width: thin; }
+.ls-copy.ls-turn > .ls-kicker, .ls-copy.ls-turn > .ls-h, .ls-copy.ls-turn > .ls-text, .ls-copy.ls-turn > .ls-links { animation: lsTurn .55s var(--e-snap) both; }
+.ls-copy.ls-turn > .ls-h { animation-delay: .03s; } .ls-copy.ls-turn > .ls-text { animation-delay: .07s; } .ls-copy.ls-turn > .ls-links { animation-delay: .1s; }
+@keyframes lsTurn { from { opacity: 0; transform: translateX(-26px); filter: blur(4px); } }
+.ls-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ls-step { position: relative; padding: 4px 12px; font: 600 11.5px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--acc-ink); isolation: isolate; }
+.ls-step::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 6px; background: var(--acc); transform: skewX(var(--skew)); }
+.ls-progress { flex: 1; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; max-width: 220px; }
+.ls-progress i { display: block; height: 100%; background: var(--acc); transform-origin: left; transform: scaleX(0); transition: transform .6s var(--e-snap); }
+.ls-skip { border: 0; background: none; font-size: 13px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; padding: 4px 0; white-space: nowrap; }
+.ls-kicker { margin: 0; font: 600 13px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--acc); }
+.ls-h { margin: 0; font: italic 900 clamp(38px, 4.9vw, 82px)/.9 var(--f-display); font-stretch: 112%; letter-spacing: -0.035em; text-wrap: balance; }
+.ls-text { margin: 0; font-size: clamp(17px, 1.45vw, 23px); line-height: 1.5; color: var(--ink-2); max-width: 36ch; text-wrap: pretty; }
+.ls-text b { color: var(--ink); font-weight: 700; box-shadow: inset 0 -0.42em 0 color-mix(in srgb, var(--acc) 22%, transparent); }
+.ls-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.ls-links:empty { display: none; }
+.ls-link { display: inline-flex; align-items: center; gap: 9px; padding: 8px 14px 8px 8px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--glass-strong); font: 600 14px var(--f-body); color: var(--ink); box-shadow: var(--hi); transition: transform .25s var(--e-snap), border-color .2s; }
+.ls-link span { padding: 3px 8px; border-radius: 999px; background: var(--acc); color: var(--acc-ink); font: 700 10px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; }
+.ls-link i { font-style: normal; color: var(--acc); transition: transform .25s var(--e-snap); }
+.ls-link:hover { transform: translateY(-2px); border-color: var(--acc); }
+.ls-link:hover i { transform: translateX(3px); }
+.ls-nav { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
+.ls-nav .btn kbd { margin-left: 6px; background: transparent; color: inherit; border-color: color-mix(in srgb, currentColor 40%, transparent); }
+.ls-nav [hidden] { display: none; }
+.ls-stage { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; min-height: 0; border-radius: 30px; padding: clamp(14px, 2vh, 26px);
+  background: radial-gradient(90% 70% at 50% 38%, #241a16, #0c0908 72%); color: #f3eadc; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 240, 220, .08); overflow: hidden; isolation: isolate; }
+.ls-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 240, 220, .07); }
+.ls-visual { min-height: 0; display: grid; place-items: center; }
+.ls-visual.swap { animation: lsSwap .6s var(--e-snap) both; }
+@keyframes lsSwap { from { opacity: 0; transform: scale(.96); filter: blur(6px); } }
+.ls-visual { position: relative; }
+.ls-visual > .art-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ls-cap { margin: 0; font-size: 14px; line-height: 1.5; color: rgba(243, 234, 220, .72); min-height: 2.6em; max-width: 64ch; }
+.ls-cap b { color: #f3eadc; font: 600 12px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; margin-right: 8px; }
+:root.lesson-open .game-screen .hud, :root.lesson-open .coach { visibility: hidden; }
+/* the morph between the lesson and the bench */
+::view-transition-group(lcopy), ::view-transition-group(lart), ::view-transition-group(lstage) { animation-duration: .75s; animation-timing-function: cubic-bezier(.2, .85, .15, 1); }
+::view-transition-image-pair(lcopy) { overflow: hidden; border-radius: 18px; }
+::view-transition-old(lcopy) { animation: vtOut .3s ease both; height: 100%; object-fit: cover; object-position: left top; }
+::view-transition-new(lcopy) { animation: vtIn .45s .25s ease both; height: 100%; object-fit: cover; object-position: left top; }
+::view-transition-old(lstage), ::view-transition-new(lstage) { height: 100%; object-fit: cover; }
+::view-transition-image-pair(lstage) { border-radius: 30px; overflow: hidden; }
+:root.vt-lesson::view-transition-old(root) { animation: vtOut .35s ease both; }
+:root.vt-lesson::view-transition-new(root) { animation: vtIn .55s .2s ease both; }
+@keyframes vtOut { to { opacity: 0; } }
+@keyframes vtIn { from { opacity: 0; } }
+
+/* ============ COACH, restyled as a task card ============ */
+.coach { width: min(360px, calc(100vw - 24px)); padding: 16px 18px 16px 22px; border-radius: 20px; gap: 10px; overflow: hidden;
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .5); }
+.coach::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--acc); }
+.coach p { font-size: 15.5px; line-height: 1.5; }
+.coach[data-kind="tour"] .coach-step::before { background: var(--ink-2); }
+
+/* ============ GUIDE ============ */
+.guide { position: fixed; inset: 0; z-index: 84; display: flex; flex-direction: column; background: var(--bg); color: var(--ink); }
+.guide[hidden] { display: none; }
+.guide::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(50vw 40vw at 100% 0%, color-mix(in srgb, var(--acc) 9%, transparent), transparent 70%), radial-gradient(40vw 40vw at 0% 100%, color-mix(in srgb, var(--acc-2) 7%, transparent), transparent 70%); }
+.guide.open { animation: gdOpen .6s var(--e-snap) both; }
+.guide.closing { animation: gdClose .42s var(--e-slide) both; }
+@keyframes gdOpen { from { clip-path: inset(0 0 100% 0 round 0 0 40px 40px); } to { clip-path: inset(0 0 0 0 round 0); } }
+@keyframes gdClose { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 0 100% 0 round 0 0 40px 40px); } }
+.gd-bar { position: relative; z-index: 2; display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 max(16px, calc((100vw - 1320px) / 2)); border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); }
+.gd-crumb { display: flex; align-items: center; gap: 8px; min-width: 0; font: 600 12px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.gd-crumb b { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.gd-crumb button { border: 0; background: none; padding: 0; font: inherit; letter-spacing: inherit; color: var(--acc); text-transform: uppercase; }
+.gd-x { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--glass-strong); font: 600 13px var(--f-body); box-shadow: var(--hi); }
+.gd-bar .back, .gd-x { white-space: nowrap; flex: 0 0 auto; }
+@media (max-width: 600px) { .gd-bar { gap: 10px; } .gd-x { font-size: 0; padding: 8px 12px; } .gd-x::before { content: "✕"; font-size: 15px; } .gd-crumb { font-size: 11px; letter-spacing: .08em; } }
+.gd-scroll { position: relative; z-index: 1; flex: 1; overflow-y: auto; overscroll-behavior: contain; scroll-behavior: smooth; }
+.gd-scroll.gd-in > * { animation: gdIn .55s var(--e-snap) both; }
+@keyframes gdIn { from { opacity: 0; transform: translateY(24px); } }
+.gd-kicker { margin: 0 0 10px; font: 600 12.5px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--acc); }
+.gd-h1 { margin: 0; font: italic 900 clamp(42px, 6vw, 92px)/.88 var(--f-display); font-stretch: 112%; letter-spacing: -0.04em; text-wrap: balance; }
+.gd-lead { margin: 18px 0 0; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.5; color: var(--ink-2); max-width: 54ch; }
+/* hub */
+.gd-hub { max-width: 1320px; margin: 0 auto; padding: clamp(28px, 6vh, 64px) max(16px, 24px) 96px; }
+.gd-hero { margin-bottom: clamp(28px, 5vh, 52px); }
+.gd-scopes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.gd-scope { position: relative; display: grid; grid-template-rows: 300px auto; text-align: left; border: 0; padding: 0; border-radius: 28px; overflow: hidden; color: #f3eadc;
+  background: radial-gradient(90% 70% at 50% 34%, #261c17, #0c0908 75%); box-shadow: 0 30px 60px -36px rgba(0, 0, 0, .7); transition: transform .4s var(--e-snap), box-shadow .4s; animation: gdIn .6s var(--e-snap) both; animation-delay: calc(var(--i) * 70ms); }
+.gd-scope:hover { transform: translateY(-6px); box-shadow: 0 40px 70px -36px color-mix(in srgb, var(--c) 45%, rgba(0, 0, 0, .7)); }
+.gd-scope-art { display: block; padding: 18px 18px 0; min-height: 0; }
+.gd-scope-art { position: relative; }
+.gd-scope-art > .art-svg { position: absolute; inset: 18px 18px 0; width: calc(100% - 36px); height: calc(100% - 18px); }
+.gd-scope-t { display: grid; gap: 6px; padding: 16px 22px 24px; }
+.gd-scope-t small { font: 600 11px var(--f-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--c); }
+.gd-scope-t b { font: italic 900 30px/1 var(--f-display); font-stretch: 112%; letter-spacing: -0.03em; }
+.gd-scope-t span { font-size: 14.5px; line-height: 1.45; color: rgba(243, 234, 220, .7); }
+.gd-scope > i { position: absolute; right: 20px; bottom: 22px; font-style: normal; font-size: 22px; color: var(--c); transition: transform .3s var(--e-snap); }
+.gd-scope:hover > i { transform: translateX(5px); }
+.gd-group { margin-top: clamp(36px, 6vh, 64px); }
+.gd-group h2, .gd-sec h2 { margin: 0 0 14px; font: 600 12.5px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.gd-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.gd-tile { position: relative; display: grid; gap: 6px; align-content: start; text-align: left; padding: 18px 18px 20px 22px; border-radius: 20px; border: 1px solid var(--line); background: var(--glass-strong); box-shadow: var(--hi); overflow: hidden;
+  transition: transform .35s var(--e-snap), border-color .25s; animation: gdIn .55s var(--e-snap) both; animation-delay: calc(var(--i) * 50ms + 150ms); }
+.gd-tile::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c); }
+.gd-tile:hover { transform: translateY(-3px); border-color: var(--c); }
+.gd-tile small { font: 600 10.5px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.gd-tile b { font: italic 900 22px/1.05 var(--f-display); font-stretch: 108%; letter-spacing: -0.02em; }
+.gd-tile span { font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+/* pages */
+.gd-page { max-width: 1320px; margin: 0 auto; padding: clamp(28px, 5vh, 56px) 24px 96px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
+.gd-copy { min-width: 0; }
+.gd-page .gd-h1 { font-size: clamp(36px, 4.3vw, 68px); overflow-wrap: anywhere; hyphens: auto; }
+.gd-page .gd-kicker { color: var(--c); }
+:root[data-theme="light"] .gd-page .gd-kicker, :root:not([data-theme="dark"]) .gd-page .gd-kicker { color: color-mix(in srgb, var(--c) 55%, var(--ink)); }
+.gd-sec { margin-top: 36px; }
+.gd-sec p, .gd-sec li { font-size: 17px; line-height: 1.68; color: var(--ink-2); }
+.gd-sec p { margin: 0 0 12px; }
+.gd-sec b { color: var(--ink); }
+.gd-sec ol, .gd-sec ul { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.gd-sec li::marker { color: var(--c); font-weight: 700; }
+.gd-hint { font-size: 14px !important; color: var(--muted) !important; }
+.gd-parts, .gd-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gd-parts button, .gd-chip { padding: 9px 15px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--glass-strong); font: 600 14px var(--f-body); box-shadow: var(--hi); transition: transform .25s var(--e-snap), border-color .2s, background-color .2s, color .2s; }
+.gd-parts button b { font-weight: 600; }
+.gd-parts button:hover, .gd-chip:hover { border-color: var(--c); transform: translateY(-2px); }
+.gd-parts button[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #120e0c; }
+.gd-pn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 48px; }
+.gd-pn button { display: grid; gap: 4px; text-align: left; padding: 16px 18px; border-radius: 18px; border: 1px solid var(--line); background: var(--glass); }
+.gd-pn button:last-child { text-align: right; }
+.gd-pn small { font: 600 11px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.gd-pn b { font: italic 900 19px/1.1 var(--f-display); font-stretch: 108%; }
+.gd-pn button:hover { border-color: var(--c); }
+.gd-visual { position: sticky; top: 24px; height: calc(100svh - 64px - 48px); min-height: 460px; }
+.gd-stage { height: 100%; display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 30px; color: #f3eadc;
+  background: radial-gradient(90% 70% at 50% 38%, #241a16, #0c0908 72%); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(255, 240, 220, .07); }
+.gd-art { flex: 1; min-height: 0; display: grid; place-items: center; }
+.gd-art { position: relative; width: 100%; }
+.gd-art > .art-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gd-cap { margin: 0; display: grid; gap: 4px; min-height: 4.6em; font-size: 14.5px; line-height: 1.5; color: rgba(243, 234, 220, .75); }
+.gd-cap b { font: 600 12px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--c); }
+.gd-dg { flex: 1; min-height: 0; }
+/* entry points */
+.mode-learn { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 0 8px; white-space: nowrap; border: 0; background: none; padding: 4px 0; font: 600 13px var(--f-body); color: var(--acc); }
+.mode-learn i { font-style: normal; transition: transform .25s var(--e-snap); }
+.mode-learn:hover i { transform: translateX(4px); }
+.mode-learn span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+@media (max-width: 980px) { .modes { flex-wrap: wrap; } .mode-learn { flex-basis: 100%; margin: 8px 0 0 4px; } }
+@media (max-width: 900px) {
+  .lesson { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 46fr) minmax(0, 54fr); gap: 12px; padding: 10px 14px 14px; }
+  .dg { gap: 8px; }
+  .dg-ctl { gap: 6px; }
+  .dg-seg { padding: 3px; }
+  .dg-seg button { padding: 6px 10px; font-size: 10.5px; letter-spacing: .03em; }
+  .dg-slider { padding: 6px 12px; gap: 8px; font-size: 10.5px; }
+  .dg-slider input { width: 44vw; }
+  .ls-stage { order: -1; border-radius: 22px; padding: 10px; grid-template-rows: minmax(0, 1fr); }
+  .ls-cap { display: none; }
+  .ls-copy { justify-content: flex-start; gap: 10px; }
+  .ls-h { font-size: clamp(32px, 9vw, 46px); }
+  .ls-text { font-size: 16.5px; max-width: none; }
+  .ls-nav { position: sticky; bottom: 0; padding-top: 8px; background: linear-gradient(transparent, var(--bg) 30%); }
+  .ls-nav .btn { flex: 1; justify-content: center; }
+  .ls-nav kbd { display: none; }
+  .ls-progress { display: none; }
+  .gd-scopes { grid-template-columns: minmax(0, 1fr); }
+  .gd-scope { grid-template-rows: 240px auto; }
+  .gd-page { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 18px; }
+  .gd-visual { position: relative; top: 0; order: -1; height: 62svh; min-height: 380px; }
+  .gd-stage { padding: 14px; border-radius: 22px; }
+  .gd-sec p, .gd-sec li { font-size: 16px; }
+  .gd-pn { grid-template-columns: minmax(0, 1fr); }
+  .gd-pn button:last-child { text-align: left; }
+  .gd-crumb b { max-width: 40vw; }
+}
+@media (max-height: 700px) and (min-width: 901px) {
+  .ls-h { font-size: clamp(34px, 4.2vw, 60px); }
+  .ls-text { font-size: 17px; }
+  .ls-cap { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lesson.ls-enter .ls-copy > *, .lesson.ls-enter .ls-stage, .ls-copy.ls-turn > *, .ls-visual.swap, .guide.open, .guide.closing, .gd-scroll.gd-in > *, .gd-scope, .gd-tile { animation: none !important; }
+}
+
+</style>
 </head>
 <body>
 <header class="topbar gutter" id="topbar">
@@ -1088,6 +1315,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <button role="tab" data-mode="confocal" aria-selected="false">Confocal</button>
           </div>
           <button class="mode-arrow shine" data-dir="1" aria-label="Next microscope (E)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+          <button class="mode-learn" id="modeLearn"><span>What is a brightfield microscope?</span><i aria-hidden="true">→</i></button>
         </div>
 
         <nav class="menu" id="titleMenu" role="menu" aria-label="Main menu">
@@ -1095,9 +1323,10 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
           <button class="m-item" role="menuitem" data-act="daily" data-pose="2" style="--i:0"><span class="m-idx">01</span><span class="m-name">Today's slide</span></button>
           <button class="m-item" role="menuitem" data-act="practice" data-pose="1" style="--i:1"><span class="m-idx">02</span><span class="m-name">Practice</span></button>
           <button class="m-item" role="menuitem" data-act="tutorial" data-pose="0" style="--i:2"><span class="m-idx">03</span><span class="m-name">Tutorial</span></button>
-          <button class="m-item" role="menuitem" data-act="notes" data-pose="1" style="--i:3"><span class="m-idx">04</span><span class="m-name">Lab notes</span></button>
-          <button class="m-item" role="menuitem" data-act="credits" data-pose="0" style="--i:4"><span class="m-idx">05</span><span class="m-name">Credits</span></button>
-          <button class="m-item m-locked" role="menuitem" aria-disabled="true" data-act="identify" data-pose="2" style="--i:5"><span class="m-idx">06</span><span class="m-name">Identify</span><span class="m-lock">soon</span></button>
+          <button class="m-item" role="menuitem" data-act="guide" data-pose="2" style="--i:3"><span class="m-idx">04</span><span class="m-name">Guide</span></button>
+          <button class="m-item" role="menuitem" data-act="notes" data-pose="1" style="--i:4"><span class="m-idx">05</span><span class="m-name">Lab notes</span></button>
+          <button class="m-item" role="menuitem" data-act="credits" data-pose="0" style="--i:5"><span class="m-idx">06</span><span class="m-name">Credits</span></button>
+          <button class="m-item m-locked" role="menuitem" aria-disabled="true" data-act="identify" data-pose="2" style="--i:6"><span class="m-idx">07</span><span class="m-name">Identify</span><span class="m-lock">soon</span></button>
         </nav>
         <p class="m-caption" id="titleCaption" aria-live="polite"></p>
 
@@ -1420,6 +1649,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
           <button class="btn primary shine" id="shareBtn"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share with friends</button>
           <button class="btn shine" id="cardBtn"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="3.5"/><path d="M8 17h8"/></svg>Victory card</button>
           <button class="btn shine" id="copyBtn">Copy result</button>
+          <button class="btn shine" id="learnBtn">How it works</button>
           <button class="btn shine" id="againBtn">Practice slide</button>
           <button class="btn ghost shine" id="homeBtn">Title screen</button>
         </nav>
@@ -1490,6 +1720,25 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
   </div>
 </section>
 
+<!-- ============ LESSON (tutorials) ============ -->
+<section class="lesson" id="lesson" hidden aria-label="Tutorial lesson">
+  <div class="ls-copy" id="lsCopy">
+    <div class="ls-meta"><span class="ls-step" id="lsStep">Step 1</span><span class="ls-progress" aria-hidden="true"><i id="lsBar"></i></span><button class="ls-skip" id="lsSkip">Skip tutorial</button></div>
+    <p class="ls-kicker" id="lsKicker"></p>
+    <h2 class="ls-h" id="lsH"></h2>
+    <p class="ls-text" id="lsText"></p>
+    <div class="ls-links" id="lsLinks"></div>
+    <div class="ls-nav"><button class="btn ghost shine" id="lsPrev">← Back</button><button class="btn primary shine" id="lsNext">Continue <kbd>Enter</kbd></button></div>
+  </div>
+  <div class="ls-stage" id="lsStage"><div class="ls-visual" id="lsVisual"></div><p class="ls-cap" id="lsCap"></p></div>
+</section>
+
+<!-- ============ GUIDE ============ -->
+<section class="guide" id="guide" hidden role="dialog" aria-modal="true" aria-label="Microscopy guide">
+  <header class="gd-bar"><button class="back shine" id="gdBack">Close</button><nav class="gd-crumb" id="gdCrumb" aria-label="Breadcrumb"></nav><button class="gd-x shine" id="gdClose" aria-label="Close the guide">Close guide</button></header>
+  <div class="gd-scroll" id="gdScroll"></div>
+</section>
+
 <!-- ============ PAUSE ============ -->
 <div class="pause" id="pause" hidden role="dialog" aria-modal="true" aria-label="Paused">
   <div class="pause-word" aria-hidden="true">PAUSED</div>
@@ -1500,9 +1749,10 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         <button class="m-item" role="menuitem" data-act="resume" style="--i:0"><span class="m-idx">01</span><span class="m-name">Resume</span></button>
         <button class="m-item" role="menuitem" data-act="restart" style="--i:1"><span class="m-idx">02</span><span class="m-name">Restart slide</span></button>
         <button class="m-item" role="menuitem" data-act="controls" style="--i:2"><span class="m-idx">03</span><span class="m-name">Controls</span></button>
-        <button class="m-item" role="menuitem" data-act="sound" style="--i:3"><span class="m-idx">04</span><span class="m-name" id="pauseSound">Sound on</span></button>
-        <button class="m-item" role="menuitem" data-act="music" style="--i:4"><span class="m-idx">05</span><span class="m-name" id="pauseMusic">Music on</span></button>
-        <button class="m-item" role="menuitem" data-act="quit" style="--i:5"><span class="m-idx">06</span><span class="m-name">Quit to title</span></button>
+        <button class="m-item" role="menuitem" data-act="guide" style="--i:3"><span class="m-idx">04</span><span class="m-name">Guide</span></button>
+        <button class="m-item" role="menuitem" data-act="sound" style="--i:4"><span class="m-idx">05</span><span class="m-name" id="pauseSound">Sound on</span></button>
+        <button class="m-item" role="menuitem" data-act="music" style="--i:5"><span class="m-idx">06</span><span class="m-name" id="pauseMusic">Music on</span></button>
+        <button class="m-item" role="menuitem" data-act="quit" style="--i:6"><span class="m-idx">07</span><span class="m-name">Quit to title</span></button>
       </nav>
       <div class="pause-ctx" id="pauseCtx" aria-live="polite"></div>
     </div>
@@ -3964,8 +4214,9 @@ function captionFor(act) {
   }
   return {
     practice: `A fresh random ${m} ${thing}, as many times as you like.`,
-    tutorial: { bright: "A guided brightfield round: coarse, fine, parfocal lenses and immersion oil. About two minutes.", fluor: "A guided fluorescence round: filter cubes, the shutter and photobleaching, one label per objective. About four minutes.", confocal: "A guided confocal round: the pinhole, optical sections and hunting labelled layers by depth. About four minutes.", sem: "One guided SEM session." }[homeMode],
+    tutorial: { bright: "A guided brightfield round: coarse, fine, parfocal lenses and immersion oil. About four minutes.", fluor: "A guided fluorescence round: filter cubes, the shutter and photobleaching, antibodies and phalloidin, one label per objective. About six minutes.", confocal: "A guided confocal round: the pinhole, optical sections and lasers, GFP and hunting labelled layers by depth. About six minutes.", sem: "One guided SEM session." }[homeMode],
     notes: sem ? "The physics behind the SEM: the beam cone, depth of field, charging." : "The optics behind the game: light cones, depth of field, immersion oil.",
+    guide: "How each microscope works, its parts, and the dyes and tricks behind every image. Interactive.",
     credits: "Where the specimens come from, and who built this.",
     identify: "Name the organism from the slide. Coming soon.",
   }[act] || "";
@@ -3982,6 +4233,7 @@ const titleMenu = makeMenu($("titleMenu"), {
     if (act === "daily") startGame({ daily: true });
     else if (act === "practice") startGame({ daily: false });
     else if (act === "tutorial") startGame({ daily: false, tut: true, mode: homeMode });
+    else if (act === "guide") GUIDE_UI.open(null);
     else if (act === "notes") openPanel("notes");
     else if (act === "credits") openPanel("credits");
   },
@@ -3996,7 +4248,7 @@ function syncModeTabs(animate) {
 }
 function setMode(mode) {
   if (mode === homeMode || !MODES[mode] || !MODE_ORDER.includes(mode)) return;
-  homeMode = mode; patchStore({ mode });
+  homeMode = mode; patchStore({ mode }); syncModeLearn();
   root.dataset.mode = mode;
   syncModeTabs(true);
   const w = $("tWord"), span = w.querySelector("span");
@@ -4013,6 +4265,9 @@ function setMode(mode) {
   renderNotes();
 }
 document.querySelectorAll(".mode-tabs [role=tab]").forEach(t => t.addEventListener("click", () => setMode(t.dataset.mode)));
+const SCOPE_PAGE = { bright: "brightfield", fluor: "epifluorescence", confocal: "confocal" };
+function syncModeLearn() { const b = $("modeLearn"); if (b) b.querySelector("span").textContent = `What is ${homeMode === "bright" ? "a brightfield" : homeMode === "fluor" ? "a fluorescence" : "a confocal"} microscope?`; }
+$("modeLearn").addEventListener("click", () => { sfx("confirm"); GUIDE_UI.open(SCOPE_PAGE[homeMode] || null, () => titleMenu.items[titleMenu.sel].focus({ preventScroll: true })); });
 document.querySelectorAll(".mode-arrow").forEach(b => b.addEventListener("click", () => cycleMode(+b.dataset.dir)));
 function cycleMode(dir) { const n = MODE_ORDER.length, i = MODE_ORDER.indexOf(homeMode); setMode(MODE_ORDER[(i + dir + n) % n]); }
 function syncChips() {
@@ -4694,6 +4949,1109 @@ function updateLoupe(gmm) {
 }
 
 /* ---------- Tutorial: a guided brightfield round ---------- */
+/* =====================================================================
+   ART · lit illustrations of the three microscopes, with named parts.
+   Each part is a <g data-part="id">; highlight() spotlights one or more
+   parts and draws callouts. Used by the tutorial lessons and the guide.
+   ===================================================================== */
+const ART = (() => {
+  let uidN = 0;
+  const OBJ_BANDS = { bright: ["#e3c043", "#8ecbea", "#f4f4f4"], fluor: ["#e3c043", "#8ecbea", "#f4f4f4"], confocal: ["#e3c043", "#8ecbea", "#2f5fb0"] };
+  const MAGS = { bright: [10, 40, 100], fluor: [10, 40, 100], confocal: [10, 40, 63] };
+
+  // part metadata: name, one-line role, and where its callout points (viewBox 560 x 640)
+  const COMMON = {
+    eyepiece:  { name: "Eyepieces", at: [150, 92], desc: "The ocular lenses you look through. They magnify the image the objective has formed, usually 10x, so a 40x objective gives 400x in total." },
+    head:      { name: "Head", at: [196, 206], desc: "Holds the prisms that split the image to both eyes, and on research stands the ports for cameras and detectors." },
+    nosepiece: { name: "Nosepiece", at: [286, 252], desc: "The revolving turret that carries the objectives. Turning it swings the next objective into the light path with a click." },
+    objective: { name: "Objective", at: [256, 300], desc: "The most important lens in the microscope. It collects light from the specimen and forms the first magnified image. Its numerical aperture (NA) sets how much detail you can resolve." },
+    stage:     { name: "Stage", at: [140, 405], desc: "The platform the slide sits on, held by clips. On most upright microscopes the stage moves up and down to focus." },
+    slide:     { name: "Slide & coverslip", at: [300, 388], desc: "The specimen sits on a glass slide under a 0.17 mm coverslip. Objectives are corrected for exactly that coverslip thickness." },
+    stagectl:  { name: "Stage controls", at: [359, 456], desc: "Coaxial knobs that move the slide left-right and forwards-back, so you can scan the specimen without touching it." },
+    condenser: { name: "Condenser", at: [216, 440], desc: "A lens under the stage that gathers lamp light into a cone on the specimen. Its iris diaphragm trades contrast against resolution." },
+    knobs:     { name: "Focus knobs", at: [430, 486], desc: "The big outer knob is coarse focus, for finding the specimen at low power. The small inner knob is fine focus, a fraction of a micron per step." },
+    lamp:      { name: "Illuminator", at: [236, 566], desc: "The lamp in the base, today usually an LED. Its field diaphragm sets the size of the lit patch on the slide." },
+    arm:       { name: "Arm", at: [440, 330], desc: "The backbone of the stand. It carries the head, the stage and the focus mechanism. Carry a microscope by its arm and base." },
+  };
+  const EXTRA = {
+    fluor: {
+      lamphouse: { name: "Fluorescence light source", at: [496, 232], desc: "A mercury, metal-halide or, today, LED source at the back. Its light is sent forwards, into the head, and down through the objective onto the sample." },
+      shutter:   { name: "Shutter", at: [412, 214], desc: "Blocks the excitation light whenever you aren't looking or imaging. Every second it stays open, the dyes bleach a little more." },
+      cubes:     { name: "Filter cube turret", at: [248, 236], desc: "Holds one filter cube per label. Each cube has an excitation filter, a dichroic mirror and an emission filter matched to one dye." },
+      camera:    { name: "Camera", at: [298, 112], desc: "A sensitive monochrome camera records each channel separately; the colours are added afterwards by software." },
+    },
+    confocal: {
+      scanhead:  { name: "Scan head", at: [410, 58], desc: "The heart of the confocal. It holds the scanning mirrors, the main dichroic, the pinhole and the detectors." },
+      lasers:    { name: "Laser lines", at: [520, 520], desc: "Each dye is excited by its own laser: here 405 nm for DAPI, 488 nm for GFP and 561 nm for red dyes. Laser light is a single colour, so no excitation filter is needed." },
+      fiber:     { name: "Optical fibre", at: [538, 300], desc: "Carries the combined laser light from the laser unit into the scan head." },
+      galvo:     { name: "Scanning mirrors", at: [342, 96], desc: "Two galvanometer mirrors tilt the beam in X and Y, sweeping the focused spot across the sample line by line." },
+      pinhole:   { name: "Pinhole", at: [474, 100], desc: "Sits in a plane conjugate to the focal spot: in-focus light passes through it, out-of-focus light is blocked. Its size is set in Airy units." },
+      detector:  { name: "Detector (PMT)", at: [496, 100], desc: "A photomultiplier tube, or a GaAsP detector, turns the few emitted photons into an electrical signal, one pixel at a time." },
+    },
+  };
+  const ORDER = {
+    bright: ["eyepiece", "head", "nosepiece", "objective", "stage", "slide", "stagectl", "condenser", "lamp", "knobs", "arm"],
+    fluor: ["lamphouse", "shutter", "cubes", "camera", "eyepiece", "nosepiece", "objective", "slide", "stage", "knobs", "condenser", "lamp"],
+    confocal: ["lasers", "fiber", "scanhead", "galvo", "pinhole", "detector", "eyepiece", "nosepiece", "objective", "slide", "stage", "knobs"],
+  };
+  const partsFor = (mode) => ORDER[mode].map(id => Object.assign({ id }, (EXTRA[mode] && EXTRA[mode][id]) || COMMON[id]));
+
+  function defs(u) {
+    return `<defs>
+      <linearGradient id="${u}en" x1="0" x2="1"><stop offset="0" stop-color="#bba98f"/><stop offset=".38" stop-color="#f7f0e4"/><stop offset=".68" stop-color="#e8dccb"/><stop offset="1" stop-color="#ab9a80"/></linearGradient>
+      <linearGradient id="${u}env" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf5ea"/><stop offset=".55" stop-color="#e6d9c6"/><stop offset="1" stop-color="#b6a48a"/></linearGradient>
+      <linearGradient id="${u}mt" x1="0" x2="1"><stop offset="0" stop-color="#161210"/><stop offset=".42" stop-color="#5c524a"/><stop offset=".58" stop-color="#3a332e"/><stop offset="1" stop-color="#14100e"/></linearGradient>
+      <linearGradient id="${u}mtv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c443d"/><stop offset="1" stop-color="#1a1513"/></linearGradient>
+      <linearGradient id="${u}cr" x1="0" x2="1"><stop offset="0" stop-color="#6a6c70"/><stop offset=".35" stop-color="#f1f2f3"/><stop offset=".55" stop-color="#c3c5c8"/><stop offset="1" stop-color="#55575b"/></linearGradient>
+      <linearGradient id="${u}warm" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff3cf" stop-opacity=".95"/><stop offset=".5" stop-color="#fff7de" stop-opacity=".75"/><stop offset="1" stop-color="#fffaf0" stop-opacity=".35"/></linearGradient>
+      <linearGradient id="${u}glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff0fa"/><stop offset="1" stop-color="#9fc3d8"/></linearGradient>
+      <radialGradient id="${u}floor" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <filter id="${u}soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+      <filter id="${u}softer" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+    </defs>`;
+  }
+
+  function objective(u, x, y, len, band, oil, extra = "") {
+    const w = 34, nose = 20;
+    return `<g ${extra}>
+      <rect x="${x - w / 2}" y="${y}" width="${w}" height="${len * 0.66}" rx="4" fill="url(#${u}cr)"/>
+      <rect x="${x - w / 2}" y="${y + 12}" width="${w}" height="7" fill="${band}"/>
+      ${oil ? `<rect x="${x - w / 2}" y="${y + 22}" width="${w}" height="3" fill="#111"/>` : ""}
+      <path d="M${x - w / 2 + 2} ${y + len * 0.66} L${x + w / 2 - 2} ${y + len * 0.66} L${x + nose / 2} ${y + len - 6} Q${x} ${y + len + 2} ${x - nose / 2} ${y + len - 6} Z" fill="url(#${u}cr)"/>
+      <ellipse cx="${x}" cy="${y + len - 3}" rx="${nose / 2 - 3}" ry="2.4" fill="#9fd3ff" opacity=".85"/>
+    </g>`;
+  }
+
+  function scope(mode) {
+    const u = "a" + (++uidN) + "_", B = OBJ_BANDS[mode], X = 238;
+    const fl = mode === "fluor", cf = mode === "confocal";
+    const accent = fl ? "#3fe07a" : cf ? "#6f8dff" : "#ffd88a";
+    const lampOn = mode === "bright";
+    let s = `<svg class="art-svg" viewBox="0 0 560 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${mode === "bright" ? "Brightfield" : fl ? "Epifluorescence" : "Confocal"} microscope">${defs(u)}`;
+    // studio: back glow and floor shadow
+    s += `<g class="decor"><ellipse cx="300" cy="330" rx="230" ry="250" fill="${accent}" opacity=".10" filter="url(#${u}softer)"/>
+      <ellipse cx="290" cy="618" rx="250" ry="16" fill="url(#${u}floor)"/></g>`;
+
+    // laser unit and fibre sit behind the stand
+    if (cf) {
+      s += `<g data-part="lasers">
+        <rect x="488" y="430" width="64" height="184" rx="10" fill="url(#${u}mt)"/>
+        <rect x="496" y="440" width="48" height="10" rx="3" fill="#0c0a09"/>
+        ${[["#9b6bff", 482, "405"], ["#36d1ff", 520, "488"], ["#c8f53c", 558, "561"]].map(([c, y, t]) => `
+          <circle cx="508" cy="${y}" r="7" fill="${c}"/><circle cx="508" cy="${y}" r="13" fill="${c}" opacity=".35" filter="url(#${u}soft)"/>
+          <text x="522" y="${y + 4}" font-family="DM Mono, monospace" font-size="11" fill="#d8d2c8">${t}</text>`).join("")}
+      </g>
+      <g data-part="fiber"><path d="M520 432 C 556 360, 560 160, 488 60 C 466 30, 432 30, 420 52" fill="none" stroke="#1a1513" stroke-width="7" stroke-linecap="round"/>
+        <path class="lp-fiber" d="M520 432 C 556 360, 560 160, 488 60 C 466 30, 432 30, 420 52" fill="none" stroke="#9fe8ff" stroke-width="2.4" stroke-linecap="round" opacity=".9"/></g>`;
+    }
+    // base and illuminator
+    s += `<g data-part="lamp">
+      <path d="M86 586 Q86 570 104 570 L468 570 Q488 570 488 588 L488 598 Q488 614 470 614 L104 614 Q86 614 86 598 Z" fill="url(#${u}en)"/>
+      <rect x="96" y="604" width="382" height="6" rx="3" fill="#000" opacity=".18"/>
+      <ellipse cx="${X}" cy="570" rx="30" ry="7" fill="url(#${u}mt)"/>
+      <ellipse cx="${X}" cy="569" rx="20" ry="4.5" fill="${lampOn ? "#fff4cf" : "#5c544d"}"/>
+      ${lampOn ? `<ellipse cx="${X}" cy="566" rx="46" ry="16" fill="#fff1c2" opacity=".55" filter="url(#${u}soft)"/>` : ""}
+    </g>`;
+    // arm
+    s += `<g data-part="arm"><path d="M470 572 C 488 470, 490 330, 454 238 C 434 186, 404 150, 366 130 L 334 170 C 360 186, 382 214, 396 252 C 422 330, 418 470, 392 572 Z" fill="url(#${u}en)"/>
+      <path d="M455 560 C 468 470, 470 340, 440 250" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/></g>`;
+    // condenser and its bracket
+    s += `<g data-part="condenser">
+      <rect x="266" y="436" width="130" height="9" rx="3" fill="url(#${u}mtv)"/>
+      <path d="M210 418 L266 418 L258 458 L218 458 Z" fill="url(#${u}mt)"/>
+      <rect x="214" y="430" width="48" height="5" fill="#8a7f72" opacity=".7"/>
+      <path d="M262 444 L292 452" stroke="#2a2420" stroke-width="4" stroke-linecap="round"/><circle cx="294" cy="452" r="4.5" fill="#2a2420"/>
+    </g>`;
+    // stage, slide, clips, stage controls
+    s += `<g data-part="stage"><rect x="372" y="386" width="62" height="46" rx="8" fill="url(#${u}en)"/>
+      <rect x="110" y="396" width="292" height="18" rx="4" fill="url(#${u}mtv)"/>
+      <rect x="110" y="396" width="292" height="3" rx="1.5" fill="#fff" opacity=".12"/></g>
+      <g data-part="slide">
+      <rect x="140" y="388" width="200" height="8" rx="1.5" fill="url(#${u}glass)" opacity=".95"/>
+      <rect x="205" y="385" width="66" height="3" fill="#f1f9fd"/>
+      <rect x="222" y="386.4" width="32" height="1.8" fill="${fl ? "#3fe07a" : cf ? "#6f8dff" : "#8a4fd0"}"/>
+      <path d="M148 386 l18 -6 l8 8" fill="none" stroke="#3a322d" stroke-width="3" stroke-linecap="round"/>
+      <path d="M332 386 l-18 -6 l-8 8" fill="none" stroke="#3a322d" stroke-width="3" stroke-linecap="round"/></g>
+      <g data-part="stagectl"><rect x="352" y="414" width="15" height="40" rx="4" fill="url(#${u}mt)"/>
+      <rect x="349" y="452" width="21" height="16" rx="5" fill="url(#${u}mt)"/><rect x="351" y="470" width="17" height="12" rx="4" fill="url(#${u}mt)"/></g>`;
+    // focus knobs on the arm
+    s += `<g data-part="knobs" transform="translate(430 486)">
+      <circle r="42" fill="url(#${u}mt)"/>
+      ${Array.from({ length: 36 }, (_, i) => `<line x1="0" y1="-40" x2="0" y2="-34" stroke="#8a8078" stroke-width="2" transform="rotate(${i * 10})"/>`).join("")}
+      <circle r="31" fill="#211b18"/>
+      <circle r="21" fill="url(#${u}mt)"/>
+      ${Array.from({ length: 20 }, (_, i) => `<line x1="0" y1="-20" x2="0" y2="-16" stroke="#9a9088" stroke-width="1.6" transform="rotate(${i * 18})"/>`).join("")}
+      <circle r="7" fill="${accent}"/>
+    </g>`;
+    // head with eyepieces
+    s += `<g data-part="eyepiece"><g transform="rotate(-32 206 174)">
+        <rect x="200" y="74" width="34" height="104" rx="5" fill="url(#${u}mt)" opacity=".85"/>
+        <rect x="182" y="70" width="38" height="108" rx="5" fill="url(#${u}mt)"/>
+        <rect x="176" y="54" width="50" height="22" rx="9" fill="#171310"/>
+        <rect x="182" y="120" width="38" height="5" fill="${accent}" opacity=".8"/>
+      </g></g>`;
+    if (fl) {
+      s += `<g data-part="camera"><rect x="288" y="130" width="22" height="40" fill="url(#${u}cr)"/>
+        <rect x="262" y="88" width="74" height="44" rx="8" fill="url(#${u}mt)"/>
+        <circle cx="299" cy="110" r="10" fill="#0b0908"/><circle cx="299" cy="110" r="5" fill="#1d3a5a"/>
+        <rect x="270" y="96" width="14" height="4" rx="2" fill="#3fe07a" opacity=".8"/></g>`;
+    }
+    s += `<g data-part="head"><path d="M150 188 Q150 168 172 168 L350 168 Q376 168 384 192 L394 226 Q398 248 374 248 L172 248 Q150 248 150 228 Z" fill="url(#${u}env)"/>
+      <path d="M160 180 L376 180" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      <rect x="168" y="214" width="120" height="3" rx="1.5" fill="#000" opacity=".12"/></g>`;
+    if (fl) {
+      s += `<g data-part="lamphouse"><rect x="384" y="220" width="72" height="26" fill="url(#${u}mtv)"/>
+        <rect x="452" y="176" width="92" height="112" rx="14" fill="url(#${u}en)"/>
+        ${[0, 1, 2, 3, 4].map(i => `<rect x="${466 + i * 14}" y="190" width="6" height="40" rx="3" fill="#000" opacity=".16"/>`).join("")}
+        <circle cx="498" cy="256" r="11" fill="#d7f9ff"/><circle cx="498" cy="256" r="24" fill="#bdf2ff" opacity=".5" filter="url(#${u}soft)"/>
+        <path d="M520 288 C 530 330, 500 360, 500 420" fill="none" stroke="#1a1513" stroke-width="5"/></g>
+        <g data-part="shutter"><rect x="404" y="210" width="14" height="46" rx="3" fill="url(#${u}mt)"/><circle cx="411" cy="206" r="7" fill="#e3c043"/></g>
+        <g data-part="cubes"><rect x="194" y="228" width="108" height="18" rx="4" fill="#191412"/>
+          <rect x="204" y="231" width="24" height="12" rx="2" fill="#5a7dff"/><rect x="236" y="231" width="24" height="12" rx="2" fill="#3fe07a"/><rect x="268" y="231" width="24" height="12" rx="2" fill="#ff5a4a"/>
+          <rect x="236" y="231" width="24" height="12" rx="2" fill="#3fe07a" filter="url(#${u}soft)" opacity=".8"/></g>`;
+    }
+    if (cf) {
+      s += `<g data-part="scanhead"><rect x="314" y="150" width="30" height="22" fill="url(#${u}mtv)"/>
+        <rect x="300" y="44" width="220" height="110" rx="16" fill="url(#${u}en)"/>
+        <rect x="312" y="62" width="198" height="78" rx="8" fill="#0d0a09"/>
+        <rect x="312" y="62" width="198" height="78" rx="8" fill="none" stroke="#fff" stroke-opacity=".12"/>
+        <text x="314" y="56" font-family="DM Mono, monospace" font-size="10" fill="#6b6158" letter-spacing="2">LSM</text></g>
+        <g data-part="galvo"><rect x="324" y="94" width="16" height="4" rx="1" fill="#e6e8ea" transform="rotate(-45 332 96)"/>
+          <rect x="324" y="110" width="16" height="4" rx="1" fill="#e6e8ea" transform="rotate(45 332 112)"/>
+          <circle cx="332" cy="96" r="2" fill="#555"/></g>
+        <g class="decor"><line x1="420" y1="88" x2="436" y2="104" stroke="#bfe9ff" stroke-width="2.4"/>
+          <ellipse cx="452" cy="100" rx="3" ry="11" fill="#bfe9ff" opacity=".55"/></g>
+        <g data-part="pinhole"><rect x="471" y="84" width="4" height="13" fill="#d8d2c8"/><rect x="471" y="103" width="4" height="13" fill="#d8d2c8"/></g>
+        <g data-part="detector"><rect x="486" y="88" width="18" height="24" rx="5" fill="#3a332e"/><circle cx="495" cy="100" r="5" fill="#ffcf5a" opacity=".85"/></g>`;
+    }
+    // nosepiece and objectives
+    const L = [100, 104, 108];
+    s += `<g data-part="nosepiece">
+      ${objective(u, X, 256, 86, B[0], false, `transform="rotate(30 ${X} 252)" opacity=".75"`)}
+      ${objective(u, X, 256, 90, B[2], mode !== "bright" || true, `transform="rotate(-30 ${X} 252)" opacity=".75"`)}
+      <ellipse cx="${X}" cy="252" rx="60" ry="14" fill="url(#${u}mt)"/><ellipse cx="${X}" cy="249" rx="50" ry="6" fill="#fff" opacity=".08"/></g>
+      <g data-part="objective">${objective(u, X, 258, 96, B[1], false)}</g>`;
+    // light paths, drawn on top
+    s += `<g class="lp" data-lp>`;
+    if (mode === "bright") {
+      s += `<path d="M226 568 L250 568 L256 458 L245 396 L242 354 L246 250 L230 250 L234 354 L231 396 L220 458 Z" fill="#fff3cf" opacity=".55" filter="url(#${u}soft)"/>
+        <path d="M228 568 L248 568 L253 458 L243 396 L241 354 L244 250 L232 250 L235 354 L233 396 L223 458 Z" fill="url(#${u}warm)"/>
+        <g transform="rotate(-32 206 174)"><rect x="195" y="62" width="12" height="114" fill="url(#${u}warm)" opacity=".8"/></g>
+        <path class="lp-flow" d="M238 566 L238 250" stroke="#fffbe8" stroke-width="2.4" stroke-dasharray="3 14" fill="none"/>`;
+    } else if (fl) {
+      s += `<path d="M498 236 L234 236 L234 384" fill="none" stroke="#7aa8ff" stroke-width="10" opacity=".35" filter="url(#${u}soft)"/>
+        <path class="lp-flow" d="M490 236 L234 236 L234 384" fill="none" stroke="#9cbcff" stroke-width="3.2" stroke-dasharray="7 9"/>
+        <path d="M244 384 L244 250" fill="none" stroke="#3fe07a" stroke-width="10" opacity=".35" filter="url(#${u}soft)"/>
+        <path class="lp-flow up" d="M244 384 L244 252" fill="none" stroke="#5cff98" stroke-width="3.2" stroke-dasharray="7 9"/>
+        <g transform="rotate(-32 206 174)"><rect x="198" y="64" width="8" height="112" fill="#5cff98" opacity=".5"/></g>
+        <circle cx="239" cy="386" r="9" fill="#5cff98" opacity=".7" filter="url(#${u}soft)"/>`;
+    } else {
+      s += `<path d="M420 58 L428 96 L332 96 L332 150" fill="none" stroke="#9fe8ff" stroke-width="8" opacity=".35" filter="url(#${u}soft)"/>
+        <path class="lp-flow" d="M420 58 L428 96 L332 96 L332 150" fill="none" stroke="#9fe8ff" stroke-width="2.6" stroke-dasharray="6 7"/>
+        <path d="M232 354 L238 386 L244 354 Z" fill="#9fe8ff" opacity=".9"/>
+        <path d="M228 354 L238 388 L248 354 Z" fill="#9fe8ff" opacity=".35" filter="url(#${u}soft)"/>
+        <circle cx="238" cy="387" r="4" fill="#fff"/><circle cx="238" cy="387" r="14" fill="#6f8dff" opacity=".7" filter="url(#${u}soft)"/>
+        <path class="lp-flow up" d="M332 116 L332 104 L452 104 L473 100 L492 100" fill="none" stroke="#5cff98" stroke-width="2.4" stroke-dasharray="5 6"/>`;
+    }
+    s += `</g><g class="callouts"></g></svg>`;
+    return s;
+  }
+
+  /* Put a scope into a container. Returns a controller to spotlight parts. */
+  function mount(el, mode) {
+    el.innerHTML = scope(mode);
+    const svg = el.querySelector("svg"), co = svg.querySelector(".callouts"), meta = {};
+    partsFor(mode).forEach(p => meta[p.id] = p);
+    function highlight(ids = [], opts = {}) {
+      ids = (Array.isArray(ids) ? ids : [ids]).filter(id => meta[id]);
+      svg.classList.toggle("focus", ids.length > 0);
+      svg.classList.toggle("lit", !!opts.light);
+      svg.querySelectorAll("[data-part]").forEach(g => g.classList.toggle("hl", ids.includes(g.dataset.part)));
+      // labels go up and out from each anchor; same-side labels are pushed apart so they never collide
+      const items = ids.map((id, i) => { const [x, y] = meta[id].at; return { id, i, x, y, right: x > 290 }; });
+      for (const side of [true, false]) {
+        const row = items.filter(it => it.right === side).sort((a, b) => a.y - b.y);
+        let prev = -1e9;
+        row.forEach(it => { it.ly = Math.max(it.y - 30, prev + 30); prev = it.ly; });
+      }
+      co.innerHTML = items.map(({ id, i, x, y, right, ly }) => {
+        const lx = right ? Math.min(552, x + 64) : Math.max(8, x - 64);
+        return `<g class="co" style="--d:${i * 90}ms"><circle cx="${x}" cy="${y}" r="5"/><circle cx="${x}" cy="${y}" r="11" class="co-ring"/>
+          <path d="M${x} ${y} L${lx} ${ly}"/><text x="${lx}" y="${ly - 8}" text-anchor="${right ? "end" : "start"}">${meta[id].name}</text></g>`;
+      }).join("");
+    }
+    return { svg, highlight, parts: partsFor(mode) };
+  }
+  return { scope, mount, partsFor, MAGS };
+})();
+
+/* =====================================================================
+   DIAG · interactive concept diagrams for the lessons and the guide.
+   Each is { render(state) -> svg, state, controls, tick? }. mount() puts
+   one in a container with its controls and keeps it live.
+   ===================================================================== */
+const DIAG = (() => {
+  const INK = "#f3eadc", DIM = "rgba(243,234,220,.55)", FAINT = "rgba(243,234,220,.18)";
+  const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" font-family="DM Mono, monospace" font-size="${o.size || 13}" fill="${o.fill || DIM}" text-anchor="${o.anchor || "start"}" letter-spacing="${o.ls == null ? 1 : o.ls}"${o.weight ? ` font-weight="${o.weight}"` : ""}>${s}</text>`;
+  const BIG = (x, y, s, o = {}) => `<text x="${x}" y="${y}" font-family="Archivo, Hanken Grotesk, sans-serif" font-style="italic" font-weight="900" font-size="${o.size || 30}" fill="${o.fill || INK}" text-anchor="${o.anchor || "start"}">${s}</text>`;
+  const glow = (id, sd = 6) => `<filter id="${id}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="${sd}"/></filter>`;
+  // wavelength (nm) to an sRGB colour
+  function wl(n) {
+    let r = 0, g = 0, b = 0;
+    if (n < 440) { r = -(n - 440) / 60; b = 1; } else if (n < 490) { g = (n - 440) / 50; b = 1; } else if (n < 510) { g = 1; b = -(n - 510) / 20; }
+    else if (n < 580) { r = (n - 510) / 70; g = 1; } else if (n < 645) { r = 1; g = -(n - 645) / 65; } else r = 1;
+    const f = n < 420 ? 0.35 + 0.65 * (n - 380) / 40 : n > 700 ? 0.35 + 0.65 * (780 - n) / 80 : 1;
+    const c = (v) => Math.round(255 * Math.pow(Math.max(0, v * f), 0.8));
+    return `rgb(${c(r)},${c(g)},${c(b)})`;
+  }
+  const DYES = {
+    dapi: { name: "DAPI", ex: 358, em: 461, exW: 22, emW: 40, cube: [[325, 375], [435, 485]], cubeName: "DAPI cube" },
+    a488: { name: "Alexa Fluor 488", ex: 495, em: 519, exW: 18, emW: 24, cube: [[460, 500], [510, 560]], cubeName: "FITC cube" },
+    p568: { name: "Phalloidin-568", ex: 578, em: 603, exW: 20, emW: 26, cube: [[530, 560], [590, 650]], cubeName: "TRITC cube" },
+    gfp:  { name: "GFP", ex: 488, em: 507, exW: 16, emW: 22, laser: 488 },
+    lyso: { name: "LysoTracker Red", ex: 577, em: 590, exW: 18, emW: 22, laser: 561 },
+  };
+  const CUBES = { dapi: { name: "DAPI", ex: 360, em: 460, dye: "dapi" }, fitc: { name: "FITC", ex: 488, em: 525, dye: "a488" }, tritc: { name: "TRITC", ex: 545, em: 610, dye: "p568" } };
+
+  const D = {};
+
+  /* ---------- Stokes shift: absorption and emission spectra with filter bands ---------- */
+  D.stokes = {
+    title: "Stokes shift", state: { dye: "dapi" },
+    controls: [{ key: "dye", opts: [["dapi", "DAPI"], ["a488", "Alexa 488"], ["p568", "568 dye"], ["gfp", "GFP"]] }],
+    render({ dye }) {
+      const d = DYES[dye], W = 560, x0 = 40, x1 = 530, y0 = 410, yT = 170;
+      const X = (n) => x0 + (n - 300) / 400 * (x1 - x0);
+      const curve = (pk, wd, skew) => { let p = ""; for (let n = 300; n <= 700; n += 3) { const s = n < pk ? wd * (1 - skew) : wd * (1 + skew); const v = Math.exp(-0.5 * ((n - pk) / s) ** 2); p += `${p ? "L" : "M"}${X(n).toFixed(1)} ${(y0 - v * (y0 - yT)).toFixed(1)} `; } return p; };
+      const absP = curve(d.ex, d.exW, -0.25), emP = curve(d.em, d.emW, 0.35);
+      let bar = ""; for (let n = 380; n < 700; n += 4) bar += `<rect x="${X(n)}" y="${y0 + 14}" width="${X(n + 4) - X(n) + 0.5}" height="8" fill="${wl(n)}"/>`;
+      const bands = d.cube ? d.cube.map(([a, b], i) => `<rect x="${X(a)}" y="${yT - 70}" width="${X(b) - X(a)}" height="${y0 - yT + 70}" fill="${i ? wl((a + b) / 2) : wl(Math.max(385, (a + b) / 2))}" opacity=".12"/>
+        ${T((X(a) + X(b)) / 2, yT - 76 - i * 0, i ? "EMISSION" : "EXCITATION", { anchor: "middle", size: 10 })}`).join("")
+        : `<line x1="${X(d.laser)}" y1="${yT - 10}" x2="${X(d.laser)}" y2="${y0}" stroke="${wl(d.laser)}" stroke-width="3"/>${T(X(d.laser) + 6, yT - 50, `${d.laser} NM LASER`, { size: 10, fill: wl(d.laser) })}`;
+      const ya = yT - 38;
+      return `<svg viewBox="0 0 ${W} 500"><defs>${glow("stG", 5)}</defs>
+        ${BIG(x0, 46, d.name, { size: 28 })}${T(x0, 70, "ABSORBS → EMITS")}
+        ${bands}
+        <line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}" stroke="${FAINT}"/>
+        <path d="${absP} L${X(700)} ${y0} L${X(300)} ${y0} Z" fill="${wl(Math.max(385, d.ex))}" opacity=".18"/>
+        <path d="${absP}" fill="none" stroke="${wl(Math.max(385, d.ex))}" stroke-width="2.5" stroke-dasharray="6 5"/>
+        <path d="${emP} L${X(700)} ${y0} L${X(300)} ${y0} Z" fill="${wl(d.em)}" opacity=".35"/>
+        <path d="${emP}" fill="none" stroke="${wl(d.em)}" stroke-width="3"/><path d="${emP}" fill="none" stroke="${wl(d.em)}" stroke-width="7" opacity=".5" filter="url(#stG)"/>
+        <line x1="${X(d.ex)}" y1="${ya}" x2="${X(d.em)}" y2="${ya}" stroke="${INK}" stroke-width="1.5"/>
+        <path d="M${X(d.em) - 7} ${ya - 5} L${X(d.em)} ${ya} L${X(d.em) - 7} ${ya + 5}" fill="none" stroke="${INK}" stroke-width="1.5"/>
+        ${T((X(d.ex) + X(d.em)) / 2, ya - 10, `STOKES SHIFT ${d.em - d.ex} NM`, { anchor: "middle", fill: INK, size: 11 })}
+        ${T(X(d.ex), yT - 8, `ex ${d.ex}`, { anchor: "middle", size: 11, fill: INK })}${T(X(d.em), yT - 8, `em ${d.em}`, { anchor: "middle", size: 11, fill: INK })}
+        ${bar}${[300, 400, 500, 600, 700].map(n => T(X(n), y0 + 42, `${n}`, { anchor: "middle", size: 11 })).join("")}${T(x1, y0 + 62, "WAVELENGTH, NM", { anchor: "end", size: 10 })}
+        <g transform="translate(${x1 - 130} 34)"><line x1="0" y1="0" x2="22" y2="0" stroke="${INK}" stroke-dasharray="5 4" stroke-width="2"/>${T(30, 4, "absorption", { size: 11 })}
+        <rect x="0" y="14" width="22" height="8" fill="${INK}" opacity=".5"/>${T(30, 22, "emission", { size: 11 })}</g>
+      </svg>`;
+    },
+  };
+
+  /* ---------- Filter cube: exciter, dichroic, emitter ---------- */
+  D.cube = {
+    title: "Filter cube", state: { cube: "fitc" },
+    controls: [{ key: "cube", opts: [["dapi", "DAPI"], ["fitc", "FITC"], ["tritc", "TRITC"]] }],
+    render({ cube }) {
+      const c = CUBES[cube], ex = wl(Math.max(390, c.ex)), em = wl(c.em);
+      const rainbow = [420, 470, 520, 570, 620].map((n, i) => `<line x1="560" y1="${244 + i * 3}" x2="452" y2="${244 + i * 3}" stroke="${wl(n)}" stroke-width="2.5" opacity=".9"/>`).join("");
+      return `<svg viewBox="0 0 560 560"><defs>${glow("cbG", 6)}
+          <linearGradient id="cbBody" x1="0" x2="1"><stop offset="0" stop-color="#2b2420"/><stop offset=".5" stop-color="#4a3f38"/><stop offset="1" stop-color="#241e1b"/></linearGradient></defs>
+        ${BIG(28, 46, `${c.name} cube`, { size: 28 })}${T(28, 70, "ONE LABEL, THREE FILTERS")}
+        <rect x="180" y="150" width="200" height="200" rx="14" fill="url(#cbBody)" stroke="rgba(255,255,255,.12)"/>
+        ${rainbow}${T(548, 232, "LAMP · ALL COLOURS", { anchor: "end", size: 10 })}
+        <rect x="372" y="200" width="16" height="100" rx="3" fill="${ex}" opacity=".85"/>${T(396, 196, "EXCITATION FILTER", { size: 10, fill: INK })}
+        <line class="dg-flow" x1="372" y1="250" x2="282" y2="250" stroke="${ex}" stroke-width="5"/>
+        <line x1="216" y1="186" x2="344" y2="314" stroke="#d9f1ff" stroke-width="5" opacity=".9"/><line x1="216" y1="186" x2="344" y2="314" stroke="#d9f1ff" stroke-width="12" opacity=".25" filter="url(#cbG)"/>
+        ${T(150, 340, "DICHROIC MIRROR", { anchor: "end", size: 10, fill: INK })}${T(150, 356, "reflects short, passes long", { anchor: "end", size: 10 })}
+        <line class="dg-flow" x1="276" y1="250" x2="276" y2="470" stroke="${ex}" stroke-width="5"/>
+        <line class="dg-flow up" x1="290" y1="470" x2="290" y2="92" stroke="${em}" stroke-width="5"/>
+        <line x1="290" y1="470" x2="290" y2="92" stroke="${em}" stroke-width="12" opacity=".35" filter="url(#cbG)"/>
+        <rect x="236" y="134" width="100" height="16" rx="3" fill="${em}" opacity=".85"/>${T(344, 128, "EMISSION FILTER", { size: 10, fill: INK })}
+        ${T(296, 84, "TO EYE / CAMERA", { size: 10 })}
+        <path d="M232 470 L336 470 L322 500 L246 500 Z" fill="#cfd2d6"/>${T(230, 488, "OBJECTIVE", { anchor: "end", size: 10 })}
+        <rect x="200" y="520" width="170" height="8" rx="2" fill="#9fc3d8" opacity=".8"/><circle cx="283" cy="518" r="8" fill="${em}"/><circle cx="283" cy="518" r="18" fill="${em}" opacity=".5" filter="url(#cbG)"/>
+        ${T(380, 528, "SAMPLE GLOWS", { size: 10 })}
+        ${T(28, 108, `${c.ex} nm in`, { size: 13, fill: ex })}${T(28, 128, `${c.em} nm out`, { size: 13, fill: em })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Photobleaching: live demo with shutter and antifade ---------- */
+  D.bleach = {
+    title: "Photobleaching", state: { shutter: "open", mount: "plain", t: 0, s: 1, hist: [] },
+    controls: [{ key: "shutter", opts: [["open", "Shutter open"], ["closed", "Shutter closed"]] }, { key: "mount", opts: [["plain", "Buffer"], ["antifade", "Antifade mountant"]] }, { key: "reset", opts: [["go", "Fresh slide"]] }],
+    onControl(st, key) { if (key === "reset") { st.s = 1; st.hist = []; st.t = 0; st.reset = "go"; } },
+    tick(st, dt) {
+      if (st.shutter === "open") st.s *= Math.exp(-(st.mount === "antifade" ? 0.035 : 0.16) * dt);
+      st.t += dt; if (!st.hist.length || st.t - st.hist[st.hist.length - 1][0] > 0.15) { st.hist.push([st.t, st.s, st.shutter === "open"]); if (st.hist.length > 140) st.hist.shift(); }
+      return true;
+    },
+    render(st) {
+      const on = st.shutter === "open", a = st.s;
+      const dots = []; let k = 7;
+      for (let i = 0; i < 26; i++) { k = (k * 9301 + 49297) % 233280; const x = 70 + (k / 233280) * 420; k = (k * 9301 + 49297) % 233280; const y = 110 + (k / 233280) * 190; k = (k * 9301 + 49297) % 233280; const r = 9 + (k / 233280) * 9; dots.push([x, y, r]); }
+      const lum = on ? a : 0;
+      const h = st.hist, t1 = h.length ? h[h.length - 1][0] : 0, t0 = Math.max(0, t1 - 20);
+      const X = (t) => 40 + (t - t0) / 20 * 480, Y = (v) => 500 - v * 120;
+      const pl = h.filter(p => p[0] >= t0).map((p, i) => `${i ? "L" : "M"}${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(" ");
+      return `<svg viewBox="0 0 560 540"><defs>${glow("blG", 7)}</defs>
+        ${BIG(28, 46, `${Math.round(a * 100)}%`, { size: 34, fill: on ? "#5cff98" : INK })}${T(28, 70, on ? "LIGHT ON · DYE BURNING" : "LIGHT OFF · SIGNAL SAFE")}
+        <rect x="40" y="90" width="480" height="230" rx="14" fill="#070606" stroke="${FAINT}"/>
+        ${dots.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#3fe07a" opacity="${(0.08 + 0.9 * lum).toFixed(3)}"/><circle cx="${x}" cy="${y}" r="${r * 1.8}" fill="#3fe07a" opacity="${(0.5 * lum).toFixed(3)}" filter="url(#blG)"/>`).join("")}
+        ${on ? "" : `${T(280, 212, "SHUTTER CLOSED", { anchor: "middle", fill: INK, size: 14, ls: 4 })}`}
+        <line x1="40" y1="500" x2="520" y2="500" stroke="${FAINT}"/><line x1="40" y1="380" x2="40" y2="500" stroke="${FAINT}"/>
+        ${T(40, 370, "SIGNAL OVER THE LAST 20 S", { size: 10 })}
+        <path d="${pl}" fill="none" stroke="#5cff98" stroke-width="2.5"/>
+        ${T(520, 524, "time →", { anchor: "end", size: 10 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Antibodies: direct vs indirect immunofluorescence ---------- */
+  D.antibody = {
+    title: "Immunofluorescence", state: { mode: "indirect" },
+    controls: [{ key: "mode", opts: [["direct", "Direct"], ["indirect", "Indirect"]] }],
+    render({ mode }) {
+      const ind = mode === "indirect";
+      const Y = (x, y, rot, col, sz = 1, star = 0) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sz})">
+        <path d="M0 0 L0 26 M0 26 L-14 44 M0 26 L14 44" stroke="${col}" stroke-width="7" stroke-linecap="round" fill="none"/>
+        ${star ? `<circle cx="0" cy="14" r="6" fill="#5cff98"/><circle cx="0" cy="14" r="13" fill="#5cff98" opacity=".55" filter="url(#abG)"/>` : ""}</g>`;
+      let tube = ""; for (let i = 0; i < 13; i++) for (let j = 0; j < 2; j++) tube += `<circle cx="${70 + i * 34}" cy="${330 + j * 22}" r="12" fill="${(i + j) % 2 ? "#8e8278" : "#b8aa9c"}"/>`;
+      const prims = [130, 250, 370, 470];
+      let ab = "", n = 0;
+      prims.forEach((x, i) => {
+        ab += Y(x, 318, 180, "#e3c043", 1, ind ? 0 : 1); n += ind ? 0 : 1;
+        if (ind) { [[-18, -12, 200], [16, -10, 160], [0, -30, 180]].slice(0, i % 2 ? 3 : 2).forEach(([dx, dy, r]) => { ab += Y(x + dx, 256 + dy, r, "#e98fd0", 0.9, 1); n++; }); }
+      });
+      return `<svg viewBox="0 0 560 520"><defs>${glow("abG", 6)}</defs>
+        ${BIG(28, 46, ind ? "Indirect" : "Direct", { size: 30 })}${T(28, 70, ind ? "PRIMARY, THEN DYE-CARRYING SECONDARIES" : "ONE ANTIBODY, DYE ATTACHED")}
+        ${tube}${T(70, 392, "MICROTUBULE · α/β-TUBULIN", { size: 11 })}
+        ${ab}
+        <g transform="translate(40 440)">${Y(10, -8, 0, "#e3c043", 0.55)}${T(30, 6, "anti-α-tubulin primary (e.g. mouse)", { size: 11 })}
+        ${ind ? `${Y(10, 26, 0, "#e98fd0", 0.55, 1)}${T(30, 40, "anti-mouse secondary + Alexa Fluor 488", { size: 11 })}` : `<circle cx="10" cy="34" r="6" fill="#5cff98"/>${T(30, 40, "Alexa Fluor 488 on the primary itself", { size: 11 })}`}</g>
+        ${T(532, 112, "DYES PER TARGET", { anchor: "end", size: 10 })}${BIG(532, 146, (n / prims.length).toFixed(1).replace(".0", ""), { anchor: "end", size: 34, fill: "#5cff98" })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Phalloidin: binds F-actin, not G-actin ---------- */
+  D.phalloidin = {
+    title: "Phalloidin", state: { show: "f" },
+    controls: [{ key: "show", opts: [["f", "F-actin filament"], ["g", "Free G-actin"]] }],
+    render({ show }) {
+      let s = "";
+      if (show === "f") {
+        for (let i = 0; i < 16; i++) {
+          const x = 60 + i * 28, y1 = 260 + Math.sin(i * 0.55) * 22, y2 = 260 - Math.sin(i * 0.55) * 22;
+          s += `<circle cx="${x}" cy="${y1}" r="15" fill="#b9a99a" stroke="#2a2420"/><circle cx="${x + 14}" cy="${y2}" r="15" fill="#d6c7b6" stroke="#2a2420"/>`;
+          if (i % 2 === 1 && i < 15) s += `<g><rect x="${x + 2}" y="252" width="10" height="16" rx="3" fill="#ff6a55"/><circle cx="${x + 7}" cy="260" r="14" fill="#ff6a55" opacity=".5" filter="url(#phG)"/></g>`;
+        }
+        s += `${T(60, 330, "PHALLOIDIN WEDGES BETWEEN SUBUNITS AND LOCKS THE FILAMENT", { size: 11 })}`;
+      } else {
+        const pts = [[90, 220], [180, 300], [260, 210], [330, 290], [410, 230], [470, 300], [150, 360], [380, 360]];
+        pts.forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="15" fill="#b9a99a" stroke="#2a2420"/>`; });
+        [[120, 160], [300, 160], [440, 380]].forEach(([x, y]) => { s += `<rect x="${x}" y="${y}" width="10" height="16" rx="3" fill="#ff6a55" opacity=".7"/>`; });
+        s += `${T(60, 420, "MONOMERS: THE BINDING SITE ONLY EXISTS BETWEEN SUBUNITS", { size: 11 })}`;
+      }
+      return `<svg viewBox="0 0 560 480"><defs>${glow("phG", 6)}</defs>
+        ${BIG(28, 46, show === "f" ? "Bound" : "Not bound", { size: 30, fill: show === "f" ? "#ff8a78" : INK })}${T(28, 70, "PHALLOIDIN · FROM AMANITA PHALLOIDES")}
+        ${s}<g transform="translate(40 450)"><rect x="0" y="-10" width="10" height="16" rx="3" fill="#ff6a55"/>${T(18, 3, "phalloidin + 568 dye", { size: 11 })}
+        <circle cx="210" cy="-2" r="8" fill="#b9a99a"/>${T(224, 3, "actin subunit", { size: 11 })}</g>
+      </svg>`;
+    },
+  };
+
+  /* ---------- DAPI in the DNA minor groove ---------- */
+  D.dapi = {
+    title: "DAPI", state: { uv: "on" },
+    controls: [{ key: "uv", opts: [["on", "UV on"], ["off", "UV off"]] }],
+    render({ uv }) {
+      const on = uv === "on"; let s = "", r = "";
+      const seq = "ATTAGCAATTTGCGAATT";
+      for (let i = 0; i < 60; i++) {
+        const x = 40 + i * 8, a = i * 0.32;
+        const y1 = 250 + Math.sin(a) * 60, y2 = 250 + Math.sin(a + 2.3) * 60;
+        if (i % 3 === 0) { const b = seq[(i / 3) % seq.length], at = b === "A" || b === "T"; r += `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${at ? "#d8c6b2" : "#7d6f63"}" stroke-width="4"/>`; }
+        s += `<circle cx="${x}" cy="${y1}" r="4" fill="#efe3d3"/><circle cx="${x}" cy="${y2}" r="4" fill="#a8998b"/>`;
+      }
+      let dapi = "";
+      [[100, 0], [252, 0], [404, 0]].forEach(([x]) => { dapi += `<path d="M${x - 16} ${246} Q${x} ${236} ${x + 16} ${246}" stroke="#7d93ff" stroke-width="7" stroke-linecap="round" fill="none"/>${on ? `<circle cx="${x}" cy="244" r="20" fill="#5a7dff" opacity=".55" filter="url(#dpG)"/>` : ""}`; });
+      return `<svg viewBox="0 0 560 480"><defs>${glow("dpG", 8)}</defs>
+        ${BIG(28, 46, "DAPI on DNA", { size: 30, fill: on ? "#9db0ff" : INK })}${T(28, 70, "MINOR GROOVE · PREFERS A-T RUNS")}
+        ${r}${s}${dapi}
+        ${T(40, 380, on ? "~358 NM IN → ~461 NM BLUE OUT, ~20× BRIGHTER WHEN BOUND" : "NO EXCITATION, NO GLOW", { size: 11, fill: on ? "#9db0ff" : DIM })}
+        <g transform="translate(40 420)"><line x1="0" y1="0" x2="18" y2="0" stroke="#d8c6b2" stroke-width="4"/>${T(26, 4, "A–T pair", { size: 11 })}<line x1="130" y1="0" x2="148" y2="0" stroke="#7d6f63" stroke-width="4"/>${T(156, 4, "G–C pair", { size: 11 })}
+        <path d="M262 4 Q272 -4 282 4" stroke="#7d93ff" stroke-width="5" fill="none"/>${T(292, 4, "DAPI", { size: 11 })}</g>
+      </svg>`;
+    },
+  };
+
+  /* ---------- One cell, three labels, channel by channel ---------- */
+  D.cell3 = {
+    title: "Three labels", state: { ch: "merge" },
+    controls: [{ key: "ch", opts: [["dapi", "DAPI"], ["fitc", "FITC"], ["tritc", "TRITC"], ["merge", "Merge"]] }],
+    render({ ch }) {
+      const show = (c) => ch === "merge" || ch === c;
+      let mt = "", act = "";
+      for (let i = 0; i < 22; i++) { const a = i / 22 * Math.PI * 2 + 0.2, L = 150 + (i * 37 % 50); mt += `<path d="M280 270 Q${280 + Math.cos(a + 0.3) * L * 0.5} ${270 + Math.sin(a + 0.3) * L * 0.5} ${280 + Math.cos(a) * L} ${270 + Math.sin(a) * L * 0.8}" stroke="#3fe07a" stroke-width="1.6" fill="none" opacity=".85"/>`; }
+      for (let i = 0; i < 7; i++) { const y = 170 + i * 30; act += `<line x1="${120 + (i % 3) * 14}" y1="${y + 18}" x2="${440 - (i % 2) * 20}" y2="${y - 8}" stroke="#ff5a4a" stroke-width="3" opacity=".85"/>`; }
+      return `<svg viewBox="0 0 560 520"><defs>${glow("c3G", 4)}<clipPath id="c3c"><path d="M110 270 C110 150, 210 110, 300 120 C 410 130, 470 200, 455 290 C 440 380, 360 420, 270 412 C 170 405, 110 360, 110 270 Z"/></clipPath></defs>
+        ${BIG(28, 46, { dapi: "Nuclei", fitc: "Microtubules", tritc: "Actin", merge: "Merged" }[ch], { size: 30 })}${T(28, 70, { dapi: "DAPI · DNA", fitc: "ALEXA 488 · α-TUBULIN", tritc: "PHALLOIDIN-568 · F-ACTIN", merge: "THREE CHANNELS, FALSE COLOUR" }[ch])}
+        <rect x="40" y="90" width="480" height="390" rx="16" fill="#050404"/>
+        <path d="M110 270 C110 150, 210 110, 300 120 C 410 130, 470 200, 455 290 C 440 380, 360 420, 270 412 C 170 405, 110 360, 110 270 Z" fill="none" stroke="${FAINT}" stroke-dasharray="3 5"/>
+        <g clip-path="url(#c3c)" style="mix-blend-mode:screen">${show("tritc") ? `<g filter="url(#c3G)" opacity=".5">${act}</g>${act}` : ""}${show("fitc") ? `<g filter="url(#c3G)" opacity=".5">${mt}</g>${mt}` : ""}</g>
+        ${show("dapi") ? `<ellipse cx="280" cy="270" rx="62" ry="48" fill="#4c6dff" opacity=".9"/><ellipse cx="280" cy="270" rx="72" ry="58" fill="#4c6dff" opacity=".5" filter="url(#c3G)"/>` : ""}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Immersion oil: air loses the steep rays ---------- */
+  D.oil = {
+    title: "Immersion oil", state: { m: "oil" },
+    controls: [{ key: "m", opts: [["air", "Air gap"], ["oil", "Oil"]] }],
+    render({ m }) {
+      const oil = m === "oil", n = 1.515, P = [280, 380];
+      let rays = "";
+      const LY = 250; // front lens
+      for (const deg of [-54, -44, -32, -16, 0, 16, 32, 44, 54]) {
+        const a = deg * Math.PI / 180, yTop = 320; // top surface of coverslip
+        const x1 = P[0] + Math.tan(a) * (P[1] - yTop);
+        if (oil) { const x2 = P[0] + Math.tan(a) * (P[1] - LY); rays += `<line x1="${P[0]}" y1="${P[1]}" x2="${x2}" y2="${LY}" stroke="#ffe7a0" stroke-width="2" opacity=".9"/>`; }
+        else {
+          const s = n * Math.sin(Math.abs(a));
+          if (s < 1) { const b = Math.asin(s) * Math.sign(a), x2 = x1 + Math.tan(b) * (yTop - LY), hit = Math.abs(x2 - 280) < 190; rays += `<line x1="${P[0]}" y1="${P[1]}" x2="${x1}" y2="${yTop}" stroke="#ffe7a0" stroke-width="2"/><line x1="${x1}" y1="${yTop}" x2="${hit ? x2 : x1 + Math.tan(b) * 40}" y2="${hit ? LY : yTop - 40}" stroke="#ffe7a0" stroke-width="2" opacity="${hit ? .9 : .4}"/>`; }
+          else { const x3 = x1 + Math.tan(a) * (yTop - P[1]) * -1; rays += `<line x1="${P[0]}" y1="${P[1]}" x2="${x1}" y2="${yTop}" stroke="#ff8a78" stroke-width="2"/><line x1="${x1}" y1="${yTop}" x2="${x3}" y2="${P[1] + 20}" stroke="#ff8a78" stroke-width="2" opacity=".6"/>`; }
+        }
+      }
+      const NA = oil ? 1.25 : 0.95;
+      return `<svg viewBox="0 0 560 520"><defs>${glow("olG", 5)}</defs>
+        ${BIG(28, 46, oil ? "Oil: n = 1.515" : "Air: n = 1.0", { size: 30 })}${T(28, 70, oil ? "NO BEND AT THE GLASS, EVERY RAY CAUGHT" : "STEEP RAYS BEND AWAY OR REFLECT BACK")}
+        <path d="M110 150 L450 150 L470 250 L90 250 Z" fill="#cfd2d6"/><ellipse cx="280" cy="250" rx="190" ry="7" fill="#9fd3ff"/>${T(460, 140, "OBJECTIVE", { size: 11, anchor: "end" })}
+        ${oil ? `<rect x="90" y="257" width="380" height="63" fill="#e8bd44" opacity=".25"/>${T(500, 294, "OIL", { size: 11, fill: "#ffd77a" })}` : `${T(500, 294, "AIR", { size: 11 })}`}
+        <rect x="60" y="320" width="440" height="40" fill="#9fc3d8" opacity=".35"/>${T(510, 344, "COVERSLIP", { size: 10, anchor: "end" })}
+        <rect x="60" y="360" width="440" height="40" fill="#9fc3d8" opacity=".15"/>
+        ${rays}<circle cx="${P[0]}" cy="${P[1]}" r="5" fill="#fff"/><circle cx="${P[0]}" cy="${P[1]}" r="14" fill="#ffe7a0" opacity=".6" filter="url(#olG)"/>
+        ${T(40, 450, "NUMERICAL APERTURE", { size: 11 })}${BIG(40, 488, NA.toFixed(2), { size: 36, fill: oil ? "#ffd77a" : INK })}
+        ${T(300, 450, "RESOLVES DETAIL DOWN TO", { size: 11 })}${BIG(300, 488, `${(0.61 * 0.55 / NA * 1000).toFixed(0)} nm`, { size: 36 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- NA: the cone, resolution and depth of field ---------- */
+  D.na = {
+    title: "Numerical aperture", state: { na: 0.65 },
+    slider: { key: "na", min: 0.1, max: 1.4, step: 0.05, label: "NA" },
+    render({ na }) {
+      const n = na > 0.95 ? 1.515 : 1, th = Math.asin(Math.min(0.999, na / n)), P = [280, 380], H = 230;
+      const half = Math.tan(th) * H, res = 0.61 * 0.55 / na, dof = 0.55 * n / (na * na);
+      return `<svg viewBox="0 0 560 520"><defs>${glow("naG", 6)}<linearGradient id="naC" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffe7a0" stop-opacity=".7"/><stop offset="1" stop-color="#ffe7a0" stop-opacity=".05"/></linearGradient></defs>
+        ${BIG(28, 46, `NA ${na.toFixed(2)}`, { size: 32 })}${T(28, 70, `n sin θ = ${n.toFixed(3)} × sin ${(th * 180 / Math.PI).toFixed(0)}°${n > 1 ? " · OIL" : " · AIR"}`)}
+        <path d="M${P[0]} ${P[1]} L${P[0] - half} ${P[1] - H} L${P[0] + half} ${P[1] - H} Z" fill="url(#naC)"/>
+        <path d="M${P[0] - half} ${P[1] - H} L${P[0]} ${P[1]} L${P[0] + half} ${P[1] - H}" stroke="#ffe7a0" fill="none" stroke-width="1.5"/>
+        <path d="M${P[0]} ${P[1] - 60} A60 60 0 0 1 ${P[0] + Math.sin(th) * 60} ${P[1] - Math.cos(th) * 60}" stroke="${INK}" fill="none"/>${T(P[0] + 12, P[1] - 66, "θ", { size: 14, fill: INK })}
+        <line x1="${P[0]}" y1="${P[1]}" x2="${P[0]}" y2="${P[1] - H}" stroke="${FAINT}" stroke-dasharray="4 4"/>
+        <circle cx="${P[0]}" cy="${P[1]}" r="5" fill="#fff"/><circle cx="${P[0]}" cy="${P[1]}" r="14" fill="#ffe7a0" opacity=".6" filter="url(#naG)"/>
+        <line x1="40" y1="${P[1] + 4}" x2="520" y2="${P[1] + 4}" stroke="${FAINT}"/>
+        ${T(40, 440, "RESOLUTION 0.61λ/NA", { size: 11 })}${BIG(40, 478, `${(res * 1000).toFixed(0)} nm`, { size: 32 })}
+        ${T(300, 440, "DEPTH OF FIELD λn/NA²", { size: 11 })}${BIG(300, 478, `${dof < 1 ? dof.toFixed(2) : dof.toFixed(1)} µm`, { size: 32 })}
+        ${T(40, 506, "λ = 550 nm green light", { size: 10 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Depth of field: which cells are sharp ---------- */
+  D.dof = {
+    title: "Depth of field", state: { k: "1" },
+    controls: [{ key: "k", opts: [["0", "10x · NA 0.25"], ["1", "40x · NA 0.65"], ["2", "100x · NA 1.25"]] }],
+    render({ k }) {
+      const objs = [[0.25, 1], [0.65, 1], [1.25, 1.515]], [na, n] = objs[+k], dof = 0.55 * n / (na * na);
+      const scale = 22, mid = 280, band = dof * scale;
+      const cells = [[80, -1.6], [130, 0.4], [180, -0.3], [230, 1.2], [280, 0], [330, -0.9], [380, 0.7], [430, -0.2], [480, 1.6]];
+      return `<svg viewBox="0 0 560 480"><defs>${glow("dfG", 3)}</defs>
+        ${BIG(28, 46, `${dof < 1 ? dof.toFixed(2) : dof.toFixed(1)} µm`, { size: 32 })}${T(28, 70, "THE SLICE THAT LOOKS SHARP")}
+        <rect x="40" y="${mid - Math.min(170, band / 2)}" width="480" height="${Math.min(340, band)}" fill="#ffe7a0" opacity=".14"/>
+        <line x1="40" y1="${mid}" x2="520" y2="${mid}" stroke="#ffe7a0" stroke-dasharray="5 5" opacity=".7"/>${T(520, mid - 8, "FOCAL PLANE", { size: 10, anchor: "end", fill: "#ffe7a0" })}
+        ${cells.map(([x, z]) => { const y = mid - z * scale * 2.6, sharp = Math.abs(z * 2.6) <= dof / 2 + 0.05; return `<circle cx="${x}" cy="${y}" r="13" fill="#8a4fd0" ${sharp ? "" : `filter="url(#dfG)" opacity=".55"`}/>${sharp ? `<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="#fff" stroke-width="1.5"/>` : ""}`; }).join("")}
+        ${T(40, 450, "CELLS IN THE BAND ARE SHARP. HIGHER NA, THINNER BAND.", { size: 11 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Parfocal objectives ---------- */
+  D.parfocal = {
+    title: "Parfocal", state: { k: "1" },
+    controls: [{ key: "k", opts: [["0", "10x"], ["1", "40x"], ["2", "100x"]] }],
+    render({ k }) {
+      const L = [[10, 120, "10 mm"], [40, 196, "0.6 mm"], [100, 226, "0.15 mm"]], cols = ["#e3c043", "#8ecbea", "#f4f4f4"];
+      const top = 140, focal = 420;
+      return `<svg viewBox="0 0 560 500"><defs>${glow("pfG", 5)}</defs>
+        ${BIG(28, 46, "Same plane", { size: 30 })}${T(28, 70, "EVERY OBJECTIVE FOCUSES 45 MM BELOW ITS SHOULDER")}
+        <line x1="40" y1="${top}" x2="520" y2="${top}" stroke="${FAINT}" stroke-dasharray="4 4"/>${T(520, top - 8, "SHOULDER", { size: 10, anchor: "end" })}
+        <line x1="40" y1="${focal}" x2="520" y2="${focal}" stroke="#ffe7a0" stroke-dasharray="6 5"/>${T(520, focal + 20, "FOCAL PLANE · SPECIMEN", { size: 10, anchor: "end", fill: "#ffe7a0" })}
+        ${L.map(([m, len, wd], i) => { const x = 130 + i * 150, on = +k === i, y2 = top + len; return `<g opacity="${on ? 1 : 0.4}">
+          <rect x="${x - 26}" y="${top}" width="52" height="${len * 0.7}" rx="5" fill="#d3d6da"/><rect x="${x - 26}" y="${top + 14}" width="52" height="8" fill="${cols[i]}"/>
+          <path d="M${x - 24} ${top + len * 0.7} L${x + 24} ${top + len * 0.7} L${x + 12} ${y2} L${x - 12} ${y2} Z" fill="#c3c6ca"/>
+          <path d="M${x - 10} ${y2} L${x} ${focal} L${x + 10} ${y2} Z" fill="#ffe7a0" opacity="${on ? .6 : .25}"/>
+          ${BIG(x, top - 18, `${m}x`, { size: 22, anchor: "middle" })}${T(x, focal + 44, `WD ${wd}`, { size: 11, anchor: "middle", fill: on ? INK : DIM })}</g>`; }).join("")}
+        <circle cx="${130 + +k * 150}" cy="${focal}" r="12" fill="#ffe7a0" opacity=".7" filter="url(#pfG)"/>
+        ${T(40, 480, "LONGER BODY, SHORTER WORKING DISTANCE, SAME FOCUS", { size: 11 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Gram stain, step by step ---------- */
+  D.gram = {
+    title: "Gram stain", state: { step: "4" },
+    controls: [{ key: "step", opts: [["0", "Unstained"], ["1", "Crystal violet"], ["2", "Iodine"], ["3", "Alcohol"], ["4", "Safranin"]] }],
+    render({ step }) {
+      const s = +step;
+      const pos = s === 0 ? "#d9d0c4" : "#6b2fa3", neg = s === 0 ? "#d9d0c4" : s < 3 ? "#6b2fa3" : s === 3 ? "#e9e1d6" : "#e2557c";
+      const note = ["Both cell walls are colourless.", "Crystal violet floods both.", "Iodine locks it in as a large CV–I complex.", "Alcohol dissolves the Gram-negative outer membrane; the complex washes out. The thick Gram-positive wall dehydrates and traps it.", "Safranin counterstains the decolourised cells pink."][s];
+      const wall = (x, thick, col, outer) => `<g transform="translate(${x} 180)">
+        <rect x="0" y="0" width="200" height="${thick}" fill="${col}" opacity=".95"/>
+        ${Array.from({ length: Math.round(thick / 6) }, (_, i) => `<line x1="0" y1="${i * 6 + 3}" x2="200" y2="${i * 6 + 3}" stroke="#000" stroke-opacity=".15"/>`).join("")}
+        ${outer ? `<rect x="0" y="-22" width="200" height="14" rx="7" fill="${s >= 3 ? "transparent" : "#c6b8a8"}" stroke="#c6b8a8" stroke-dasharray="${s >= 3 ? "4 4" : "0"}"/>` : ""}
+        <rect x="0" y="${thick + 6}" width="200" height="12" rx="6" fill="#c6b8a8"/></g>`;
+      return `<svg viewBox="0 0 560 500"><defs>${glow("grG", 4)}</defs>
+        ${BIG(28, 46, ["Before", "Step 1", "Step 2", "Step 3", "Step 4"][s], { size: 30 })}${T(28, 70, ["UNSTAINED", "CRYSTAL VIOLET · 1 MIN", "GRAM'S IODINE · 1 MIN", "ACETONE-ALCOHOL · A FEW SECONDS", "SAFRANIN · 1 MIN"][s])}
+        ${T(40, 116, "GRAM-POSITIVE", { size: 11, fill: INK })}${T(300, 116, "GRAM-NEGATIVE", { size: 11, fill: INK })}
+        ${wall(40, 60, pos, false)}${wall(300, 12, neg, true)}
+        ${T(40, 278, "thick peptidoglycan", { size: 10 })}${T(300, 226, "thin peptidoglycan", { size: 10 })}${T(300, 150, "outer membrane", { size: 10 })}
+        ${[0, 1, 2, 3, 4, 5].map(i => `<circle cx="${80 + (i % 3) * 26}" cy="${314 + Math.floor(i / 3) * 26}" r="11" fill="${pos}"/>`).join("")}
+        ${[0, 1, 2, 3].map(i => `<rect x="${330 + i * 34}" y="${312 + (i % 2) * 14}" width="28" height="12" rx="6" fill="${neg}"/>`).join("")}
+        ${T(40, 382, "e.g. S. aureus", { size: 11 })}${T(300, 382, "e.g. E. coli", { size: 11 })}
+        <foreignObject x="40" y="400" width="480" height="90"><div xmlns="http://www.w3.org/1999/xhtml" style="font:500 14px/1.45 'Hanken Grotesk',sans-serif;color:${INK}">${note}</div></foreignObject>
+      </svg>`;
+    },
+  };
+
+  /* ---------- Pinhole: optical sectioning ---------- */
+  const J = (n, x) => { let s = 0, t = n === 0 ? 1 : x / 2; for (let k = 0; k < 30; k++) { s += t; t *= -(x * x / 4) / ((k + 1) * (k + 1 + n)); } return s; };
+  D.pinhole = {
+    title: "Pinhole", state: { au: 1 },
+    slider: { key: "au", min: 0.25, max: 3, step: 0.05, label: "Pinhole", fmt: (v) => `${v.toFixed(2)} AU` },
+    render({ au }) {
+      const v = 3.8317 * au, inF = 1 - J(0, v) ** 2 - J(1, v) ** 2, outF = Math.min(1, (au / 4.5) ** 2), sect = 0.6 * Math.sqrt(0.55 + 0.45 * au * au);
+      const ph = 6 + au * 14, X = 450, mid = 260;
+      const beam = (y0, conv, col, op, sx = 60) => {
+        const yL = mid; // lens at x 200
+        return `<path d="M${sx} ${y0 - 4} L200 ${yL - 70} L${conv} ${mid} L200 ${yL + 70} L${sx} ${y0 + 4} Z" fill="${col}" opacity="${op * 0.18}"/>
+          <path d="M200 ${yL - 70} L${conv} ${mid} M200 ${yL + 70} L${conv} ${mid}" stroke="${col}" stroke-width="2" opacity="${op}"/>
+          ${conv < X ? `<path d="M${conv} ${mid} L${X} ${mid + (X - conv) * 70 / (conv - 200)} M${conv} ${mid} L${X} ${mid - (X - conv) * 70 / (conv - 200)}" stroke="${col}" stroke-width="2" opacity="${op * 0.6}"/>` : ""}`;
+      };
+      return `<svg viewBox="0 0 560 520"><defs>${glow("phlG", 5)}</defs>
+        ${BIG(28, 46, `${au.toFixed(2)} AU`, { size: 32 })}${T(28, 70, au < 0.8 ? "SHARP SLICE, BUT LIGHT THROWN AWAY" : au <= 1.3 ? "THE USUAL BALANCE" : "BRIGHT, BUT A THICKER SLICE")}
+        ${beam(mid, 380, "#ff8a78", 0.7, 104)}${beam(mid, X, "#5cff98", 1)}<circle cx="104" cy="${mid}" r="5" fill="#ff8a78"/>
+        <ellipse cx="200" cy="${mid}" rx="10" ry="80" fill="#bfe9ff" opacity=".35"/>${T(200, mid + 104, "LENS", { size: 10, anchor: "middle" })}
+        <rect x="${X - 3}" y="${mid - 150}" width="6" height="${150 - ph / 2}" fill="#d8d2c8"/><rect x="${X - 3}" y="${mid + ph / 2}" width="6" height="${150 - ph / 2}" fill="#d8d2c8"/>
+        ${T(X, mid - 160, "PINHOLE", { size: 10, anchor: "middle", fill: INK })}
+        <rect x="${X + 30}" y="${mid - 30}" width="40" height="60" rx="8" fill="#3a332e"/>${T(X + 50, mid + 50, "PMT", { size: 10, anchor: "middle" })}
+        <circle cx="${X + 50}" cy="${mid}" r="${6 + 10 * (inF * 0.85 + outF * 0.3)}" fill="#ffcf5a" opacity=".85" filter="url(#phlG)"/>
+        <circle cx="60" cy="${mid}" r="6" fill="#5cff98"/>${T(60, mid + 28, "IN FOCUS", { size: 10, anchor: "middle", fill: "#5cff98" })}
+        ${T(104, mid - 22, "OUT OF FOCUS", { size: 10, anchor: "start", fill: "#ff8a78" })}
+        ${[["IN-FOCUS LIGHT KEPT", inF, "#5cff98"], ["OUT-OF-FOCUS LEAK", outF, "#ff8a78"]].map(([t, f, c], i) => `${T(40, 440 + i * 34, t, { size: 11 })}<rect x="250" y="${430 + i * 34}" width="200" height="10" rx="5" fill="${FAINT}"/><rect x="250" y="${430 + i * 34}" width="${200 * f}" height="10" rx="5" fill="${c}"/>${T(520, 440 + i * 34, `${Math.round(f * 100)}%`, { size: 11, anchor: "end", fill: INK })}`).join("")}
+        ${T(40, 510, `SECTION ≈ ${sect.toFixed(2)} µM AT 63x / NA 1.40 (ILLUSTRATIVE)`, { size: 10 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- Organoid sections and the z-stack ---------- */
+  D.section = {
+    title: "Optical sections", state: { z: 0.3 },
+    slider: { key: "z", min: -0.95, max: 0.95, step: 0.01, label: "Depth", fmt: (v) => `Z ${(v * 60).toFixed(0)} µm` },
+    render({ z }) {
+      const R = 150, cx = 170, cy = 290, y = cy - z * R, r = Math.sqrt(Math.max(0, 1 - z * z)) * R, wall = 26;
+      const ri = Math.sqrt(Math.max(0, (R - wall) ** 2 - (z * R) ** 2));
+      let cells = ""; const n = Math.max(6, Math.round(r / 9));
+      for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, rr = ri > 0 ? (r + ri) / 2 : r * 0.55; cells += `<circle cx="${420 + Math.cos(a) * rr * 0.62}" cy="${290 + Math.sin(a) * rr * 0.62}" r="${ri > 0 ? 6 : 5}" fill="#5a7dff"/>`; }
+      return `<svg viewBox="0 0 560 520"><defs>${glow("seG", 4)}</defs>
+        ${BIG(28, 46, ri > 0 ? "A ring" : "A cap", { size: 30 })}${T(28, 70, "SIDE VIEW → WHAT ONE OPTICAL SECTION SHOWS")}
+        <circle cx="${cx}" cy="${cy}" r="${R}" fill="#6f8dff" opacity=".12" stroke="#6f8dff" stroke-opacity=".6"/>
+        <circle cx="${cx}" cy="${cy}" r="${R - wall}" fill="#0b0908" stroke="#6f8dff" stroke-opacity=".35"/>${T(cx, cy + 4, "LUMEN", { size: 10, anchor: "middle" })}
+        <line x1="${cx - R - 14}" y1="${y}" x2="${cx + R + 14}" y2="${y}" stroke="#5cff98" stroke-width="2.5"/><line x1="${cx - R - 14}" y1="${y}" x2="${cx + R + 14}" y2="${y}" stroke="#5cff98" stroke-width="8" opacity=".4" filter="url(#seG)"/>
+        ${T(cx, cy + R + 30, "SIDE VIEW", { size: 10, anchor: "middle" })}
+        <rect x="320" y="190" width="200" height="200" rx="100" fill="#050404" stroke="${FAINT}"/>
+        <g opacity=".95">${cells}</g><circle cx="420" cy="290" r="${r * 0.62 + 10}" fill="none" stroke="#5cff98" stroke-opacity=".45"/>
+        ${T(420, 420, "OPTICAL SECTION", { size: 10, anchor: "middle" })}
+        ${T(40, 490, "STEP Z, KEEP EVERY SECTION: THAT'S A Z-STACK.", { size: 11 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- GFP fused to a membrane protein ---------- */
+  D.gfp = {
+    title: "GFP", state: { laser: "on" },
+    controls: [{ key: "laser", opts: [["on", "488 nm on"], ["off", "Laser off"]] }],
+    render({ laser }) {
+      const on = laser === "on";
+      let strands = ""; for (let i = 0; i < 11; i++) strands += `<rect x="${238 + i * 8}" y="140" width="5" height="120" rx="2.5" fill="#4ad07f" opacity="${0.35 + (i % 2) * 0.25}"/>`;
+      return `<svg viewBox="0 0 560 500"><defs>${glow("gfG", 9)}</defs>
+        ${BIG(28, 46, "GFP", { size: 32, fill: on ? "#5cff98" : INK })}${T(28, 70, "238 AMINO ACIDS · AEQUOREA VICTORIA")}
+        <rect x="226" y="132" width="104" height="136" rx="40" fill="#1b3a26" stroke="#4ad07f" stroke-opacity=".6"/>${strands}
+        <circle cx="278" cy="200" r="9" fill="${on ? "#9dffbe" : "#3a6b4b"}"/>${on ? `<circle cx="278" cy="200" r="34" fill="#5cff98" opacity=".7" filter="url(#gfG)"/>` : ""}
+        ${T(340, 190, "β-BARREL OF 11 STRANDS", { size: 10 })}${T(340, 208, "CHROMOPHORE INSIDE", { size: 10, fill: on ? "#5cff98" : DIM })}
+        <path d="M278 268 C 278 290, 300 290, 300 312" stroke="${DIM}" stroke-width="3" fill="none" stroke-dasharray="3 4"/>${T(310, 296, "LINKER", { size: 10 })}
+        <rect x="40" y="330" width="480" height="60" fill="#c6b8a8" opacity=".12"/>
+        ${Array.from({ length: 24 }, (_, i) => `<circle cx="${50 + i * 20}" cy="336" r="6" fill="#c6b8a8" opacity=".55"/><circle cx="${50 + i * 20}" cy="384" r="6" fill="#c6b8a8" opacity=".55"/>`).join("")}
+        <rect x="280" y="312" width="40" height="90" rx="12" fill="#b28ad8"/>${T(330, 420, "MEMBRANE PROTEIN", { size: 10 })}${T(40, 420, "CELL MEMBRANE", { size: 10 })}
+        ${on ? `<line class="dg-flow" x1="80" y1="110" x2="250" y2="190" stroke="#36d1ff" stroke-width="3"/>${T(40, 104, "488 NM", { size: 10, fill: "#36d1ff" })}` : ""}
+        ${T(40, 470, "THE CELL BUILDS ITS OWN LABEL: NO STAINING, WORKS ALIVE", { size: 11 })}
+      </svg>`;
+    },
+  };
+
+  /* ---------- LysoTracker: protonated and trapped ---------- */
+  D.lyso = {
+    title: "LysoTracker", state: { t: 0, mol: null },
+    tick(st, dt) {
+      if (!st.mol) { st.mol = Array.from({ length: 36 }, (_, i) => ({ x: 60 + (i * 97) % 440, y: 120 + (i * 53) % 300, vx: 0, vy: 0, in: -1 })); }
+      const L = [[200, 230, 34], [360, 300, 40], [300, 170, 26]];
+      st.mol.forEach(m => {
+        if (m.in >= 0) { const [lx, ly, lr] = L[m.in]; m.x += (Math.random() - 0.5) * 3; m.y += (Math.random() - 0.5) * 3; const dx = m.x - lx, dy = m.y - ly, d = Math.hypot(dx, dy); if (d > lr - 6) { m.x = lx + dx / d * (lr - 6); m.y = ly + dy / d * (lr - 6); } return; }
+        m.vx = m.vx * 0.9 + (Math.random() - 0.5) * 2.2; m.vy = m.vy * 0.9 + (Math.random() - 0.5) * 2.2; m.x += m.vx; m.y += m.vy;
+        if (m.x < 70 || m.x > 490) m.vx *= -1, m.x = Math.max(70, Math.min(490, m.x)); if (m.y < 110 || m.y > 430) m.vy *= -1, m.y = Math.max(110, Math.min(430, m.y));
+        L.forEach(([lx, ly, lr], k) => { if (Math.hypot(m.x - lx, m.y - ly) < lr) m.in = k; });
+      });
+      st.t += dt; return true;
+    },
+    render(st) {
+      const L = [[200, 230, 34], [360, 300, 40], [300, 170, 26]], mol = st.mol || [], trapped = mol.filter(m => m.in >= 0).length;
+      return `<svg viewBox="0 0 560 520"><defs>${glow("lyG", 6)}</defs>
+        ${BIG(28, 46, `${trapped} trapped`, { size: 30, fill: "#ff8a78" })}${T(28, 70, "WEAK BASE · CROSSES MEMBRANES ONLY WHEN UNCHARGED")}
+        <rect x="56" y="96" width="448" height="350" rx="60" fill="#1a1412" stroke="${FAINT}"/>${T(80, 132, "CYTOSOL · pH 7.2", { size: 10 })}
+        ${L.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#3a1b17" stroke="#ff8a78" stroke-opacity=".5"/>`).join("")}${T(200, 280, "LYSOSOME · pH ~4.5–5", { size: 10, anchor: "middle", fill: "#ff8a78" })}
+        ${mol.map(m => m.in >= 0 ? `<circle cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="4" fill="#ff6a55"/><circle cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="9" fill="#ff6a55" opacity=".45" filter="url(#lyG)"/>` : `<circle cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="3" fill="#d8d2c8" opacity=".7"/>`).join("")}
+        <g transform="translate(60 480)"><circle cx="0" cy="-4" r="3" fill="#d8d2c8"/>${T(10, 0, "B, neutral: diffuses freely", { size: 11 })}<circle cx="250" cy="-4" r="4" fill="#ff6a55"/>${T(262, 0, "BH⁺, charged: stuck and glowing", { size: 11 })}</g>
+      </svg>`;
+    },
+  };
+
+  /* ---------- generic mount ---------- */
+  function mount(el, id, init = {}) {
+    const def = D[id]; if (!def) { el.innerHTML = ""; return { stop() {} }; }
+    const st = Object.assign(JSON.parse(JSON.stringify(def.state || {})), init);
+    if (def.state && def.state.mol === null) st.mol = null;
+    el.innerHTML = `<div class="dg"><div class="dg-svg"></div><div class="dg-ctl"></div></div>`;
+    const box = el.querySelector(".dg-svg"), ctl = el.querySelector(".dg-ctl");
+    const draw = () => { box.innerHTML = def.render(st); };
+    let html = "";
+    (def.controls || []).forEach(c => { html += `<div class="dg-seg" role="group">${c.opts.map(([v, t]) => `<button data-k="${c.key}" data-v="${v}" aria-pressed="${st[c.key] === v}">${t}</button>`).join("")}</div>`; });
+    if (def.slider) { const s = def.slider; html += `<label class="dg-slider"><span>${s.label}</span><input type="range" min="${s.min}" max="${s.max}" step="${s.step}" value="${st[s.key]}"><b>${s.fmt ? s.fmt(st[s.key]) : (+st[s.key]).toFixed(2)}</b></label>`; }
+    ctl.innerHTML = html; ctl.hidden = !html;
+    ctl.addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-k]"); if (!b) return;
+      st[b.dataset.k] = b.dataset.v; if (def.onControl) def.onControl(st, b.dataset.k);
+      ctl.querySelectorAll(`button[data-k="${b.dataset.k}"]`).forEach(x => x.setAttribute("aria-pressed", String(x === b && b.dataset.k !== "reset")));
+      draw(); if (typeof sfx === "function") sfx("move", { i: 2 });
+    });
+    const rng = ctl.querySelector("input[type=range]");
+    if (rng) rng.addEventListener("input", () => { const s = def.slider; st[s.key] = +rng.value; ctl.querySelector(".dg-slider b").textContent = s.fmt ? s.fmt(st[s.key]) : (+st[s.key]).toFixed(2); draw(); });
+    draw();
+    let raf = 0, last = 0, alive = true, acc = 0;
+    if (def.tick) {
+      const loop = (now) => { if (!alive) return; const dt = Math.min(0.1, (now - (last || now)) / 1000); last = now; acc += dt;
+        if (def.tick(st, dt) && acc > 1 / 30 && el.isConnected && !document.hidden) { acc = 0; draw(); } raf = requestAnimationFrame(loop); };
+      raf = requestAnimationFrame(loop);
+    }
+    return { stop() { alive = false; cancelAnimationFrame(raf); }, set(k, v) { st[k] = v; draw(); } };
+  }
+  return { mount, has: (id) => !!D[id], title: (id) => D[id] && D[id].title, list: Object.keys(D) };
+})();
+
+/* =====================================================================
+   GUIDE_PAGES · the microscopy guide. Microscope pages carry the lit
+   illustration with clickable parts; concept pages carry a live diagram.
+   ===================================================================== */
+const GUIDE_GROUPS = [
+  ["Optics", ["na", "oil", "dof", "parfocal"]],
+  ["Stains and labels", ["stains", "dapi", "immuno", "phalloidin", "gfp", "lysotracker"]],
+  ["Fluorescence", ["fluorescence", "filter-cube", "bleach"]],
+  ["Confocal", ["pinhole", "zstack", "organoid"]],
+];
+const GUIDE_PAGES = {
+  /* ---------------- microscopes ---------------- */
+  brightfield: { kind: "scope", mode: "bright", title: "Brightfield microscope", kicker: "Microscope · the classic",
+    lead: "Light from a lamp passes up through the specimen. You see whatever absorbs some of it, which is why cells are stained first.",
+    sections: [
+      ["How it works", `<p>White light from the base is gathered by the <b>condenser</b> into a cone on the slide. Where the specimen absorbs light, that spot looks darker or coloured. The <b>objective</b> forms a magnified image, and the <b>eyepiece</b> magnifies it again. Total magnification is the two multiplied, so a 100x oil objective with a 10x eyepiece gives 1000x.</p>
+        <p>What you can resolve is set by the objective's <b>numerical aperture</b>, not by magnification. Magnifying past the resolution limit (about 0.2 µm for visible light) only makes the blur bigger: "empty magnification".</p>`],
+      ["In a real lab", `<ol><li><b>Prepare a smear</b>: spread the culture thinly on a slide, air-dry, heat-fix.</li><li><b>Stain</b>: Gram stain for most bacteria, Ziehl–Neelsen for acid-fast ones like <i>Mycobacterium</i>.</li><li><b>Set up the light</b>: centre the condenser and adjust its iris (Köhler illumination gives even light).</li><li><b>Find it at 10x</b> with coarse focus, then switch to fine.</li><li><b>Swing to 40x</b>, refocus with fine only.</li><li><b>Add oil, swing to 100x</b>, fine focus, and identify shape, arrangement and Gram reaction.</li><li><b>Clean the oil</b> off the lens with lens paper when done.</li></ol>`],
+      ["Strengths and limits", `<p><b>Cheap, fast and everywhere.</b> It's the workhorse of clinical microbiology and histology. But living cells are mostly transparent, so you need stains (which usually kill and fix the cells) or contrast tricks such as phase contrast.</p>`],
+      ["In Parfocal", `<p>Brightfield mode gives you Gram- and ZN-stained smears. Coarse at 10x, fine above it, oil at 100x, and watch for dust on the coverslip 170 µm above the smear.</p>`],
+    ], related: ["stains", "na", "oil", "parfocal", "dof"] },
+
+  epifluorescence: { kind: "scope", mode: "fluor", title: "Epifluorescence microscope", kicker: "Microscope · light from above",
+    lead: "Specific molecules are tagged with dyes that glow. The microscope lights them with one colour and shows you only the colour they give back.",
+    sections: [
+      ["How it works", `<p>A bright source at the back sends light into the head. In the <b>filter cube</b>, an excitation filter picks the colour that excites the dye, and a <b>dichroic mirror</b> reflects it down through the objective onto the sample. The dye emits a longer wavelength, which travels back up through the same objective, <i>passes</i> the dichroic, and is cleaned up by the emission filter.</p>
+        <p>"Epi" means from above: the objective is both the condenser and the imaging lens. Because the emitted light is thousands of times weaker than the excitation, the filters must block the excitation almost perfectly. That's why the background is black.</p>`],
+      ["In a real lab", `<ol><li><b>Grow cells</b> on coverslips, then <b>fix</b> them (often 4% paraformaldehyde).</li><li><b>Permeabilise</b> with a detergent such as Triton X-100, so antibodies can get inside.</li><li><b>Block</b> with serum or BSA to stop antibodies sticking everywhere.</li><li><b>Primary antibody</b> against your protein, wash, then a <b>fluorescent secondary</b>, wash.</li><li><b>Phalloidin</b> for actin and <b>DAPI</b> for nuclei, then mount in <b>antifade</b>.</li><li><b>Image</b>: focus on DAPI, then capture each channel with its own cube and exposure, and merge them in software.</li></ol>`],
+      ["Strengths and limits", `<p><b>Specific and sensitive</b>: you can see one protein among thousands, and several at once in different colours. But light from above and below the focal plane also reaches the camera, so thick samples look hazy, and dyes <b>photobleach</b> under the lamp.</p>`],
+      ["In Parfocal", `<p>Fluorescence mode gives you cells with three labels. Each objective asks for a different target, so you pick the matching cube, close the shutter to save signal, and add oil at 100x.</p>`],
+    ], related: ["fluorescence", "filter-cube", "bleach", "dapi", "immuno", "phalloidin"] },
+
+  confocal: { kind: "scope", mode: "confocal", title: "Confocal microscope", kicker: "Microscope · optical sections",
+    lead: "A focused laser spot is scanned across the sample, and a pinhole blocks every photon that didn't come from the focal plane. The result is a thin, clean slice of a thick sample.",
+    sections: [
+      ["How it works", `<p><b>Lasers</b> provide intense light of single wavelengths. The beam is reflected by a main dichroic onto two <b>scanning mirrors</b> (galvanometers), which steer it so the objective focuses it to a tiny spot that sweeps across the sample.</p>
+        <p>The emitted light travels back the same way, passes the dichroic and is focused onto a <b>pinhole</b>. Light from the focal plane converges exactly at the pinhole and passes. Light from above or below is out of focus there, spread into a wide disc, and mostly blocked. A <b>photomultiplier</b> measures what gets through, one pixel at a time, and the computer builds the image.</p>`],
+      ["In a real lab", `<ol><li><b>Choose laser lines</b> that match your dyes, and the detector ranges for each emission.</li><li><b>Set the pinhole</b> to about 1 Airy unit.</li><li><b>Balance laser power and detector gain</b>: enough signal, no saturated pixels, as little light as possible.</li><li><b>Scan channels sequentially</b> if dyes overlap, so one doesn't bleed into another's channel.</li><li><b>Set the top and bottom</b> of the sample and record a <b>z-stack</b>, stepping about half the section thickness each time.</li><li><b>Reconstruct</b> in 3D, or make maximum-intensity projections.</li></ol>`],
+      ["Strengths and limits", `<p><b>Sharp optical sections</b> of thick samples like tissues, organoids and embryos, with no physical slicing. But point scanning is slow, the lasers can bleach and damage live cells, and the instruments are expensive. Spinning-disk and light-sheet microscopes address speed and damage.</p>`],
+      ["In Parfocal", `<p>Confocal mode gives you a thick organoid with three labelled layers at different depths. Out-of-focus layers go dark instead of blurring, so you hunt each layer by depth. The pinhole setting trades brightness against slice thickness.</p>`],
+    ], related: ["pinhole", "zstack", "organoid", "gfp", "lysotracker", "fluorescence"] },
+
+  /* ---------------- optics ---------------- */
+  na: { kind: "concept", visual: "na", title: "Numerical aperture", kicker: "Optics",
+    lead: "NA measures how wide a cone of light an objective collects. It sets the finest detail you can see, and how thin the in-focus slice is.",
+    sections: [
+      ["The number", `<p><b>NA = n · sin θ</b>, where θ is the half-angle of the cone the lens accepts and n is the refractive index between lens and coverslip: 1.0 for air, 1.515 for immersion oil. Dry lenses top out near 0.95, and oil lenses reach about 1.4.</p>`],
+      ["Why it matters", `<p>Resolution (the smallest separation you can tell apart) is about <b>0.61 λ / NA</b>, roughly 0.24 µm for green light at NA 1.4. A higher NA also means a much thinner <b>depth of field</b>, about λn / NA². In fluorescence, image brightness rises roughly with NA⁴, so the NA matters even more there.</p>`],
+      ["Read the barrel", `<p>Every objective is engraved with it: "100x / 1.25 Oil" means 100x magnification, NA 1.25, for oil immersion. Drag the slider to see the cone, resolution and depth of field change together.</p>`],
+    ], related: ["oil", "dof", "brightfield"] },
+  oil: { kind: "concept", visual: "oil", title: "Immersion oil", kicker: "Optics",
+    lead: "A drop of oil between lens and coverslip lets high-NA objectives catch light that would otherwise bend away in air.",
+    sections: [
+      ["The problem with air", `<p>Light leaving the glass coverslip into air bends away from the axis (refraction). Rays steeper than about 41° are totally internally reflected and never leave the glass at all. A dry lens can't catch them, so its NA is capped near 0.95.</p>`],
+      ["What oil does", `<p>Immersion oil has a refractive index of about <b>1.515</b>, matching glass. With no glass–air boundary, rays travel straight on into the lens, so it can collect a much wider cone: NA 1.25 to 1.4. The image becomes sharper and, in fluorescence, much brighter.</p>`],
+      ["In practice", `<ol><li>Focus at 40x first.</li><li>Swing the nosepiece halfway, put one small drop on the coverslip.</li><li>Swing in the 100x so its front lens dips into the drop, then focus with fine only.</li><li>Never swing a dry 40x back through the oil: it smears its front lens.</li><li>Wipe the oil off the objective with lens paper when you finish.</li></ol>`],
+    ], related: ["na", "brightfield", "epifluorescence"] },
+  dof: { kind: "concept", visual: "dof", title: "Depth of field", kicker: "Optics",
+    lead: "The thickness of the slice that looks sharp at once. It shrinks fast as NA rises: from about 9 µm at 10x to half a micron at 100x.",
+    sections: [
+      ["Why it shrinks", `<p>Depth of field is roughly <b>λn / NA²</b>. Doubling the NA cuts it to a quarter. That is why a nudge of coarse focus that's harmless at 10x throws a 100x image completely out of focus.</p>`],
+      ["What it means for focusing", `<p>At low power, a whole smear is sharp at once. At high power, cells at slightly different heights can't all be sharp together, so you choose a plane, or focus up and down through the cell to understand its 3D shape.</p>`],
+      ["In Parfocal", `<p>You're scored by how much blur is actually visible, measured against this depth of field. So being 2 µm off is perfect at 10x, but clearly soft at 100x.</p>`],
+    ], related: ["na", "parfocal", "brightfield"] },
+  parfocal: { kind: "concept", visual: "parfocal", title: "Parfocal objectives", kicker: "Optics",
+    lead: "The objectives on a microscope are built so that when one is in focus, the others are nearly in focus too. This game is named after it.",
+    sections: [
+      ["How it's done", `<p>Each objective is designed so its focal plane sits the same distance below the shoulder that screws into the nosepiece. That <b>parfocal distance</b> is standardised, usually 45 mm. High-power lenses are longer and sit closer to the slide: their <b>working distance</b> is a fraction of a millimetre.</p>`],
+      ["Why it matters", `<p>You find the specimen once at 10x, where the field is wide and the depth of field generous, then swing up and only need a touch of <b>fine focus</b>. Using coarse at high power risks driving a long objective into the slide.</p>`],
+    ], related: ["dof", "brightfield", "na"] },
+
+  /* ---------------- stains and labels ---------------- */
+  stains: { kind: "concept", visual: "gram", title: "Gram and acid-fast stains", kicker: "Stains",
+    lead: "Bacteria are nearly invisible unstained. Differential stains colour them according to how their cell walls are built.",
+    sections: [
+      ["Gram stain", `<ol><li><b>Crystal violet</b> stains all cells purple.</li><li><b>Iodine</b> forms a large crystal violet–iodine complex.</li><li><b>Alcohol or acetone</b> decolourises: it dissolves the outer membrane of Gram-negative cells, and the complex washes out of their thin peptidoglycan. The thick peptidoglycan of Gram-positive cells dehydrates and traps it.</li><li><b>Safranin</b> counterstains the decolourised cells pink.</li></ol><p>Purple means Gram-positive (<i>Staphylococcus</i>, <i>Streptococcus</i>); pink means Gram-negative (<i>E. coli</i>, <i>Neisseria</i>).</p>`],
+      ["Ziehl–Neelsen (acid-fast)", `<p>Mycobacteria have waxy <b>mycolic acids</b> in their walls that resist the Gram stain. Hot carbol fuchsin is driven in by heating, then acid-alcohol decolourises everything else, and methylene blue counterstains the background. Acid-fast bacilli such as <i>M. tuberculosis</i> stay bright red on blue.</p>`],
+      ["Why it's still used", `<p>A Gram stain takes five minutes and immediately narrows down the possible bacteria, guiding the first choice of antibiotic long before culture results arrive.</p>`],
+    ], related: ["brightfield", "dof"] },
+  dapi: { kind: "concept", visual: "dapi", title: "DAPI", kicker: "Labels · DNA",
+    lead: "A small blue-fluorescent dye that binds DNA. It marks every nucleus, so it's the reference channel in almost every fluorescence image.",
+    sections: [
+      ["How it binds", `<p>DAPI (4′,6-diamidino-2-phenylindole) sits in the <b>minor groove</b> of double-stranded DNA, preferring runs of A–T base pairs. Bound to DNA its fluorescence rises about twentyfold, so background stays dark. It absorbs UV (about 358 nm) and emits blue (about 461 nm).</p>`],
+      ["How labs use it", `<p>It's added at the end of staining or included in the mounting medium. Because it's bright, photostable and labels every cell, people <b>focus using DAPI</b>, saving weaker labels from bleaching. It also reveals nuclear shape, condensed chromosomes in dividing cells, and fragmented nuclei in dying ones.</p>`],
+      ["Caution", `<p>DAPI binds DNA, so it's handled as a potential mutagen: gloves, and proper disposal.</p>`],
+    ], related: ["fluorescence", "filter-cube", "immuno", "epifluorescence"] },
+  immuno: { kind: "concept", visual: "antibody", title: "Immunofluorescence", kicker: "Labels · antibodies",
+    lead: "Antibodies find one specific protein among thousands. Attach a fluorescent dye to them and that protein lights up.",
+    sections: [
+      ["Direct vs indirect", `<p><b>Direct</b>: the dye is attached to the antibody that binds your protein. Simple, but weak. <b>Indirect</b>: an unlabelled <b>primary antibody</b> (say, mouse anti-α-tubulin) binds the target, then a fluorescent <b>secondary antibody</b> (goat anti-mouse IgG + Alexa Fluor 488) binds the primary. Several secondaries bind each primary, amplifying the signal, and one secondary works for any mouse primary.</p>`],
+      ["The protocol", `<ol><li>Fix and permeabilise the cells.</li><li>Block with serum or BSA.</li><li>Primary antibody, about an hour, then wash.</li><li>Secondary antibody, in the dark, then wash.</li><li>Counterstain (DAPI, phalloidin) and mount.</li></ol>`],
+      ["Controls", `<p>A "secondary only" sample, with no primary, shows how much the secondary sticks non-specifically. Without it, a bright image proves little.</p>`],
+    ], related: ["dapi", "phalloidin", "fluorescence", "epifluorescence"] },
+  phalloidin: { kind: "concept", visual: "phalloidin", title: "Phalloidin", kicker: "Labels · actin",
+    lead: "A toxin from the death cap mushroom that binds filamentous actin tightly. Fluorescent phalloidin outlines the actin cytoskeleton.",
+    sections: [
+      ["What it is", `<p>Phalloidin is a small bicyclic peptide (seven amino acids) from <i>Amanita phalloides</i>, the death cap. It binds <b>F-actin</b>, the filament, at the interface between subunits, and stabilises it. Free <b>G-actin</b> monomers don't have that binding site, so only filaments are stained.</p>`],
+      ["Why labs use it", `<p>It's small, so it reaches dense actin structures that bulky antibodies miss, and it binds with high affinity, giving crisp images of <b>stress fibres</b>, lamellipodia and cell cortex. It comes ready-conjugated to many dyes (488, 568, 647…).</p>`],
+      ["Caution", `<p>It's toxic, and it only works on fixed, permeabilised cells: it doesn't cross live membranes well, and it would disrupt actin dynamics if it did.</p>`],
+    ], related: ["immuno", "dapi", "fluorescence"] },
+  gfp: { kind: "concept", visual: "gfp", title: "Green fluorescent protein", kicker: "Labels · genetic",
+    lead: "A protein from a jellyfish that glows green with no added chemicals. Fuse its gene to yours and the cell makes its own label.",
+    sections: [
+      ["Where it comes from", `<p>GFP was found in the jellyfish <i>Aequorea victoria</i>. Its 238 amino acids fold into a <b>β-barrel</b>, and three residues inside cyclise into the chromophore. The 2008 Nobel Prize in Chemistry went to Shimomura, Chalfie and Tsien for its discovery and development.</p>`],
+      ["How it's used", `<p>Fuse the GFP gene to the gene for your protein and express it: the fusion shows where that protein goes, <b>in living cells</b>, in real time. Engineered variants (EGFP, mCherry, and many more) cover the spectrum. EGFP excites at about 488 nm and emits at about 507 nm, a perfect match for the 488 nm laser.</p>`],
+      ["Here", `<p>The organoid's cells express GFP fused to a membrane protein, so every cell outline glows.</p>`],
+    ], related: ["fluorescence", "confocal", "lysotracker"] },
+  lysotracker: { kind: "concept", visual: "lyso", title: "LysoTracker", kicker: "Labels · organelles",
+    lead: "A dye that accumulates in acidic compartments, lighting up lysosomes in living cells.",
+    sections: [
+      ["Acid trapping", `<p>LysoTracker probes are fluorophores linked to a <b>weak base</b>. Uncharged at neutral pH, they diffuse across membranes. Inside lysosomes (pH about 4.5–5) they pick up a proton, become charged and can't get back out. So they pile up wherever it's acidic.</p>`],
+      ["How it's used", `<p>Added to live cells at low concentration for a short time, it reports the number, size and position of acidic organelles, which change in autophagy, storage diseases and drug responses. Because it depends on the pH gradient, cells must be alive when stained.</p>`],
+    ], related: ["gfp", "confocal", "fluorescence"] },
+
+  /* ---------------- fluorescence ---------------- */
+  fluorescence: { kind: "concept", visual: "stokes", title: "Fluorescence and the Stokes shift", kicker: "Fluorescence",
+    lead: "A fluorophore absorbs light of one colour and emits a longer, redder colour a few nanoseconds later. That gap makes fluorescence microscopy possible.",
+    sections: [
+      ["What happens", `<p>A photon lifts an electron in the dye to an excited state. It loses a little energy as vibration, then drops back and emits a photon. Since some energy was lost, the emitted photon has <b>less energy, a longer wavelength</b>. The distance between absorption and emission peaks is the <b>Stokes shift</b>.</p>`],
+      ["Why it matters", `<p>The shift lets filters separate the weak emitted glow from the intense excitation light. Dyes with narrow, well-separated spectra can be combined: blue DAPI, green Alexa 488 and red 568 in the same cell, each read through its own filters.</p>`],
+    ], related: ["filter-cube", "bleach", "dapi", "epifluorescence"] },
+  "filter-cube": { kind: "concept", visual: "cube", title: "The filter cube", kicker: "Fluorescence",
+    lead: "Three filters in one block, matched to one dye: one picks the excitation colour, one splits the paths, one cleans up the emission.",
+    sections: [
+      ["The three parts", `<ol><li><b>Excitation filter</b>: passes only the band that excites the dye.</li><li><b>Dichroic mirror</b>, at 45°: reflects shorter wavelengths (excitation) down to the sample, transmits longer ones (emission) up to the eye.</li><li><b>Emission filter</b>: passes only the dye's emission band and blocks stray excitation light.</li></ol>`],
+      ["Choosing a cube", `<p>Cubes are named after classic dyes: <b>DAPI</b> (UV in, blue out), <b>FITC</b> (blue in, green out, also right for Alexa 488 and GFP) and <b>TRITC</b> (green in, orange-red out, right for 568 dyes). With the wrong cube, a label is simply invisible, or another label leaks through.</p>`],
+    ], related: ["fluorescence", "epifluorescence", "bleach"] },
+  bleach: { kind: "concept", visual: "bleach", title: "Photobleaching", kicker: "Fluorescence",
+    lead: "Fluorophores wear out. Under strong light they are destroyed, permanently, and the signal fades. It's a problem to manage, not something you want.",
+    sections: [
+      ["Why it happens", `<p>Each excitation carries a small chance that the dye enters a long-lived triplet state, where it reacts, mostly with oxygen, producing reactive oxygen species that break the molecule. After enough cycles (thousands to millions, depending on the dye), it stops fluorescing for good. The same chemistry also harms live cells: <b>phototoxicity</b>.</p>`],
+      ["How to limit it", `<ul><li><b>Close the shutter</b> whenever you aren't looking or capturing.</li><li>Use the <b>least light</b> and shortest exposure that gives a usable image.</li><li>Focus with a <b>robust channel</b> (DAPI) or transmitted light.</li><li>Mount in an <b>antifade</b> medium that scavenges oxygen radicals.</li><li>Choose photostable dyes (Alexa Fluor rather than FITC).</li></ul>`],
+      ["When it's useful", `<p>One technique uses it on purpose: <b>FRAP</b> (fluorescence recovery after photobleaching). Bleach a small area, then watch how fast unbleached molecules move back in, which measures how mobile a protein is.</p>`],
+    ], related: ["fluorescence", "filter-cube", "dapi", "epifluorescence"] },
+
+  /* ---------------- confocal ---------------- */
+  pinhole: { kind: "concept", visual: "pinhole", title: "The pinhole and Airy units", kicker: "Confocal",
+    lead: "A pinhole in front of the detector lets in-focus light through and blocks the rest. Its size decides how thin the optical section is.",
+    sections: [
+      ["Why it works", `<p>The pinhole sits in a plane <b>conjugate</b> to the focused spot in the sample: light from the focal plane comes to a sharp point exactly at the pinhole. Light from above or below focuses before or after it, so at the pinhole it's a wide disc and only a sliver passes.</p>`],
+      ["Airy units", `<p>A focused spot is never a perfect point: diffraction makes a bright central disc, the <b>Airy disc</b>, with faint rings. A pinhole of <b>1 Airy unit (AU)</b> matches that disc's size, so it passes most in-focus light while rejecting most out-of-focus light. Smaller barely improves the section but wastes signal; larger is brighter but thicker.</p>`],
+      ["Choosing it", `<p>Start at 1 AU. Open it for very dim samples when a slightly thicker slice is acceptable. Drag the slider to see the trade-off.</p>`],
+    ], related: ["confocal", "zstack", "organoid"] },
+  zstack: { kind: "concept", visual: "section", title: "Optical sections and z-stacks", kicker: "Confocal",
+    lead: "A confocal images one thin plane at a time. Step the focus through the sample, keep every plane, and you have the sample in 3D.",
+    sections: [
+      ["Taking a stack", `<p>You set the top and bottom of the region, and the microscope steps the focus, typically by about half the optical section thickness (Nyquist sampling), imaging each plane. A 50 µm organoid at 0.3 µm steps is around 170 images per channel.</p>`],
+      ["Using it", `<p>Software can show any single section, a <b>maximum-intensity projection</b> (the brightest value through the stack at each pixel), side views, or a full 3D rendering. Each section of a hollow sphere is a ring whose size depends on depth: drag the slider.</p>`],
+    ], related: ["pinhole", "organoid", "confocal"] },
+  organoid: { kind: "concept", visual: "section", visualInit: { z: 0 }, title: "Organoids", kicker: "Samples",
+    lead: "Tiny, self-organised 3D tissues grown from stem cells. They mimic real organs far better than flat layers of cells, and they're thick, which is why they need a confocal.",
+    sections: [
+      ["What they are", `<p>Stem cells embedded in a gel such as Matrigel, with the right growth factors, divide and self-organise into structures resembling organs: gut crypts, mini-kidneys, brain regions. Many epithelial organoids are <b>hollow spheres</b>: a single layer of polarised cells around a central lumen.</p>`],
+      ["Why they matter", `<p>They're used to study development, model diseases from a patient's own cells, and test drugs, without an animal. Imaging them means seeing through tens to hundreds of microns of tissue, which is where confocal and light-sheet microscopes come in.</p>`],
+    ], related: ["zstack", "confocal", "gfp"] },
+};
+
+/* =====================================================================
+   GUIDE_UI · the microscopy guide: a hub, microscope pages with the lit
+   illustration and clickable parts, concept pages with a live diagram.
+   Opens over anything (title, a lesson, the pause menu, results).
+   ===================================================================== */
+const GUIDE_UI = (() => {
+  const el = $("guide"), scroll = $("gdScroll"), crumb = $("gdCrumb");
+  let isOpen = false, stack = [], live = null, onClose = null, opener = null, base = 0;
+  const ACC = { bright: "#c9a6ff", fluor: "#45e07f", confocal: "#80a0ff" };
+  const conceptDot = (id) => ({ Optics: "#ffe7a0", "Stains and labels": "#e98fd0", Fluorescence: "#45e07f", Confocal: "#80a0ff" })[(GUIDE_GROUPS.find(g => g[1].includes(id)) || ["Optics"])[0]];
+
+  function stopLive() { if (live) { live.stop && live.stop(); live = null; } }
+  function hub() {
+    const scopes = [["brightfield", "bright"], ["epifluorescence", "fluor"], ["confocal", "confocal"]];
+    return `<div class="gd-hub">
+      <header class="gd-hero"><p class="gd-kicker">Microscopy guide</p><h1 class="gd-h1">How microscopes see</h1>
+        <p class="gd-lead">Three microscopes, the parts that make them work, and the dyes and tricks that make cells visible. Every page has something to play with.</p></header>
+      <div class="gd-scopes">${scopes.map(([id, m], i) => `<button class="gd-scope" data-go="${id}" style="--c:${ACC[m]};--i:${i}">
+        <span class="gd-scope-art" data-art="${m}"></span><span class="gd-scope-t"><small>${GUIDE_PAGES[id].kicker}</small><b>${GUIDE_PAGES[id].title.replace(" microscope", "")}</b><span>${GUIDE_PAGES[id].lead.split(". ")[0]}.</span></span><i aria-hidden="true">→</i></button>`).join("")}</div>
+      ${GUIDE_GROUPS.map(([g, ids]) => `<section class="gd-group"><h2>${g}</h2><div class="gd-tiles">${ids.map((id, i) => `<button class="gd-tile" data-go="${id}" style="--c:${conceptDot(id)};--i:${i}"><small>${GUIDE_PAGES[id].kicker}</small><b>${GUIDE_PAGES[id].title}</b><span>${GUIDE_PAGES[id].lead.split(". ")[0]}.</span></button>`).join("")}</div></section>`).join("")}
+    </div>`;
+  }
+  function page(id) {
+    const p = GUIDE_PAGES[id], scope = p.kind === "scope";
+    const all = [...["brightfield", "epifluorescence", "confocal"], ...GUIDE_GROUPS.flatMap(g => g[1])], k = all.indexOf(id);
+    const prev = all[(k - 1 + all.length) % all.length], next = all[(k + 1) % all.length];
+    const parts = scope ? ART.partsFor(p.mode) : [];
+    return `<article class="gd-page ${scope ? "is-scope" : "is-concept"}" style="--c:${scope ? ACC[p.mode] : conceptDot(id)}">
+      <div class="gd-copy">
+        <p class="gd-kicker">${p.kicker}</p><h1 class="gd-h1">${p.title}</h1><p class="gd-lead">${p.lead}</p>
+        ${scope ? `<section class="gd-sec"><h2>Parts</h2><p class="gd-hint">Tap a part to find it on the microscope.</p><div class="gd-parts">${parts.map(pt => `<button data-part="${pt.id}"><b>${pt.name}</b></button>`).join("")}</div></section>` : ""}
+        ${p.sections.map(([h, body]) => `<section class="gd-sec"><h2>${h}</h2>${body}</section>`).join("")}
+        <section class="gd-sec gd-rel"><h2>Related</h2><div class="gd-chips">${p.related.map(r => `<button class="gd-chip" data-go="${r}">${GUIDE_PAGES[r].title}</button>`).join("")}</div></section>
+        <nav class="gd-pn"><button data-go="${prev}"><small>← Previous</small><b>${GUIDE_PAGES[prev].title}</b></button><button data-go="${next}"><small>Next →</small><b>${GUIDE_PAGES[next].title}</b></button></nav>
+      </div>
+      <div class="gd-visual"><div class="gd-stage">
+        ${scope ? `<div class="gd-art"></div><div class="gd-cap" aria-live="polite"><b>Light path</b><span>${{ bright: "Lamp → condenser → specimen → objective → eyepiece.", fluor: "Excitation (blue) goes down through the objective; the green glow comes back up.", confocal: "Laser → fibre → scan mirrors → objective; emission → pinhole → detector." }[p.mode]}</span></div>
+          <div class="dg-ctl"><div class="dg-seg"><button data-view="light" aria-pressed="true">Light path</button><button data-view="parts" aria-pressed="false">All parts</button></div></div>` : `<div class="gd-dg"></div>`}
+      </div></div>
+    </article>`;
+  }
+  function render() {
+    stopLive();
+    const id = stack[stack.length - 1];
+    scroll.innerHTML = id ? page(id) : hub();
+    scroll.scrollTop = 0;
+    crumb.innerHTML = id ? `<button data-go="">Guide</button><span>/</span><b>${GUIDE_PAGES[id].title}</b>` : `<b>Microscopy guide</b>`;
+    $("gdBack").innerHTML = stack.length > base ? "← Back" : "Close";
+    if (!id) {
+      scroll.querySelectorAll("[data-art]").forEach(a => { const c = ART.mount(a, a.dataset.art); c.highlight([], { light: true }); });
+      return;
+    }
+    const p = GUIDE_PAGES[id];
+    if (p.kind === "scope") {
+      const art = ART.mount(scroll.querySelector(".gd-art"), p.mode), cap = scroll.querySelector(".gd-cap");
+      const meta = Object.fromEntries(art.parts.map(x => [x.id, x]));
+      let sel = null;
+      const pick = (pid, sound = true) => {
+        sel = pid;
+        scroll.querySelectorAll(".gd-parts button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.part === pid)));
+        scroll.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", "false"));
+        art.highlight([pid]);
+        cap.innerHTML = `<b>${meta[pid].name}</b><span>${meta[pid].desc}</span>`;
+        if (sound) sfx("move", { i: 2 });
+        if (innerWidth < 900) scroll.querySelector(".gd-visual").scrollIntoView({ block: "start", behavior: prefersReduced() ? "auto" : "smooth" });
+      };
+      scroll.querySelectorAll(".gd-parts button").forEach(b => { b.addEventListener("click", () => pick(b.dataset.part)); b.addEventListener("mouseenter", () => { if (matchMedia("(hover: hover)").matches) { art.highlight([b.dataset.part]); } }); b.addEventListener("mouseleave", () => { if (matchMedia("(hover: hover)").matches) { if (sel) art.highlight([sel]); else art.highlight([], { light: true }); } }); });
+      art.svg.querySelectorAll("[data-part]").forEach(g => { g.style.cursor = "pointer"; g.addEventListener("click", () => pick(g.dataset.part)); });
+      scroll.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => {
+        sel = null; scroll.querySelectorAll(".gd-parts button").forEach(x => x.setAttribute("aria-pressed", "false"));
+        scroll.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+        if (b.dataset.view === "parts") { art.highlight(art.parts.map(x => x.id).filter(x => ["eyepiece", "objective", "stage", "knobs", "lamphouse", "cubes", "scanhead", "lasers", "condenser"].includes(x))); cap.innerHTML = `<b>The main parts</b><span>Tap any part, here or in the list, for what it does.</span>`; }
+        else { art.highlight([], { light: true }); cap.innerHTML = `<b>Light path</b><span>${{ bright: "Lamp → condenser → specimen → objective → eyepiece.", fluor: "Excitation (blue) goes down through the objective; the green glow comes back up.", confocal: "Laser → fibre → scan mirrors → objective; emission → pinhole → detector." }[p.mode]}</span>`; }
+        sfx("move", { i: 1 });
+      }));
+      art.highlight([], { light: true });
+    } else {
+      live = DIAG.mount(scroll.querySelector(".gd-dg"), p.visual, p.visualInit || {});
+    }
+  }
+  function go(id) {
+    if (id === "") { stack = []; base = 0; } else if (id && GUIDE_PAGES[id]) { if (stack[stack.length - 1] === id) return; stack.push(id); }
+    sfx("whoosh");
+    scroll.classList.remove("gd-in"); void scroll.offsetWidth;
+    render(); scroll.classList.add("gd-in");
+  }
+  function back() {
+    if (stack.length > base) { stack.pop(); sfx("back"); scroll.classList.remove("gd-in"); void scroll.offsetWidth; render(); scroll.classList.add("gd-in"); }
+    else close();
+  }
+  function open(id, cb) {
+    opener = document.activeElement; onClose = cb || null;
+    stack = id && GUIDE_PAGES[id] ? [id] : []; base = stack.length; // opened on a page: Back returns to where you came from
+    isOpen = true; el.hidden = false; el.classList.remove("closing"); void el.offsetWidth; el.classList.add("open");
+    document.documentElement.classList.add("guide-open");
+    sfx("whoosh"); render(); scroll.classList.add("gd-in");
+    setTimeout(() => $("gdBack").focus({ preventScroll: true }), 60);
+  }
+  async function close() {
+    if (!isOpen) return;
+    isOpen = false; stopLive(); sfx("back");
+    el.classList.remove("open"); el.classList.add("closing");
+    document.documentElement.classList.remove("guide-open");
+    await wait(420); el.hidden = true; el.classList.remove("closing"); scroll.innerHTML = "";
+    const cb = onClose; onClose = null; if (cb) cb();
+    else if (opener && opener.isConnected) try { opener.focus({ preventScroll: true }); } catch (e) {}
+  }
+  el.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b) { e.preventDefault(); go(b.dataset.go); } });
+  $("gdBack").addEventListener("click", back);
+  $("gdClose").addEventListener("click", close);
+  function key(e) {
+    if (e.key === "Escape" || (e.key === "Backspace" && !/input|textarea/i.test(e.target.tagName))) { e.preventDefault(); back(); }
+  }
+  return { open, close, key, go, isOpen: () => isOpen };
+})();
+
+/* =====================================================================
+   LESSON · the tutorials' teaching view. Big type on the left, a lit
+   microscope or a live diagram on the right. When it's time to use the
+   bench, the lesson morphs into the game: text → task card, microscope →
+   the side view, the dark stage → the eyepiece.
+   ===================================================================== */
+const LESSON = (() => {
+  const el = $("lesson"), visual = $("lsVisual"), stage = $("lsStage"), copy = $("lsCopy");
+  let open = false, morphing = false, cur = { key: null, art: null, mode: null, live: null }, hooks = {};
+  const canVT = () => !!document.startViewTransition && !prefersReduced();
+  const VT_NAMES = ["lcopy", "lart", "lstage"];
+  function nameLesson(on) {
+    copy.style.viewTransitionName = on ? "lcopy" : "";
+    stage.style.viewTransitionName = on ? "lstage" : "";
+    const svg = visual.querySelector(".art-svg");
+    visual.style.viewTransitionName = on && svg && visual.offsetWidth ? "lart" : "";
+  }
+  function nameGame(on) {
+    const coach = $("coach"), art = $("scopeArt"), ep = $("eyepieceBox");
+    coach.style.viewTransitionName = on && !coach.hidden ? "lcopy" : "";
+    art.style.viewTransitionName = on && art.getBoundingClientRect().width > 0 ? "lart" : "";
+    ep.style.viewTransitionName = on && ep.getBoundingClientRect().width > 0 ? "lstage" : "";
+  }
+  function clearNames() { nameLesson(false); nameGame(false); }
+  async function morph(update) {
+    if (!canVT()) { update(); return; }
+    morphing = true;
+    document.documentElement.classList.add("vt-lesson");
+    let done = false;
+    try {
+      const t = document.startViewTransition(() => { clearNames(); update(); done = true; });
+      await t.finished;
+    } catch (e) { if (!done) update(); }
+    clearNames(); document.documentElement.classList.remove("vt-lesson");
+    morphing = false;
+  }
+  function placeTop() { const tb = $("topbar"); el.style.top = Math.max(0, tb.getBoundingClientRect().bottom) + "px"; }
+
+  function setVisual(step, mode) {
+    const v = step.visual || "scope", key = v === "scope" ? "scope:" + mode : v;
+    if (cur.key !== key) {
+      if (cur.live) { cur.live.stop(); cur.live = null; }
+      cur.art = null;
+      visual.classList.remove("swap"); void visual.offsetWidth; visual.classList.add("swap");
+      if (v === "scope") { cur.art = ART.mount(visual, mode); }
+      else { cur.live = DIAG.mount(visual, v.replace(/^diag:/, ""), step.init || {}); }
+      cur.key = key; cur.mode = mode;
+    }
+    stage.dataset.kind = v === "scope" ? "scope" : "diag";
+    if (cur.art) {
+      cur.art.highlight(step.parts || [], { light: step.light || !(step.parts && step.parts.length) });
+      const meta = step.parts && step.parts.length ? cur.art.parts.find(p => p.id === step.parts[0]) : null;
+      $("lsCap").innerHTML = meta ? `<b>${meta.name}</b> ${meta.desc}` : `<b>${{ bright: "Brightfield", fluor: "Epifluorescence", confocal: "Confocal" }[mode]} microscope</b> ${step.light !== false ? "The glowing line is the path the light takes." : ""}`;
+    } else {
+      $("lsCap").innerHTML = `<b>${DIAG.title(v.replace(/^diag:/, ""))}</b> Interactive: try the controls.`;
+    }
+  }
+  function fill(step, info) {
+    $("lsStep").textContent = `Step ${info.n} / ${info.total}`;
+    $("lsKicker").textContent = info.kicker;
+    $("lsH").textContent = step.h;
+    $("lsText").innerHTML = step.text();
+    $("lsLinks").innerHTML = (step.links || []).filter(id => GUIDE_PAGES[id]).map(id => `<button class="ls-link" data-guide="${id}"><span>Learn</span>${GUIDE_PAGES[id].title}<i aria-hidden="true">→</i></button>`).join("");
+    $("lsPrev").hidden = !info.canBack;
+    $("lsNext").innerHTML = `${info.last ? "Got it" : "Continue"} <kbd>Enter</kbd>`;
+    $("lsBar").style.transform = `scaleX(${(info.n / info.total).toFixed(3)})`;
+    setVisual(step, info.mode);
+  }
+  async function present(step, info, { instant = false } = {}) {
+    placeTop();
+    if (open) {
+      copy.classList.remove("ls-turn"); void copy.offsetWidth; copy.classList.add("ls-turn");
+      fill(step, info); sfx("move", { i: 3 });
+      return;
+    }
+    open = true; document.documentElement.classList.add("lesson-open");
+    fill(step, info); // filled while still hidden, so the morph lands on the right content
+    const show = () => { el.hidden = false; $("coach").hidden = true; nameLesson(true); };
+    if (instant || !canVT()) { show(); el.classList.remove("ls-enter"); void el.offsetWidth; el.classList.add("ls-enter"); clearNames(); }
+    else { nameGame(true); await morph(() => { show(); nameLesson(true); }); }
+    sfx("whoosh");
+    setTimeout(() => { if (open) $("lsNext").focus({ preventScroll: true }); }, 60);
+  }
+  async function dismiss(thenShowCard) {
+    if (!open) { if (thenShowCard) thenShowCard(); return; }
+    open = false; document.documentElement.classList.remove("lesson-open");
+    const hide = () => { el.hidden = true; if (thenShowCard) thenShowCard(); nameGame(true); };
+    if (!canVT()) { hide(); return; }
+    nameLesson(true);
+    await morph(hide);
+  }
+  function hideNow() {
+    open = false; document.documentElement.classList.remove("lesson-open"); el.hidden = true; clearNames();
+    if (cur.live) { cur.live.stop(); cur.live = null; }
+    cur = { key: null, art: null, mode: null, live: null };
+  }
+  $("lsNext").addEventListener("click", () => { if (!morphing && hooks.next) hooks.next(); });
+  $("lsPrev").addEventListener("click", () => { if (!morphing && hooks.back) hooks.back(); });
+  $("lsSkip").addEventListener("click", () => hooks.skip && hooks.skip());
+  $("lsLinks").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-guide]"); if (!b) return;
+    GUIDE_UI.open(b.dataset.guide, () => { if (open) $("lsNext").focus({ preventScroll: true }); });
+  });
+  window.addEventListener("resize", () => { if (open) placeTop(); });
+  function key(e) {
+    if (e.key === "Escape") { e.preventDefault(); openPause(); return; }
+    const tag = (e.target.tagName || "").toLowerCase();
+    if (morphing) { e.preventDefault(); return; }
+    if ((e.key === "Enter" && tag !== "button") || e.key === "ArrowRight" || e.key === " " && tag !== "button") { e.preventDefault(); hooks.next && hooks.next(); }
+    else if (e.key === "ArrowLeft" || e.key === "Backspace") { e.preventDefault(); hooks.back && hooks.back(); }
+  }
+  return { present, dismiss, hideNow, key, isOpen: () => open, isMorphing: () => morphing, on(h) { hooks = h; } };
+})();
+
+/* =====================================================================
+   TUT · the guided rounds. Three kinds of step:
+   lesson  · full-page teaching view (Continue to advance)
+   tour    · a card pointing at part of the bench (Next to advance)
+   task    · a card asking you to do something; advances when done
+   ===================================================================== */
 const TUT = (() => {
   const semAcc = () => { const s = G.s, b = s.base; if (!b || !semBaseReady()) return 0; const bst = semBest(b, s.kV); return semQ(b, s.focus, Math.hypot((s.sx - s.cx) * STIG_UM, (s.sy - s.cy) * STIG_UM), s.kV) / bst.q; };
   const semFocusAcc = () => { const s = G.s, b = s.base; if (!b || !semBaseReady()) return 0; const bst = semBest(b, s.kV); return semQ(b, s.focus, 0, s.kV) / bst.q; };
@@ -4720,82 +6078,97 @@ const TUT = (() => {
   const fineCtl = () => isPhone() ? "#jogFine" : "#knob";
   const coarseCtl = () => isPhone() ? "#jogCoarse" : "#knob";
   const acc = () => focusAccuracy();
+  const fineHow = () => isPhone() ? "Drag the <b>Fine</b> strip" : "Use the <b>centre</b> of the knob, or hold ↑ ↓,";
+  const coarseHow = () => isPhone() ? "Drag the <b>Coarse</b> strip right" : "Spin the <b>outer ring</b> of the knob (or hold Shift + ↑)";
+  const cubeIs = (c) => () => G.cube === c;
+  const L = (stage, h, text, o = {}) => Object.assign({ stage, pre: true, lesson: true, h, text: typeof text === "function" ? text : () => text }, o);
+
   const LIGHT_STEPS = [
-    { stage: 0, pre: true, target: () => "#eyepieceBox", next: true, text: () => "This is the <b>eyepiece</b> at 10x. It's a blur because the lens is still far above the slide." },
-    { stage: 0, pre: true, target: () => "#loupe", next: true, text: () => "The <b>loupe</b> magnifies the gap between the lens and the coverslip. Watch it as you focus." },
-    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200,
-      text: () => isPhone() ? "Drag the <b>Coarse</b> strip right to bring the lens down. Drag fast to travel, slowly near the end." : "Spin the <b>outer ring</b> clockwise to bring the lens down (or scroll on it, or hold Shift + ↑). Spin fast to travel, slowly near the end." },
+    L(0, "The brightfield microscope", "The oldest, most common microscope in any lab. A lamp in the base shines <b>up through the slide</b>, and you see the specimen because it absorbs some of that light. Most cells are nearly transparent, so they're <b>stained</b> first.", { light: true, links: ["brightfield"] }),
+    L(0, "Follow the light", "Lamp → <b>condenser</b>, which gathers the light into a cone on the slide → specimen → <b>objective</b>, which forms the magnified image → <b>eyepiece</b>, which magnifies it again. Total magnification is objective × eyepiece: 100x × 10x = 1000x.", { parts: ["condenser", "objective", "eyepiece"], light: true, links: ["brightfield", "na"] }),
+    L(0, "Today: S. aureus", "A Gram-stained smear of <i>Staphylococcus aureus</i>. Its thick peptidoglycan wall traps crystal violet, so the cells stay <b>purple: Gram-positive</b>. They divide in several planes, which piles them into grape-like clusters.", { visual: "diag:gram", links: ["stains"] }),
+    L(0, "Two focus knobs", "The big outer knob is <b>coarse focus</b>: it moves the stage fast, for finding the specimen. The small inner knob is <b>fine focus</b>: a fraction of a micron at a time, for sharpening. Rule: coarse only at the lowest power.", { parts: ["knobs"], links: ["dof"] }),
+    { stage: 0, pre: true, kind: "tour", target: () => "#eyepieceBox", next: true, text: () => "Your <b>eyepiece</b> at 10x. Blurred: the lens is still far above the slide." },
+    { stage: 0, pre: true, kind: "tour", target: () => "#loupe", next: true, text: () => "The <b>loupe</b> magnifies the gap between lens and coverslip. Watch it as you focus." },
+    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200, text: () => `${coarseHow()} to bring the lens down. Spin fast to travel, slowly near the end.` },
     { stage: 0, pre: true, target: () => "#eyepieceBox", done: () => d() > -45, text: () => "Specks snapping into focus? That's <b>dust on top of the coverslip</b>, 170 µm above the smear. Keep going down." },
-    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7,
-      text: () => isPhone() ? "Nearly there. Drag the <b>Fine</b> strip slowly and sharpen the purple smear." : "Nearly there. Use the <b>centre</b> of the knob, or ↑ and ↓, for fine focus. Turned slowly it moves a fraction of a micron. Sharpen the purple smear." },
-    { stage: 0, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Sharp. Press <b>Lock focus</b>. You're graded on how sharp the smear looks next to the sharpest plane it has, so if it looks sharp, it is." },
-    { stage: 0, post: true, target: () => "#nextBtn", text: () => "That's your verdict. Now swing in the <b>40x</b> objective." },
-    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Objectives are <b>parfocal</b>, so the focus carried over. Use only fine focus here. Coarse at 40x costs points." },
+    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7, text: () => `Nearly there. ${fineHow()} and sharpen the purple clusters.` },
+    { stage: 0, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Sharp. <b>Lock focus</b>. You're graded on how sharp it looks next to the sharpest plane the smear has." },
+    { stage: 0, post: true, target: () => "#nextBtn", text: () => "That's your verdict. Now swing in <b>40x</b>." },
+    L(1, "Parfocal objectives", "Objectives are built to be <b>parfocal</b>: when one is in focus, the others nearly are too. Each focuses the same distance below its shoulder. So after swinging in 40x you only need a touch of <b>fine focus</b>. This game is named after it.", { visual: "diag:parfocal", init: { k: "1" }, links: ["parfocal", "dof"] }),
+    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => `Fine focus only at 40x: coarse here costs points. ${fineHow()}.` },
     { stage: 1, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock it in." },
     { stage: 1, post: true, target: () => "#nextBtn", text: () => "Last one: swing in <b>100x</b>." },
-    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "100x needs <b>immersion oil</b>. Add a drop and watch the loupe: the front lens has to sit in the oil." },
-    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Now fine focus. The depth of field is 0.53 µm, so small turns matter here. Never touch coarse at 100x." },
+    L(2, "Immersion oil", "At 100x the lens must catch a very wide cone of light. In air, the steepest rays bend away at the glass, or never leave it. A drop of oil with the same refractive index as glass (<b>n ≈ 1.515</b>) keeps them, raising the NA from about 0.95 to 1.25: brighter and sharper.", { visual: "diag:oil", links: ["oil", "na"] }),
+    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "<b>Add oil</b> (O) and watch the loupe: the front lens has to sit in the drop." },
+    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Fine focus. The depth of field is <b>0.53 µm</b> here, so small turns matter. Never coarse at 100x." },
     { stage: 2, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus and see how you did." },
-    { stage: 2, post: true, target: () => "#nextBtn", text: () => "Tutorial round done. See your results." },
+    { stage: 2, post: true, target: () => "#nextBtn", text: () => "Round done. See your results." },
   ];
-  const cubeIs = (c) => () => G.cube === c;
+
   const FLUOR_STEPS = [
-    // 10x: DAPI nuclei
-    { stage: 0, pre: true, target: () => "#eyepieceBox", next: true, text: () => "This is an <b>epifluorescence</b> microscope. The light comes down <b>through the objective</b>, not up through the slide, so the field is dark except where a dye glows. Today's sample is fixed HeLa cells carrying three different labels." },
-    { stage: 0, pre: true, target: () => "#cubeSeg", next: true, text: () => "Each label needs its own <b>filter cube</b>: an excitation filter picks the colour that excites the dye, a dichroic mirror reflects it onto the sample, and an emission filter lets only the dye's glow back to your eye. One cube, one label at a time." },
-    { stage: 0, pre: true, target: () => "#cubeSeg", next: true, text: () => "First target: <b>nuclei, stained with DAPI</b>. DAPI binds DNA, absorbs UV (~358 nm) and glows blue (~461 nm). The <b>DAPI cube</b> is already in. In a real lab you focus on DAPI first: it's bright, tough and on every cell, so you don't waste your weaker labels." },
-    { stage: 0, pre: true, target: () => "#shutterBtn", done: () => !G.shutter, text: () => "Dyes <b>photobleach</b>: every second under the lamp destroys some of them for good. Watch the <b>signal</b> meter. Close the <b>shutter</b> now (or press S)." },
-    { stage: 0, pre: true, target: () => "#shutterBtn", done: () => G.shutter, text: () => "That's the habit: shutter closed whenever you aren't looking. Open it again to focus." },
-    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200,
-      text: () => (isPhone() ? "Drag the <b>Coarse</b> strip right" : "Spin the <b>outer ring</b> of the knob (or hold Shift + ↑)") + " to bring the lens down. Coarse is fine at 10x. Look for blue ovals coming out of the dark." },
-    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7,
-      text: () => (isPhone() ? "Now the <b>Fine</b> strip" : "Now the <b>centre</b> of the knob, or ↑ ↓") + ". Sharpen the nuclei. Out-of-focus light still reaches you in widefield, so blurred cells glow as a soft haze rather than vanishing." },
+    L(0, "The fluorescence microscope", "Instead of what a sample absorbs, you see what <b>glows</b>. Chosen molecules carry fluorescent dyes; the microscope lights them with one colour and shows you only the colour they give back. Against black, a single labelled protein stands out.", { light: true, links: ["epifluorescence"] }),
+    L(0, "Light from above", "This is an <b>epifluorescence</b> microscope: <i>epi</i> means from above. A powerful source at the back sends light into the head and <b>down through the objective</b>, and the same objective collects the glow. The transmitted lamp in the base stays off.", { parts: ["lamphouse", "objective"], light: true, links: ["epifluorescence"] }),
+    L(0, "The Stokes shift", "A dye absorbs a photon, loses a little energy as vibration, then emits a <b>longer, redder</b> photon. That gap between the excitation and emission colours is the <b>Stokes shift</b>, and it's what lets filters separate the faint glow from the bright excitation light.", { visual: "diag:stokes", init: { dye: "dapi" }, links: ["fluorescence"] }),
+    L(0, "The filter cube", "One cube per label, three filters each. The <b>excitation filter</b> passes the colour that excites the dye. The <b>dichroic mirror</b> reflects it down onto the sample, but lets the longer emitted colour pass back up. The <b>emission filter</b> cleans up what reaches your eye.", { visual: "diag:cube", init: { cube: "dapi" }, links: ["filter-cube"] }),
+    L(0, "One cell, three labels", "These are HeLa cells, fixed and stained three ways: <b>DAPI</b> for DNA, an antibody carrying <b>Alexa Fluor 488</b> for microtubules, and <b>phalloidin-568</b> for actin. Each glows a different colour, so each has its own cube. Try the channels.", { visual: "diag:cell3", links: ["dapi", "immuno", "phalloidin"] }),
+    L(0, "DAPI first", "DAPI sits in the minor groove of DNA and glows blue under UV. Labs <b>focus on DAPI first</b>: it's bright, slow to fade and on every cell, so your weaker labels aren't bleached while you hunt for focus. The DAPI cube is already in.", { visual: "diag:dapi", links: ["dapi"] }),
+    L(0, "Photobleaching", "Dyes wear out. Each excitation risks a reaction, mostly with oxygen, that <b>destroys the dye for good</b>, so the signal fades and never returns. You limit it by <b>closing the shutter</b> whenever you aren't looking, using less light, and mounting in antifade. Try it.", { visual: "diag:bleach", links: ["bleach"] }),
+    { stage: 0, pre: true, target: () => "#shutterBtn", done: () => !G.shutter, text: () => "Watch the <b>signal</b> meter. Close the <b>shutter</b> now (S)." },
+    { stage: 0, pre: true, target: () => "#shutterBtn", done: () => G.shutter, text: () => "That's the habit. Open it again to focus." },
+    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200, text: () => `${coarseHow()} to bring the lens down. Look for blue ovals coming out of the dark.` },
+    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7, text: () => `${fineHow()} and sharpen the nuclei. In widefield, blurred cells glow as haze instead of vanishing.` },
     { stage: 0, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Sharp. <b>Lock focus</b>." },
     { stage: 0, post: true, target: () => "#nextBtn", text: () => "Next, swing in <b>40x</b>. The target changes, and so will the cube." },
-    // 40x: microtubules, Alexa 488
-    { stage: 1, pre: true, target: () => "#cubeSeg", done: cubeIs("fitc"), text: () => "Target: <b>microtubules</b>. They're labelled by <b>indirect immunofluorescence</b>: an anti-α-tubulin primary antibody, then a secondary antibody carrying <b>Alexa Fluor 488</b> (excites ~495 nm, emits green ~519 nm). Switch to the <b>FITC</b> cube, which matches it (or press C)." },
-    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Each label sits at its own height in the cell, so <b>refocus with fine only</b>. Note the meter: bleaching is faster at 40x, because the lamp's light is packed into a smaller field. Close the shutter if you stop to think." },
+    L(1, "Indirect immunofluorescence", "Microtubules are found with antibodies. A <b>primary</b> antibody against α-tubulin binds the target; a <b>secondary</b> antibody carrying Alexa Fluor 488 binds the primary. Several secondaries sit on each primary, so the signal is amplified.", { visual: "diag:antibody", links: ["immuno"] }),
+    { stage: 1, pre: true, target: () => "#cubeSeg", done: cubeIs("fitc"), text: () => "Switch to the <b>FITC</b> cube (C). It matches Alexa Fluor 488: excites ~495 nm, emits green ~519 nm." },
+    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Microtubules sit at a different height to the nuclei: <b>fine focus only</b>. Bleaching is faster at 40x, so close the shutter if you stop to think." },
     { stage: 1, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock it." },
     { stage: 1, post: true, target: () => "#nextBtn", text: () => "Last: swing in <b>100x</b>." },
-    // 100x: actin, phalloidin-568
-    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "100x is an oil lens (NA 1.40). Oil matches the glass, so the lens catches the wide cone of light that air would bend away. In fluorescence that matters twice: brightness rises steeply with NA. <b>Add oil</b>." },
-    { stage: 2, pre: true, target: () => "#cubeSeg", done: cubeIs("tritc"), text: () => "Target: <b>actin fibres</b>, stained with <b>phalloidin</b>, a toxin from the death cap mushroom that binds filamentous actin tightly. This one carries a 568 nm dye that glows orange-red. Switch to the <b>TRITC</b> cube." },
-    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Stress fibres run along the <b>bottom of the cell</b>, where it grips the coverslip. Fine focus only, small turns: the depth of field here is under half a micron, and 100x bleaches fastest." },
+    L(2, "Phalloidin", "A small toxin from the <b>death cap mushroom</b>, <i>Amanita phalloides</i>. It binds between the subunits of <b>filamentous actin</b>, not free monomers, so a fluorescent phalloidin draws the actin cytoskeleton crisply. This one carries a 568 nm dye that glows orange-red.", { visual: "diag:phalloidin", links: ["phalloidin"] }),
+    L(2, "Oil matters twice", "The 100x is an oil lens, NA 1.40. In epifluorescence, image brightness rises roughly with <b>NA⁴</b>, because the same lens both delivers the excitation and collects the glow. So oil here isn't only for sharpness, it's for signal.", { visual: "diag:oil", links: ["oil", "na"] }),
+    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "<b>Add oil</b> (O)." },
+    { stage: 2, pre: true, target: () => "#cubeSeg", done: cubeIs("tritc"), text: () => "Switch to the <b>TRITC</b> cube for the 568 dye." },
+    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Stress fibres run along the <b>bottom of the cell</b>, where it grips the coverslip. Small fine turns: under half a micron of depth of field, and 100x bleaches fastest." },
     { stage: 2, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus and see how you did." },
-    { stage: 2, post: true, target: () => "#nextBtn", text: () => "Round done. In the lab, you'd now photograph each channel separately and <b>merge</b> them into one false-colour image: blue nuclei, green microtubules, red actin." },
+    L(2, "Merge", "In the lab you'd now capture each channel separately, in black and white, with its own cube and exposure, then <b>merge</b> them in software as false colour: blue nuclei, green microtubules, red actin.", { post: true, pre: false, visual: "diag:cell3", init: { ch: "merge" }, links: ["epifluorescence", "bleach"] }),
+    { stage: 2, post: true, target: () => "#nextBtn", text: () => "See your results." },
   ];
+
   const CONF_STEPS = [
-    // 10x: nuclei layer
-    { stage: 0, pre: true, target: () => "#eyepieceBox", next: true, text: () => "This is a <b>laser scanning confocal</b>. A focused laser spot sweeps the sample point by point, a detector measures the glow from each point, and a computer builds the image. You watch it on a screen, not through an eyepiece." },
-    { stage: 0, pre: true, target: () => "#eyepieceBox", next: true, text: () => "The sample is an <b>organoid</b>: a hollow ball of epithelial cells grown in 3D, often hundreds of microns thick. Widefield would drown it in out-of-focus haze. A confocal cuts a thin <b>optical section</b> out of it instead, without physically slicing anything." },
-    { stage: 0, pre: true, target: () => "#pinSeg", next: true, text: () => "The trick is the <b>pinhole</b>. It sits where light from the focal plane comes to a point, so that light passes, while light from above and below arrives spread out and is blocked. Its size is in <b>Airy units</b>; 1 AU is the usual balance of sharpness and brightness." },
-    { stage: 0, pre: true, target: () => "#zRead", next: true, text: () => "So out-of-focus layers here don't blur, they <b>go dark</b>. You find each labelled layer by its depth, shown on the <b>Z readout</b>." },
-    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200,
-      text: () => (isPhone() ? "Drag the <b>Coarse</b> strip right" : "Spin the <b>outer ring</b> (or hold Shift + ↑)") + " to bring the lens down until rings of cells appear." },
-    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7,
-      text: () => "Target: the <b>nuclei layer</b>, stained with DAPI and excited by the <b>405 nm laser</b>. " + (isPhone() ? "Use the <b>Fine</b> strip" : "Use fine focus") + " until the blue nuclei are at their brightest. Brightest is in focus here." },
+    L(0, "The confocal microscope", "Widefield lights the whole sample, so light from every depth reaches you and thick samples drown in haze. A confocal focuses a <b>laser to one spot</b> and rejects any light that didn't come from that spot's plane.", { light: true, links: ["confocal"] }),
+    L(0, "Point by point", "Two <b>scanning mirrors</b> sweep the spot across the sample, line by line. At each point a <b>detector</b>, usually a photomultiplier, counts the glow, and the computer builds the image pixel by pixel. You watch it on a screen.", { parts: ["galvo", "detector", "scanhead"], light: true, links: ["confocal"] }),
+    L(0, "Lasers and labels", "Each dye has its own laser line: <b>405 nm</b> for DAPI, <b>488 nm</b> for GFP, <b>561 nm</b> for red dyes. A laser is a single pure colour, so no excitation filter is needed. When dyes overlap, labs scan them <b>one at a time</b> so one channel doesn't bleed into another.", { parts: ["lasers", "fiber"], light: true, links: ["fluorescence", "gfp", "lysotracker"] }),
+    L(0, "The pinhole", "Light from the focal plane comes back to a sharp point, exactly at a tiny <b>pinhole</b>, and passes. Light from above or below arrives as a wide blur and is mostly blocked. That's <b>optical sectioning</b>: a thin slice of a thick sample, without cutting it.", { visual: "diag:pinhole", links: ["pinhole"] }),
+    L(0, "Airy units", "Pinhole size is measured in <b>Airy units</b>. 1 AU matches the bright central disc of the focused spot's image. Smaller barely sharpens the slice but throws light away; bigger is brighter but thicker. <b>1 AU</b> is the usual setting. Drag the slider.", { visual: "diag:pinhole", links: ["pinhole"] }),
+    L(0, "Today: an organoid", "A tiny 3D tissue grown from stem cells: a <b>hollow ball of epithelial cells</b>, tens to hundreds of microns thick. Each optical section through it is a ring. You'll find three labelled layers at three depths.", { visual: "diag:section", links: ["organoid", "zstack"] }),
+    { stage: 0, pre: true, kind: "tour", target: () => "#zRead", next: true, text: () => "Out-of-focus layers here don't blur, they <b>go dark</b>. The <b>Z readout</b> shows your depth." },
+    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200, text: () => `${coarseHow()} to bring the lens down until rings of cells appear.` },
+    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7, text: () => `Target: the <b>nuclei layer</b> (DAPI, 405 nm). ${fineHow()} until it's at its brightest: brightest is in focus here.` },
     { stage: 0, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus." },
     { stage: 0, post: true, target: () => "#nextBtn", text: () => "Next, <b>40x</b>, and a different layer." },
-    // 40x: membrane-GFP, pinhole experiment
-    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Target: the <b>membrane-GFP layer</b>, a few microns away. These cells were engineered to make GFP fused to a membrane protein, so the cell outlines glow; the <b>488 nm laser</b> excites it. Fine focus through Z: the nuclei fade as the outlines appear." },
-    { stage: 1, pre: true, target: () => "#pinSeg", done: () => G.pinhole === 2, text: () => "Try an experiment. Open the pinhole to <b>2 AU</b> (or press P) and watch: the image gets brighter, but the section gets thicker, so neighbouring layers bleed in." },
-    { stage: 1, pre: true, target: () => "#pinSeg", done: () => G.pinhole === 1, text: () => "That's the trade-off. People open the pinhole for dim samples, and keep it near 1 AU when the slice has to be thin. Set it back to <b>1 AU</b> before you lock." },
+    L(1, "Membrane-GFP", "Green fluorescent protein comes from the jellyfish <i>Aequorea victoria</i>. These cells were engineered to make GFP <b>fused to a membrane protein</b>, so every cell outline glows, with no staining at all. The 488 nm laser excites it.", { visual: "diag:gfp", links: ["gfp"] }),
+    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Find the <b>membrane-GFP layer</b>, a few microns away. Fine focus through Z: the nuclei fade as the outlines appear." },
+    { stage: 1, pre: true, target: () => "#pinSeg", done: () => G.pinhole === 2, text: () => "Experiment: open the pinhole to <b>2 AU</b> (P). Brighter, but a thicker slice lets neighbouring layers bleed in." },
+    { stage: 1, pre: true, target: () => "#pinSeg", done: () => G.pinhole === 1, text: () => "That's the trade-off. Back to <b>1 AU</b> before you lock." },
     { stage: 1, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Touch up focus if it drifted, then lock." },
     { stage: 1, post: true, target: () => "#nextBtn", text: () => "Last: swing in the <b>63x oil</b> lens." },
-    // 63x: lysosomes
-    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "63x is an oil lens (NA 1.40). Oil lets it gather the widest cone of light, which also makes the optical section thinnest. <b>Add oil</b>." },
-    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Target: the <b>lysosome layer</b>, deepest of the three. <b>LysoTracker Red</b> is a dye that collects in acidic compartments; the <b>561 nm laser</b> excites it. The section here is about half a micron, so tiny fine turns." },
+    L(2, "LysoTracker", "A dye on a <b>weak base</b>. Uncharged, it slips through membranes; inside acidic <b>lysosomes</b> (pH ≈ 4.5–5) it picks up a proton, becomes charged and is trapped. So it piles up in lysosomes and lights them in living cells. The 561 nm laser excites it.", { visual: "diag:lyso", links: ["lysotracker"] }),
+    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "<b>Add oil</b> (O). NA 1.40 also gives the thinnest optical section." },
+    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Find the <b>lysosome layer</b>, the deepest. The section is about half a micron: tiny fine turns." },
     { stage: 2, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus and see how you did." },
-    { stage: 2, post: true, target: () => "#nextBtn", text: () => "Round done. In the lab you'd now record a <b>z-stack</b>: one section every few hundred nanometres through the whole organoid, then rebuild it in 3D on the computer." },
+    L(2, "The z-stack", "In the lab you'd now record a <b>z-stack</b>: a section every few hundred nanometres through the whole organoid, then rebuild it in 3D or project it into one image. Drag through the depths.", { post: true, pre: false, visual: "diag:section", links: ["zstack", "confocal"] }),
+    { stage: 2, post: true, target: () => "#nextBtn", text: () => "See your results." },
   ];
   const STEP_SETS = { bright: LIGHT_STEPS, fluor: FLUOR_STEPS, confocal: CONF_STEPS, sem: SEM_STEPS };
   const FINISH = {
-    bright: "That's the routine: <b>coarse at 10x</b>, fine above it, <b>oil before 100x</b>. Try today's slide next, or switch microscopes on the title screen.",
-    fluor: "That's the routine: <b>focus on DAPI first</b>, one cube per label, <b>shutter closed</b> whenever you're not looking, oil before 100x. Try today's slide next.",
-    confocal: "That's the routine: <b>pinhole at 1 AU</b>, find each layer by depth, oil before 63x, then stack the sections. Try today's slide next.",
+    bright: "That's the routine: <b>coarse at 10x</b>, fine above it, <b>oil before 100x</b>. Try today's slide, or open the <b>guide</b> for more.",
+    fluor: "That's the routine: <b>focus on DAPI first</b>, one cube per label, <b>shutter closed</b> when you're not looking, oil before 100x.",
+    confocal: "That's the routine: <b>pinhole at 1 AU</b>, find each layer by depth, oil before 63x, then stack the sections.",
     sem: "That's the routine: <b>pump, pick the voltage, beam on</b>, then focus, stigmate and set contrast before each photo.",
   };
-  let active = false, i = 0, shownIdx = -1, curTarget = null, finished = false, steps = LIGHT_STEPS;
+  const KICK = { bright: "Brightfield", fluor: "Fluorescence", confocal: "Confocal", sem: "SEM" };
+  let active = false, i = 0, shownIdx = -1, curTarget = null, finished = false, steps = LIGHT_STEPS, mode = "bright", first = true;
   const coach = $("coach");
   function clearTarget() { if (curTarget) curTarget.classList.remove("coach-target"); curTarget = null; }
   function place() {
@@ -4805,7 +6178,6 @@ const TUT = (() => {
     const gs = $("gScope"), gr = gs && gs.getBoundingClientRect(), art = $("scopeArt");
     if (!el) { left = innerWidth - w - 24; top = 96; }
     else if (el.closest("#dock") && gr && gr.width && gr.right < el.getBoundingClientRect().left) {
-      // controls in the dock: park the coach over the side-view panel, so the eyepiece stays in view
       left = gr.left + (gr.width - w) / 2; top = Math.max(gr.top + 12, art.getBoundingClientRect().top);
     }
     else {
@@ -4817,11 +6189,15 @@ const TUT = (() => {
     coach.style.left = clamp(left, 12, innerWidth - w - 12) + "px";
     coach.style.top = clamp(top, 12, innerHeight - h - 12) + "px";
   }
-  function render() {
-    const s = steps[i];
-    if (!s) { stop(); return; }
-    shownIdx = i;
-    $("coachStep").textContent = `Step ${i + 1} / ${steps.length}`;
+  const lessonCount = () => steps.length;
+  function info() {
+    const s = steps[i], prev = steps[i - 1];
+    return { n: i + 1, total: lessonCount(), mode, kicker: `${KICK[mode]} · ${OBJ[s.stage] ? (OBJ[s.stage].label || OBJ[s.stage].mag + "x") : ""}`,
+      canBack: !!(prev && prev.lesson && prev.stage === s.stage && !!prev.post === !!s.post), last: !steps[i + 1] };
+  }
+  function showCard(s) {
+    $("coachStep").textContent = `${s.kind === "tour" ? "Look" : s.post ? "Next" : "Your turn"} · ${i + 1} / ${steps.length}`;
+    coach.dataset.kind = s.kind || (s.post ? "post" : "task");
     $("coachText").innerHTML = s.text();
     $("coachNext").textContent = "Next";
     $("coachNext").parentElement.hidden = !s.next;
@@ -4829,35 +6205,72 @@ const TUT = (() => {
     const sel = s.target && s.target();
     curTarget = sel ? document.querySelector(sel) : null;
     if (curTarget) { curTarget.classList.add("coach-target"); if (isPhone()) curTarget.scrollIntoView({ block: "center", behavior: prefersReduced() ? "auto" : "smooth" }); }
-    coach.hidden = false; coach.style.animation = "none"; void coach.offsetWidth; coach.style.animation = "";
+    coach.hidden = false;
     if (isPhone()) { coach.style.left = "12px"; coach.style.top = "max(10px, env(safe-area-inset-top, 0px))"; }
-    sfx("move", { i: 3 });
+    place();
+  }
+  function render() {
+    const s = steps[i];
+    if (!s) { stop(); return; }
+    shownIdx = i;
+    if (s.lesson) { clearTarget(); LESSON.present(s, info(), { instant: first }); first = false; return; }
+    first = false;
+    if (LESSON.isOpen()) LESSON.dismiss(() => { showCard(s); });
+    else { showCard(s); coach.style.animation = "none"; void coach.offsetWidth; coach.style.animation = ""; sfx("move", { i: 3 }); }
     requestAnimationFrame(place);
   }
-  function start(on, mode) { stop(); if (!on) return; steps = STEP_SETS[mode] || LIGHT_STEPS; active = true; i = 0; shownIdx = -1; finished = false; }
-  function stop() { active = false; clearTarget(); coach.hidden = true; }
+  function start(on, m) {
+    stop(); if (!on) return;
+    mode = m || "bright"; steps = STEP_SETS[mode] || LIGHT_STEPS; active = true; i = 0; shownIdx = -1; finished = false; first = true;
+    tick(); // the first lesson is up before the iris opens
+  }
+  function stop() { active = false; clearTarget(); coach.hidden = true; LESSON.hideNow(); }
+  function waitingFor(s) {
+    const judged = G.mode === "sem" ? semWs.classList.contains("judged") : gameGrid.classList.contains("judged");
+    if (s.post) return !judged || !$("slam").hidden;
+    if (s.lesson) return G.stage > 0 && !G.ready && !G.locked;
+    if (s.setup) return G.paused || busy;
+    return (!G.ready && !G.locked) || G.paused;
+  }
   function tick() {
     if (!active || !G || finished) { place(); return; }
     let s = steps[i];
-    while (s && (s.stage < G.stage || ((s.pre || s.setup) && s.stage === G.stage && G.locked) || (s.setup && G.ready))) { i++; s = steps[i]; }
+    while (s && (s.stage < G.stage || ((s.pre || s.setup) && !s.post && s.stage === G.stage && G.locked) || (s.setup && G.ready))) { i++; s = steps[i]; }
     if (!s) { stop(); return; }
-    const judged = G.mode === "sem" ? semWs.classList.contains("judged") : gameGrid.classList.contains("judged");
-    const waiting = s.post ? !judged || !$("slam").hidden : s.setup ? G.paused || busy : (!G.ready && !G.locked) || G.paused;
-    if (waiting) { if (!coach.hidden) { coach.hidden = true; clearTarget(); shownIdx = -1; } return; }
+    if (waitingFor(s)) {
+      if (!coach.hidden) { coach.hidden = true; clearTarget(); shownIdx = -1; }
+      if (LESSON.isOpen() && !G.paused && !pauseOpen && !s.lesson) { LESSON.dismiss(); shownIdx = -1; }
+      return;
+    }
     if (s.done && s.done()) { i++; return; }
-    if (shownIdx !== i || coach.hidden) render();
+    if (shownIdx !== i || (s.lesson ? !LESSON.isOpen() : coach.hidden && !LESSON.isOpen())) render();
     place();
   }
+  function advance() {
+    if (!active) return;
+    i++; shownIdx = -1;
+    sfx("confirm");
+    const s = steps[i];
+    if (!s) { if (LESSON.isOpen()) LESSON.dismiss(); stop(); return; }
+    if (waitingFor(s) && LESSON.isOpen()) { LESSON.dismiss(); return; }
+    tick();
+  }
+  LESSON.on({
+    next: advance,
+    back: () => { const s = steps[i], p = steps[i - 1]; if (p && p.lesson && p.stage === s.stage) { i--; shownIdx = -1; sfx("back"); render(); } },
+    skip: () => { stop(); finished = true; sfx("back"); },
+  });
   function finishAt() {
     if (!active) return;
-    finished = true; clearTarget();
+    finished = true; clearTarget(); LESSON.hideNow();
     $("coachStep").textContent = "All done";
+    coach.dataset.kind = "done";
     $("coachText").innerHTML = FINISH[G ? G.mode : "bright"] || FINISH.bright;
     $("coachNext").parentElement.hidden = false; $("coachNext").textContent = "Got it";
     coach.hidden = false;
     requestAnimationFrame(() => { if (!isPhone()) { coach.style.left = (innerWidth - coach.offsetWidth - 24) + "px"; coach.style.top = "96px"; } });
   }
-  $("coachNext").addEventListener("click", () => { if (finished) { stop(); return; } i++; shownIdx = -1; });
+  $("coachNext").addEventListener("click", () => { if (finished) { stop(); return; } i++; shownIdx = -1; tick(); });
   $("coachSkip").addEventListener("click", () => { stop(); finished = true; });
   window.addEventListener("resize", place);
   window.addEventListener("scroll", place, { passive: true });
@@ -5171,6 +6584,7 @@ function pauseCtx(act) {
   const touch = isPhone() || window.matchMedia("(hover: none)").matches;
   const sem = G.mode === "sem";
   const html = {
+    guide: `<h3>Microscopy guide</h3><p>How the ${MODES[G.mode].name.toLowerCase()} microscope works, its parts, and the dyes and tricks behind this slide. The clock stays stopped while you read.</p>`,
     resume: `<h3>Paused</h3><p>${MODES[G.mode].name} · ${escapeHtml($("slideName").textContent)}</p><dl><dt>${sem ? "Field" : "Objective"}</dt><dd>${sem ? `${fmtMag(o.mag)} · ${o.sub}` : `${o.mag}x · ${o.sub}`}</dd><dt>Round</dt><dd>${G.stage + 1} of 3</dd><dt>Clock</dt><dd>${G.timed ? (sem && !G.ready && !G.s.started ? "Starts when the beam comes on" : `${Math.ceil(rem)} s left, stopped while paused`) : "Timeless"}</dd><dt>Score so far</dt><dd>${sofar} / 3000</dd></dl>`,
     restart: sem ? `<h3>Restart stub</h3><p>Vent, reload this same stub and start again from the first field. Your score so far is dropped.</p>` : `<h3>Restart slide</h3><p>Start this same slide again from 10x. Your score so far is dropped.</p>`,
     controls: sem ? (touch
@@ -5192,6 +6606,7 @@ const pauseMenu = makeMenu($("pauseMenu"), {
     if (act === "resume") closePause();
     else if (act === "restart") { closePause(true); TUT.stop(); startGame({ daily: G.daily, tut: G.tut, seed: G.seed, mode: G.mode }); }
     else if (act === "controls") pauseCtx("controls");
+    else if (act === "guide") GUIDE_UI.open(SCOPE_PAGE[G.mode] || null, () => pauseMenu.items[pauseMenu.sel].focus({ preventScroll: true }));
     else if (act === "sound") { toggleSound(); pauseCtx("sound"); }
     else if (act === "music") { toggleMusic(); pauseCtx("music"); }
     else if (act === "quit") { closePause(true); quitToTitle(); }
@@ -5296,6 +6711,7 @@ $("copyBtn").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(text); $("copyBtn").textContent = "Copied"; sfx("confirm"); }
   catch (e) { $("shareText").classList.add("show"); const r = document.createRange(); r.selectNodeContents($("shareText")); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); $("copyBtn").textContent = "Selected, press Ctrl+C"; }
 });
+$("learnBtn").addEventListener("click", () => { sfx("confirm"); GUIDE_UI.open(SCOPE_PAGE[G ? G.mode : homeMode] || null); });
 $("againBtn").addEventListener("click", () => { sfx("confirm"); TUT.stop(); const m = G ? G.mode : homeMode; startGame({ daily: false, mode: m }); });
 $("homeBtn").addEventListener("click", () => { sfx("back"); quitToTitle(); });
 
@@ -5505,9 +6921,11 @@ $("cardCopy").addEventListener("click", () => {
 document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (!modal.hidden) { if (e.key === "Escape") { e.preventDefault(); closeModal(); } return; }
+  if (GUIDE_UI.isOpen()) { GUIDE_UI.key(e); return; }
   if (busy) { if (e.key === "Enter" && slamSkip) slamSkip(); return; }
   if (openPanelId) { if (e.key === "Escape" || e.key === "Backspace") { e.preventDefault(); closePanel(); } return; }
   if (pauseOpen) { if (e.key === "Escape") { e.preventDefault(); closePause(); return; } pauseMenu.key(e); return; }
+  if (current === "game" && LESSON.isOpen()) { LESSON.key(e); return; }
   if (current === "title") {
     if (titleMenu.key(e)) return;
     const k = e.key.toLowerCase();
@@ -5575,7 +6993,7 @@ function loop(now) {
         }
         if (rem <= 0) { sfx("timeup"); lock(true); }
       } else if (!G.timed) $("timer").classList.remove("low");
-      if (G.mode === "fluor" && G.ready && !G.locked && G.shutter) {
+      if (G.mode === "fluor" && G.ready && !G.locked && G.shutter && !LESSON.isOpen()) {
         G.exposure[G.k] += dt; G.signal = Math.exp(-BLEACH[G.k] * G.exposure[G.k]);
         if (Math.abs(G.signal - G.signalDrawn) > 0.012) G.dirty = true;
       }
@@ -6410,7 +7828,7 @@ function semNaFig(m) {
 root.dataset.mode = homeMode;
 document.body.dataset.screen = "title";
 $("tWord").querySelector("span").textContent = MODE_WORD[homeMode];
-syncChips();
+syncChips(); syncModeLearn();
 buildHero();
 function introTitle() {
   requestAnimationFrame(() => { syncModeTabs(false); titleMenu.quiet = true; titleMenu.select(0); titleMenu.quiet = false; titleMenu.enter(); });
@@ -6443,7 +7861,7 @@ renderNotes(); renderCredits();
 loadPlates(renderCredits);
 requestAnimationFrame(loop);
 /* test hook for local checks only: inert unless the page is opened with #pftest */
-if (location.hash === "#pftest") window.__pf = { get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
+if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
   renderSpec(mode, seed, k) { const m = MODES[mode], sp = genSpecimen(seed, mode, mode === "bright" ? ORGS[seed % ORGS.length].id : null), o = m.objs[k], cv = newCanvas(); renderField(cv.getContext("2d"), sp, buildLayers(sp, o, k === 2), { o, e: effective(mode, k, true, 1), d: -sp.targets[k].z, cube: "all", shutter: true, signal: 1 }); return { url: cv.toDataURL("image/jpeg", 0.85), kind: sp.plate || sp.orgId || sp.kind }; },
   start(mode, seed) { startGame({ seed, mode }); },
   drive, log: [], grade(off) { const b = bestPlane(), e = eff(); return { acc: focusAccuracy(b.d + off), old: Math.exp(-Math.LN2 * (2 * (b.d + off + tgt().z) / e.dof) ** 2), best: b.d, q: b.q, dof: e.dof }; },
