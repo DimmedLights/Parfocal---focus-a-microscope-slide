@@ -1,6 +1,6 @@
-# Perfocal
+# Parfocal
 
-Play it at **https://perfocal.vercel.app**
+Play it at **https://parfocal.vercel.app**
 
 A daily microscope game. Find the specimen at low power, swing in the next objective, add oil for the last one, and lock focus as close to the right plane as you can. Scoring is measured against each objective's real depth of field. A fourth microscope, a scanning electron microscope, runs at its own workstation.
 
