@@ -2317,10 +2317,131 @@ function genHT29(seed) {
 }
 function clamp01(v, hi) { return Math.max(0, Math.min(hi, Math.round(v))); }
 
-function genSpecimen(seed, mode, orgId) {
+function genSpecimen(seed, mode, orgId, live) {
+  if (live && LIVE[mode] && makeRng(seed, "live?")() < (mode === "bright" ? 0.5 : 0.75)) return genLive(seed, mode);
   if (mode === "fluor") return (orgId !== "hela" && makeRng(seed, "kind")() < 0.5 && plateImgs.ht29) ? genHT29(seed) : genHela(seed);
   if (mode === "confocal") return genOrganoid(seed);
   return genBright(seed, orgId);
+}
+
+/* ---------- Live footage: real time-lapse and real-time clips, played into the field of view ----------
+   Each clip is a square loop. Blur, confocal dimming, bleaching and the filter cube are applied live:
+   under a cube you see only the channel that cube passes, so a red label goes dark under FITC. */
+const CLIPS = {
+  h2b_hela: {"file": "videos/h2b-hela.mp4", "credit": "HeLa cells expressing H2B-GFP, live time-lapse. Alawi F et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Dyskerin-Localizes-to-the-Mitotic-Apparatus-and-Is-Required-for-Orderly-Mitosis-in-Human-Cells-pone.0080805.s003.ogv", "gray": false, "ch": "fitc"},
+  mito_mef: {"file": "videos/mito-mef.mp4", "credit": "Mitochondria fusing and dividing in a mouse embryonic fibroblast, matrix-targeted DsRed. Böhler P et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Mitochondrial_dynamics_in_a_MEF_cell.webm", "gray": false, "ch": "tritc"},
+  eb1_u2os: {"file": "videos/eb1-u2os.mp4", "credit": "EB1-GFP comets in a U2OS cell. O'Rourke B et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cep192-Controls-the-Balance-of-Centrosome-and-Non-Centrosomal-Microtubules-during-Interphase-pone.0101001.s008.ogv", "gray": true, "ch": "fitc", "boost": 1.25},
+  h2b_field: {"file": "videos/h2b-field.mp4", "credit": "Field of H2B-GFP cells entering mitosis. Díaz-Martínez L et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cohesin-Is-Dispensable-for-Centromere-Cohesion-in-Human-Cells-pone.0000318.s006.ogv", "gray": true, "ch": "fitc", "boost": 1.9},
+  er_mito: {"file": "videos/er-mito.mp4", "credit": "Mitochondria and ER in a live COS-7 cell. Bottanelli F et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Two-colour-live-cell-nanoscale-imaging-of-intracellular-targets-ncomms10778-s2.ogv", "gray": false, "ch": "tritc", "chs": ["fitc", "tritc"]},
+  virus: {"file": "videos/virus.mp4", "credit": "Prototype foamy virus particles (Env-mCherry channel) entering HeLa cells. Stirnnagel K et al., via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Differential-pH-dependent-cellular-uptake-pathways-among-foamy-viruses-elucidated-using-dual-1742-4690-9-71-S3.ogv", "gray": true, "ch": "tritc", "boost": 1.2},
+  eb1_3t3b: {"file": "videos/eb1-3t3b.mp4", "credit": "EB1-GFP in NIH 3T3 fibroblasts, confocal time-lapse. Bozonhiggsa, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:MAX_3T3_23Mar2015_EB1-GFP-06.ogv", "gray": true, "ch": "fitc", "boost": 2.2},
+  ecoli: {"file": "videos/ecoli.mp4", "credit": "GFP-expressing Escherichia coli swimming. Cuenca M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:D-Alanine-Controlled-Transient-Intestinal-Mono-Colonization-with-Non-Laboratory-Adapted-Commensal-pone.0151872.s006.ogv", "gray": false, "ch": "fitc", "boost": 1.3},
+  zf_notochord: {"file": "videos/zf-notochord.mp4", "credit": "Zebrafish notochord cells intercalating, membrane RFP, confocal time-lapse. Edeling M et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Structural-Requirements-for-PACSINSyndapin-Operation-during-Zebrafish-Embryonic-Notochord-pone.0008150.s008.ogv", "gray": true, "ch": "red", "boost": 1.5},
+  fly_furrow: {"file": "videos/fly-furrow.mp4", "credit": "Ventral furrow forming in a Drosophila embryo, Spider-GFP membranes, confocal. Spahn P et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, inverted, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-Vertex-Model-of-Drosophila-Ventral-Furrow-Formation-pone.0075051.s002.ogv", "gray": true, "ch": "gfp"},
+  paramecium: {"file": "videos/paramecium.mp4", "credit": "Paramecium swimming. Jon Houseman, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Para1004.webm", "gray": false},
+  egeria: {"file": "videos/egeria.mp4", "zoom": 1, "credit": "Cytoplasmic streaming in Egeria leaf cells. Berkshire Community College Bioscience Image Library, via Wikimedia Commons, CC0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Video-_cytoplasmic_streaming_in_Egeria_densa.webm", "gray": false},
+  tradescantia: {"file": "videos/tradescantia.mp4", "zoom": 1, "credit": "Cytoplasmic streaming in Tradescantia stamen hair cells. Heiti Paves, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Movement_of_organelles_in_Tradescantia_stamen_hair_cells.webm", "gray": false},
+  bsubtilis: {"file": "videos/bsubtilis.mp4", "zoom": 0.95, "credit": "Bacillus subtilis cells swimming in water. Kobayashi K et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Genetic-Analysis-of-Collective-Motility-of-Paenibacillus-sp.-NAIST15-1-pgen.1006387.s017.ogv", "gray": false},
+  organoid: {"file": "videos/organoid.mp4", "credit": "Fallopian tube organoids forming from single cells in Matrigel, time-lapse. Kessler M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Notch-and-Wnt-pathways-regulate-stemness-and-differentiation-in-human-fallopian-tube-organoids-ncomms9989-s3.ogv", "gray": false}
+};
+const MASK = { dapi: "#0000ff", fitc: "#00ff00", tritc: "#ff0000" };
+const VIDS = {};
+function clipVideo(key) {
+  if (VIDS[key]) return VIDS[key];
+  const v = document.createElement("video");
+  v.muted = true; v.loop = true; v.playsInline = true; v.preload = "auto";
+  v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.crossOrigin = "anonymous";
+  v.src = CLIPS[key].file;
+  VIDS[key] = v;
+  return v;
+}
+function playClips(keys) { for (const [k, v] of Object.entries(VIDS)) if (!keys.includes(k)) v.pause(); for (const k of keys) { const p = clipVideo(k).play(); if (p && p.catch) p.catch(() => {}); } }
+function stopClips() { for (const v of Object.values(VIDS)) v.pause(); }
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopClips();
+  else if (G && G.sp && G.sp.live) playClips([G.sp.targets[G.k].clip]);
+});
+
+const LIVE = {
+  fluor: [
+    { id: "live-cells", name: "Live human and mouse cells", stain: "Live-cell fluorescence · fluorescent proteins",
+      stages: [{ clip: "h2b_hela", label: "nuclei", tag: "H2B-GFP", ch: "fitc" }, { clip: "mito_mef", label: "mitochondria", tag: "matrix-targeted DsRed", ch: "tritc" }, { clip: "eb1_u2os", label: "growing microtubule ends", tag: "EB1-GFP", ch: "fitc" }],
+      facts: [["10x", "HeLa · H2B-GFP chromatin"], ["40x", "MEF · mitochondria, DsRed"], ["100x", "U2OS · EB1-GFP comets"], ["Labels", "Genetically encoded, no fixation"]],
+      why: "Nothing here is stained after death. The cells make their own fluorescent proteins: GFP fused to histone H2B marks chromatin, a red protein sent to the mitochondrial matrix shows mitochondria dividing and fusing, and EB1-GFP rides only the growing tips of microtubules, so each comet is one microtubule getting longer." },
+    { id: "live-division", name: "Dividing cells, ER and virus entry", stain: "Live-cell fluorescence · fluorescent proteins and tags",
+      stages: [{ clip: "h2b_field", label: "chromosomes", tag: "H2B-GFP", ch: "fitc" }, { clip: "er_mito", label: "ER network", tag: "red channel", ch: "tritc" }, { clip: "virus", label: "virus particles", tag: "Env-mCherry", ch: "tritc" }],
+      facts: [["10x", "H2B-GFP cells entering mitosis"], ["40x", "COS-7 · mitochondria (green), ER (magenta)"], ["100x", "Foamy virus particles entering HeLa cells"], ["Virions", "~100 nm: seen as diffraction-limited dots"]],
+      why: "A virus particle is far smaller than the ~200 nm resolution limit of light, so you never see its shape, only a bright diffraction-limited spot where a labelled particle sits. Tagging a viral envelope protein with mCherry lets you follow single particles as the cell takes them up and carries them inward." },
+    { id: "live-motion", name: "Microtubules and swimming bacteria", stain: "Live-cell fluorescence · GFP",
+      stages: [{ clip: "h2b_field", label: "chromosomes", tag: "H2B-GFP", ch: "fitc" }, { clip: "eb1_3t3b", label: "growing microtubule ends", tag: "EB1-GFP", ch: "fitc" }, { clip: "ecoli", label: "swimming bacteria", tag: "cytoplasmic GFP", ch: "fitc" }],
+      facts: [["10x", "H2B-GFP cells"], ["40x", "NIH 3T3 · EB1-GFP, false-colour LUT"], ["100x", "E. coli expressing GFP, swimming"], ["Speed", "Microtubules grow at roughly 10–20 µm per minute"]],
+      why: "Microtubules are dynamic: they grow, then suddenly shrink back (catastrophe) and regrow, a behaviour called dynamic instability. EB1 binds only the newly built tip, so the moving comets trace growth directly. The bacteria at 100x are alive too; GFP fills their cytoplasm, so each swimmer is a bright rod." },
+  ],
+  confocal: [
+    { id: "live-embryos", name: "Live embryos and a dividing cell", stain: "Live confocal · membrane and tip labels",
+      stages: [{ clip: "zf_notochord", label: "notochord membranes", tag: "mcRFP · 561 nm", ch: "red" }, { clip: "fly_furrow", label: "epithelial membranes", tag: "Spider-GFP · 488 nm", ch: "gfp" }, { clip: "eb1_3t3b", label: "growing microtubule ends", tag: "EB1-GFP · 488 nm", ch: "gfp" }],
+      facts: [["10x", "Zebrafish notochord, membrane RFP"], ["20x", "Fruit fly embryo, Spider-GFP"], ["63x", "NIH 3T3 · EB1-GFP"], ["Why confocal", "Clean sections deep inside living embryos"]],
+      why: "A whole embryo is thick, so widefield images would drown in out-of-focus glow. The confocal pinhole rejects that light, which is how you can watch cells inside a living zebrafish squeeze between each other to lengthen the notochord, or a fly embryo fold its ventral furrow during gastrulation." },
+    { id: "live-organelles", name: "Living tissue and organelles", stain: "Live confocal · fluorescent proteins and tags",
+      stages: [{ clip: "fly_furrow", label: "epithelial membranes", tag: "Spider-GFP · 488 nm", ch: "gfp" }, { clip: "er_mito", label: "mitochondria and ER", tag: "488 + 561 nm", ch: "gfp" }, { clip: "eb1_3t3b", label: "growing microtubule ends", tag: "EB1-GFP · 488 nm", ch: "gfp" }],
+      facts: [["10x", "Fruit fly embryo, Spider-GFP"], ["20x", "COS-7 · mitochondria and ER"], ["63x", "NIH 3T3 · EB1-GFP"], ["Two lasers", "Each label is excited and detected on its own line"]],
+      why: "Mitochondria and the endoplasmic reticulum touch constantly, and ER tubules mark where mitochondria will divide. Imaging both in one living cell needs two labels on separate laser lines, with the pinhole keeping each a thin optical section." },
+  ],
+  bright: [
+    { id: "wet-pond", name: "Wet mount: pond life and plant cells", stain: "Unstained wet mount · living",
+      stages: [{ clip: "paramecium", label: "Paramecium" }, { clip: "egeria", label: "streaming chloroplasts" }, { clip: "bsubtilis", label: "swimming bacteria" }],
+      facts: [["10x", "Paramecium in pond water"], ["40x", "Egeria leaf · cytoplasmic streaming"], ["100x", "Bacillus subtilis swimming"], ["Prep", "A drop under a coverslip, no stain"]],
+      why: "A wet mount keeps cells alive, so you see behaviour, not just shape. Paramecium beats thousands of cilia to swim and reverse; in Egeria leaf cells, myosin motors drag the chloroplasts around the cell in a loop (cyclosis); and Bacillus subtilis swims with flagella too thin to resolve, so only the bodies show." },
+    { id: "wet-plant", name: "Wet mount: organoids and stamen hairs", stain: "Unstained live culture and wet mount",
+      stages: [{ clip: "organoid", label: "organoids forming" }, { clip: "tradescantia", label: "cytoplasmic streaming" }, { clip: "bsubtilis", label: "swimming bacteria" }],
+      facts: [["10x", "Fallopian tube organoids in Matrigel, time-lapse"], ["40x", "Tradescantia stamen hair cells"], ["100x", "Bacillus subtilis swimming"], ["Contrast", "Unstained cells: close the condenser a little"]],
+      why: "Living cells are nearly transparent, so brightfield shows them mostly through small differences in refractive index. Single epithelial cells in a gel grow into hollow organoids over days, and in Tradescantia hair cells the cytoplasm streams along strands that cross the vacuole." },
+  ],
+};
+const LIVE_CROP = [1, 0.78, 0.6]; // each objective sees a smaller part of its clip, but never below its pixels
+
+function genLive(seed, mode) {
+  const R = makeRng(seed, "live"), set = LIVE[mode][R.int(0, LIVE[mode].length - 1)];
+  const z1 = R.range(0.9, 1.8), z2 = z1 + R.range(0.8, 1.6);
+  const zs = mode === "bright" ? [0, 0, 0] : [0, z1, z2];
+  return { kind: mode, live: set, video: set.stages.map(s => s.clip), dust: mode === "bright" ? genDust(seed) : [], bg: { c: [236, 234, 228], e: [206, 202, 194], haze: [150, 150, 150] },
+    info: { name: set.name, stain: set.stain, facts: set.facts, why: set.why, clips: set.stages.map(s => s.clip) },
+    targets: set.stages.map((s, i) => ({ z: zs[i], ch: s.ch, label: s.label, tag: s.tag, clip: s.clip })) };
+}
+function liveStage(sp, o) { const objs = MODES[sp.kind].objs, k = objs.indexOf(o); return k >= 0 ? k : o.mag <= 10 ? 0 : o.mag <= 40 ? 1 : 2; }
+function buildLiveLayers(sp, o) {
+  const k = liveStage(sp, o), t = sp.targets[k], cv = newCanvas();
+  const L = { live: true, n: 1, clip: t.clip, crop: CLIPS[t.clip].zoom || LIVE_CROP[k], ch: t.ch || "all", z: t.z, w: CLIPS[t.clip].gain || 1, canvas: cv, ctx: cv.getContext("2d"), drawnAt: -1, cube: null };
+  if (G && G.sp === sp) playClips([t.clip]);
+  paintLive(L, "all", sp.kind);
+  const layers = [L];
+  if (sp.kind === "bright") {
+    const dust = { z: DUST_Z, canvas: newCanvas(), dust: true, n: 0 }, dctx = prepCtx(dust.canvas, o.s);
+    for (const d of sp.dust) drawDust(dctx, d);
+    layers.push(dust);
+  }
+  return layers;
+}
+/* Paint the newest video frame into the live layer. cube: the filter cube in use, or "all". Returns true if it changed. */
+function paintLive(L, cube, mode) {
+  const c = CLIPS[L.clip], v = VIDS[L.clip];
+  if (!v || v.readyState < 2) return false;
+  const t = v.currentTime;
+  if (t === L.drawnAt && cube === L.cube) return false;
+  L.drawnAt = t; L.cube = cube;
+  const x = L.ctx, vw = v.videoWidth, sw = vw * L.crop, so = (vw - sw) / 2;
+  x.globalCompositeOperation = "source-over"; x.filter = "none";
+  if (mode === "bright") { x.drawImage(v, so, so, sw, sw, 0, 0, SIZE, SIZE); return true; }
+  x.fillStyle = "#000"; x.fillRect(0, 0, SIZE, SIZE);
+  const shows = cube === "all" || (c.chs ? c.chs.includes(cube) : cube === c.ch);
+  if (!shows) return true;
+  const gain = (c.boost || 1) * (mode === "confocal" ? 1.6 : 1); // a thin optical section collects less light
+  if (FILTER_OK && (c.gray || gain !== 1)) x.filter = `${c.gray ? "grayscale(1) " : ""}brightness(${gain})`;
+  x.drawImage(v, so, so, sw, sw, 0, 0, SIZE, SIZE);
+  x.filter = "none";
+  const tint = c.gray ? rgba(CH[cube === "all" || mode !== "fluor" ? c.ch : cube].rgb, 1) : cube === "all" ? null : MASK[cube];
+  if (tint) { x.globalCompositeOperation = "multiply"; x.fillStyle = tint; x.fillRect(0, 0, SIZE, SIZE); x.globalCompositeOperation = "source-over"; }
+  return true;
 }
 
 /* ---------- Drawing ---------- */
@@ -2430,6 +2551,7 @@ function newCanvas() { const c = document.createElement("canvas"); c.width = SIZ
 function prepCtx(cv, s) { const ctx = cv.getContext("2d"); ctx.translate(SIZE / 2, SIZE / 2); ctx.scale(s, s); return ctx; }
 
 function buildLayers(sp, o, usePlate) {
+  if (sp.live) return buildLiveLayers(sp, o);
   if (sp.kind === "fluor") return buildFluorLayers(sp, o);
   if (sp.kind === "confocal") return buildConfocalLayers(sp, o);
   const s = o.s, viewR = SIZE / 2 / s + 6;
@@ -2595,7 +2717,7 @@ function renderField(ctx, sp, layers, v) {
     if (v.shutter !== false) {
       ctx.globalCompositeOperation = "lighter";
       for (const L of layers) {
-        if (v.cube !== "all" && L.ch !== v.cube) continue;
+        if (v.cube !== "all" && L.ch !== v.cube && !L.live) continue;
         const sig = sigmaPx(o, e, d + L.z);
         let a = L.w * (v.signal == null ? 1 : v.signal) * e.bright, use = sig;
         if (sig > 36) { a *= 36 / sig; use = 36; }
@@ -4070,9 +4192,9 @@ function show(v) {
   window.scrollTo(0, 0);
 }
 const GAME_STEPS = {
-  bright: ["Labelling the slide", "Heat-fixing the smear", "Staining", "Lowering the coverslip", "Centring the condenser", "Swinging in 10x"],
+  bright: ["Labelling the slide", "Preparing the sample", "Lowering the coverslip", "Centring the condenser", "Swinging in 10x"],
   fluor: ["Warming up the lamp", "Mounting the coverslip", "Checking the filter cubes", "Dimming the room lights", "Swinging in 10x"],
-  confocal: ["Warming up the lasers", "Aligning the pinhole", "Setting detector gain", "Clearing the organoid", "Swinging in 10x"],
+  confocal: ["Warming up the lasers", "Aligning the pinhole", "Setting detector gain", "Mounting the sample", "Swinging in 10x"],
   sem: ["Mounting the stub", "Checking the coating", "Loading the chamber", "Closing the door", "Starting the software"],
 };
 function circleFor(el, shrink = 0.9) {
@@ -4463,7 +4585,9 @@ function renderCredits() {
   const withPhoto = ORGS.filter(o => plateImgs[o.id]).length;
   let html = `<h3>Slides</h3>
     <p>Brightfield slides show one of ${ORGS.length} organisms, drawn in code from published cell size, shape, arrangement and stain colour: ${ORGS.map(o => `<i>${o.name}</i>`).join(", ")}.${withPhoto ? ` For ${withPhoto} of them, the 100x view is a real micrograph.` : ""}</p>
-    <p>Fluorescence slides are either drawn cultured cells with DNA, tubulin and actin labels, or a real three-channel field of HT29 cells. Confocal slides are drawn epithelial organoids with nuclear, membrane and lysosome labels.</p>`;
+    <p>Most fluorescence and confocal slides, and half of the brightfield ones, are real footage of living samples: cells, organelles, bacteria, embryos and virus particles, recorded in labs and shared openly. Blur, confocal sectioning, bleaching and the filter cubes are applied to the footage as you play. The rest are fixed and stained, as real slides often are: Gram smears, a three-channel field of HT29 cells, and drawn HeLa cells and organoids.</p>
+    <p>Live footage:</p><ul>${Object.values(CLIPS).map(c => `<li>${escapeHtml(c.credit)} <a href="${c.url}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
+    <p>Footage under CC BY-SA is shared under the same licence.</p>`;
   if (photos.length) {
     html += `<p>Photographs:</p><ul>` + photos.map(id => `<li>${escapeHtml(PLATES[id].credit)} <a href="${PLATES[id].url}" target="_blank" rel="noopener">Source</a></li>`).join("") + `</ul>`;
     if (photos.some(id => /BY-SA/.test(PLATES[id].credit))) html += `<p>The modified CC BY-SA photographs are shared under the same licence.</p>`;
@@ -4513,8 +4637,8 @@ function startGameNow({ daily, tut, seed: seedIn, mode }) {
   const seed = seedIn != null ? seedIn : tut ? hashString(mode === "bright" ? "parfocal-tutorial" : `parfocal-tutorial-${mode}`) : daily ? hashString(mode === "bright" ? "parfocal:" + key : `parfocal:${mode}:${key}`) : (Math.floor(Math.random() * 4294967295) >>> 0);
   const S = makeRng(seed, "setup");
   const org = mode === "bright" ? (tut ? orgById.saureus : ORGS[seed % ORGS.length]) : null;
-  const sp = genSpecimen(seed, mode, tut && mode === "fluor" ? "hela" : org && org.id);
-  const info = mode === "bright"
+  const sp = genSpecimen(seed, mode, tut && mode === "fluor" ? "hela" : org && org.id, !tut);
+  const info = sp.live ? sp.info : mode === "bright"
     ? { name: org.name, stain: org.stain, facts: [["Reaction", org.gram], ["Shape", org.shape], ["Arrangement", org.arr], ["Size", org.size]], why: org.why, plateId: org.id }
     : SPEC_INFO[sp.info || (mode === "fluor" ? "hela" : "organoid")];
   const p40 = (S.chance(0.5) ? 1 : -1) * S.range(0.7, 2.0);
@@ -4532,6 +4656,7 @@ function startGameNow({ daily, tut, seed: seedIn, mode }) {
     cube: "dapi", shutter: true, exposure: [0, 0, 0], signal: 1, signalDrawn: 1, pinhole: 1, lastNoise: 0, lastT: performance.now(),
   };
   G.zv = G.stageZ;
+  if (sp.live) { sp.video.forEach(clipVideo); playClips([sp.targets[0].clip]); } else stopClips();
   root.dataset.mode = mode;
   $("hudMode").textContent = MODES[mode].name;
   $("slideName").textContent = tut ? "Tutorial · timeless" : (G.daily ? `Daily · ${key}` : "Practice slide") + (G.timed ? " · timed" : " · timeless");
@@ -5699,7 +5824,7 @@ const GUIDE_PAGES = {
         <p>"Epi" means from above: the objective is both the condenser and the imaging lens. Because the emitted light is thousands of times weaker than the excitation, the filters must block the excitation almost perfectly. That's why the background is black.</p>`],
       ["In a real lab", `<ol><li><b>Grow cells</b> on coverslips, then <b>fix</b> them (often 4% paraformaldehyde).</li><li><b>Permeabilise</b> with a detergent such as Triton X-100, so antibodies can get inside.</li><li><b>Block</b> with serum or BSA to stop antibodies sticking everywhere.</li><li><b>Primary antibody</b> against your protein, wash, then a <b>fluorescent secondary</b>, wash.</li><li><b>Phalloidin</b> for actin and <b>DAPI</b> for nuclei, then mount in <b>antifade</b>.</li><li><b>Image</b>: focus on DAPI, then capture each channel with its own cube and exposure, and merge them in software.</li></ol>`],
       ["Strengths and limits", `<p><b>Specific and sensitive</b>: you can see one protein among thousands, and several at once in different colours. But light from above and below the focal plane also reaches the camera, so thick samples look hazy, and dyes <b>photobleach</b> under the lamp.</p>`],
-      ["In Parfocal", `<p>Fluorescence mode gives you cells with three labels. Each objective asks for a different target, so you pick the matching cube, close the shutter to save signal, and add oil at 100x.</p>`],
+      ["In Parfocal", `<p>Most fluorescence slides are real footage of living cells: chromatin, mitochondria, ER, growing microtubules, swimming bacteria and single virus particles, each lit by a fluorescent protein the cell makes itself. Under the wrong cube a label goes dark, exactly as on a real scope. Some slides are fixed and stained instead (DAPI, antibodies, phalloidin), because that is still how most lab images are made. Pick the matching cube, close the shutter to save signal, and add oil at 100x.</p>`],
     ], related: ["fluorescence", "filter-cube", "bleach", "dapi", "immuno", "phalloidin"] },
 
   confocal: { kind: "scope", mode: "confocal", title: "Confocal microscope", kicker: "Microscope · optical sections",
@@ -5709,7 +5834,7 @@ const GUIDE_PAGES = {
         <p>The emitted light travels back the same way, passes the dichroic and is focused onto a <b>pinhole</b>. Light from the focal plane converges exactly at the pinhole and passes. Light from above or below is out of focus there, spread into a wide disc, and mostly blocked. A <b>photomultiplier</b> measures what gets through, one pixel at a time, and the computer builds the image.</p>`],
       ["In a real lab", `<ol><li><b>Choose laser lines</b> that match your dyes, and the detector ranges for each emission.</li><li><b>Set the pinhole</b> to about 1 Airy unit.</li><li><b>Balance laser power and detector gain</b>: enough signal, no saturated pixels, as little light as possible.</li><li><b>Scan channels sequentially</b> if dyes overlap, so one doesn't bleed into another's channel.</li><li><b>Set the top and bottom</b> of the sample and record a <b>z-stack</b>, stepping about half the section thickness each time.</li><li><b>Reconstruct</b> in 3D, or make maximum-intensity projections.</li></ol>`],
       ["Strengths and limits", `<p><b>Sharp optical sections</b> of thick samples like tissues, organoids and embryos, with no physical slicing. But point scanning is slow, the lasers can bleach and damage live cells, and the instruments are expensive. Spinning-disk and light-sheet microscopes address speed and damage.</p>`],
-      ["In Parfocal", `<p>Confocal mode gives you a thick organoid with three labelled layers at different depths. Out-of-focus layers go dark instead of blurring, so you hunt each layer by depth. The pinhole setting trades brightness against slice thickness.</p>`],
+      ["In Parfocal", `<p>Most confocal slides are real recordings of living embryos and cells: a zebrafish notochord, a fruit fly embryo folding, organelles and growing microtubules. Others are a fixed, thick organoid with three labelled layers at different depths. Out-of-focus layers go dark instead of blurring, so you hunt each layer by depth. The pinhole setting trades brightness against slice thickness.</p>`],
     ], related: ["pinhole", "zstack", "organoid", "gfp", "lysotracker", "fluorescence"] },
 
   /* ---------------- optics ---------------- */
@@ -6650,7 +6775,7 @@ $("pause").addEventListener("click", (e) => { if (e.target === $("pause")) close
 function quitToTitle() {
   TUT.stop(); if (G && G.mode === "sem") { semHaltKnobs(); semPumpSound(false); }
   wipeTo({ reveal: () => {
-    G = null; OBJ = MODES.bright.objs; show("title"); titleMenu.enter(); heroPose(+titleMenu.items[titleMenu.sel].dataset.pose, true);
+    G = null; stopClips(); OBJ = MODES.bright.objs; show("title"); titleMenu.enter(); heroPose(+titleMenu.items[titleMenu.sel].dataset.pose, true);
     const wm = $("wordmark"); wm.classList.remove("focusing"); void wm.offsetWidth; if (!prefersReduced()) wm.classList.add("focusing");
     const s = titleMenu.items[titleMenu.sel]; if (s) $("titleCaption").textContent = captionFor(s.dataset.act);
   } });
@@ -6681,7 +6806,7 @@ function finishNow() {
   });
   const info = G.info;
   $("idCode").textContent = `PF · ${G.daily ? G.key : "PRACTICE"} · ${G.mode.toUpperCase()}`;
-  $("rOrg").innerHTML = G.mode === "bright" || (G.mode === "sem" && G.stub.kind === "staph") ? `<i>${info.name}</i>` : info.name;
+  $("rOrg").innerHTML = (G.mode === "bright" && !G.sp.live) || (G.mode === "sem" && G.stub.kind === "staph") ? `<i>${info.name}</i>` : info.name;
   $("rStain").textContent = info.stain;
   $("rFacts").innerHTML = info.facts.map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("");
   $("rWhy").textContent = info.why;
@@ -6690,7 +6815,7 @@ function finishNow() {
   if (!uniq.length) uniq.push(G.mode === "sem" ? "Clean technique: the right voltage for the stub, focus and stigmation at high magnification, and a full histogram." : G.mode === "fluor" ? "Clean technique: right cube for each label, shutter closed while thinking, oil before 100x." : G.mode === "confocal" ? "Clean technique: coarse only at 10x, a tight pinhole, and oil before 63x." : "Clean technique: coarse only at 10x, fine focus above it, oil before 100x.");
   uniq.forEach(t => { const li = document.createElement("li"); li.textContent = t; ls.appendChild(li); });
   const plate = info.plateId && plateImgs[info.plateId] ? PLATES[info.plateId] : null;
-  $("rCredit").innerHTML = G.mode === "sem" ? `Stub modelled in 3D from published sizes and rendered as a secondary-electron image.${G.info.lead || ""}` : plate ? `${G.mode === "bright" ? "100x plate" : "Photograph"}: ${escapeHtml(plate.credit)} <a href="${plate.url}" target="_blank" rel="noopener">Source</a>` : "Specimen drawn in code from published size, shape and labelling.";
+  $("rCredit").innerHTML = G.sp && G.sp.live ? "Live footage: " + [...new Set(G.sp.video)].map(k => `${escapeHtml(CLIPS[k].credit)} <a href="${CLIPS[k].url}" target="_blank" rel="noopener">Source</a>`).join(" · ") : G.mode === "sem" ? `Stub modelled in 3D from published sizes and rendered as a secondary-electron image.${G.info.lead || ""}` : plate ? `${G.mode === "bright" ? "100x plate" : "Photograph"}: ${escapeHtml(plate.credit)} <a href="${plate.url}" target="_blank" rel="noopener">Source</a>` : "Specimen drawn in code from published size, shape and labelling.";
   $("shareText").textContent = shareMessage().replace(/\n/g, " · ");
   $("rWhat").textContent = G.mode === "sem" ? "What was on the stub" : "What was on the slide";
   $("againBtn").textContent = G.mode === "sem" ? "Practice stub" : "Practice slide";
@@ -6866,7 +6991,7 @@ async function drawCard() {
   const fy = CARD_H - 154;
   c.strokeStyle = "rgba(255,240,220,0.14)"; c.lineWidth = 1.5; c.beginPath(); c.moveTo(M, fy); c.lineTo(CARD_W - M, fy); c.stroke();
   c.textAlign = "left"; c.fillStyle = cream;
-  const spec = G.info.name; fitText(c, spec, CARD_W - 2 * M - 300, 28, `${G.mode === "bright" || (G.mode === "sem" && G.stub.kind === "staph") ? "italic " : ""}600`, BODY); c.fillText(spec, M, fy + 52);
+  const spec = G.info.name; fitText(c, spec, CARD_W - 2 * M - 300, 28, `${(G.mode === "bright" && !G.sp.live) || (G.mode === "sem" && G.stub.kind === "staph") ? "italic " : ""}600`, BODY); c.fillText(spec, M, fy + 52);
   c.font = `500 20px ${MONO}`; c.fillStyle = muted; c.textAlign = "right";
   c.fillText("PARFOCAL.VERCEL.APP", CARD_W - M, fy + 50);
   c.textAlign = "left";
@@ -7018,6 +7143,7 @@ function loop(now) {
     if (G.zv !== G.stageZ) { G.zv = G.stageZ; G.dirty = true; }
     if (G.ready) checkOil();
     TUT.tick();
+    if (G.sp.live && !document.hidden) for (const L of G.layers) if (L.live && paintLive(L, G.mode === "fluor" ? G.cube : "all", G.mode)) G.dirty = true;
     if (G.dirty) {
       const v = { o, e: eff(), d: dv(), cube: G.cube, shutter: G.shutter, signal: G.signal, crashed: G.crashed, oilSmear: G.k === 1 && G.oilOn40 };
       renderField(sctx, G.sp, G.layers, v);
