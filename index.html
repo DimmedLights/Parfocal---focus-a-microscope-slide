@@ -1225,12 +1225,14 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .gd-cap b { font: 600 12px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--c); }
 .gd-dg { flex: 1; min-height: 0; }
 /* entry points */
-.mode-learn { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 0 8px; white-space: nowrap; border: 0; background: none; padding: 4px 0; font: 600 13px var(--f-body); color: var(--acc); }
+.mode-learn { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 0 10px; white-space: nowrap; border: 0; background: none; padding: 4px 0; font: 600 13px var(--f-body); color: var(--acc); }
+.mode-learn .ml-short { display: none; }
+@media (min-width: 981px) and (max-width: 1180px) { .mode-learn span:first-child { display: none; } .mode-learn .ml-short { display: inline; } }
 .mode-learn i { font-style: normal; transition: transform .25s var(--e-snap); }
 .mode-learn:hover i { transform: translateX(4px); }
 .mode-learn span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 
-@media (max-width: 980px) { .modes { flex-wrap: wrap; } .mode-learn { flex-basis: 100%; margin: 8px 0 0 4px; } }
+
 @media (max-width: 900px) {
   .lesson { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 46fr) minmax(0, 54fr); gap: 12px; padding: 10px 14px 14px; }
   .dg { gap: 8px; }
@@ -1315,7 +1317,6 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <button role="tab" data-mode="confocal" aria-selected="false">Confocal</button>
           </div>
           <button class="mode-arrow shine" data-dir="1" aria-label="Next microscope (E)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-          <button class="mode-learn" id="modeLearn"><span>What is a brightfield microscope?</span><i aria-hidden="true">→</i></button>
         </div>
 
         <nav class="menu" id="titleMenu" role="menu" aria-label="Main menu">
@@ -1333,6 +1334,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         <div class="t-chips">
           <button class="chip-toggle shine" id="clockChip" aria-pressed="true"><span class="ct-k">Clock</span><span class="ct-v" id="clockVal">Timed</span><kbd>T</kbd></button>
           <button class="chip-toggle shine" id="soundChip" aria-pressed="true"><span class="ct-k">Sound</span><span class="ct-v" id="soundVal">On</span><kbd>M</kbd></button>
+          <button class="mode-learn" id="modeLearn"><span>What is a brightfield microscope?</span><span class="ml-short">How it works</span><i aria-hidden="true">→</i></button>
         </div>
         <p class="t-keys"><kbd>↑</kbd><kbd>↓</kbd> choose · <kbd>Enter</kbd> open · <kbd>Q</kbd><kbd>E</kbd> microscope · <kbd>Esc</kbd> back</p>
       </div>
