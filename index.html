@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Parfocal</title>
-<meta name="description" content="A daily microscope game. Focus brightfield smears, fluorescent cells, confocal organoids and a scanning electron microscope, scored against real depth of field.">
+<meta name="description" content="A daily microscope game. Focus brightfield smears, fluorescent cells and confocal organoids, scored against real depth of field.">
 <meta property="og:title" content="Parfocal">
-<meta property="og:description" content="Can you focus it? A daily microscope game with brightfield, fluorescence, confocal and SEM.">
+<meta property="og:description" content="Can you focus it? A daily microscope game with brightfield, fluorescence and confocal.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://parfocal.vercel.app">
 <meta name="theme-color" content="#15110f">
@@ -631,6 +631,18 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 @keyframes coachPulse { 50% { outline-offset: 10px; outline-color: color-mix(in srgb, var(--acc) 40%, transparent); } }
 
 /* ============ TRANSITIONS ============ */
+.gate { position: fixed; inset: 0; z-index: 88; display: grid; place-items: center; background: var(--scope); color: #efe6d8; cursor: pointer; clip-path: circle(150% at 50% 50%); }
+.gate[hidden] { display: none; }
+.gate.out { clip-path: circle(0px at 50% 50%); transition: clip-path .7s cubic-bezier(.6,0,.2,1); }
+.gate-in { display: grid; justify-items: center; gap: 14px; padding: 24px; text-align: center; }
+.gate-eyebrow { margin: 0; font: 500 12px var(--f-mono); letter-spacing: .32em; text-transform: uppercase; opacity: .6; }
+.gate-title { margin: 0; font: italic 900 clamp(56px, 12vw, 150px)/.84 var(--f-display); font-stretch: 125%; letter-spacing: -0.045em; text-shadow: -3px 0 rgba(255, 70, 90, .55), 3px 0 rgba(70, 140, 255, .55); animation: gateFocus 1.4s var(--e-snap, cubic-bezier(.2,.9,.3,1)) both; }
+.gate-go { margin-top: 18px; border: 1px solid rgba(239, 230, 216, .35); background: rgba(239, 230, 216, .06); color: inherit; padding: 13px 26px; border-radius: 999px; font: 700 13px var(--f-body); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; animation: gatePulse 2.2s ease-in-out infinite 1.2s; }
+.gate-go:focus-visible { outline: 2px solid #efe6d8; outline-offset: 4px; }
+.gate-sub { margin: 0; font: 500 12px var(--f-body); opacity: .55; }
+@keyframes gateFocus { 0% { filter: blur(14px); opacity: 0; letter-spacing: .02em; } 100% { filter: blur(0); opacity: 1; } }
+@keyframes gatePulse { 50% { background: rgba(239, 230, 216, .16); box-shadow: 0 0 0 6px rgba(239, 230, 216, .07); } }
+@media (prefers-reduced-motion: reduce) { .gate-title, .gate-go { animation: none; } .gate.out { transition: none; } }
 .iris { position: fixed; inset: 0; z-index: 90; background: var(--scope); color: #efe6d8; display: grid; place-items: center; clip-path: circle(0px at 50% 50%); }
 .iris-text { display: grid; justify-items: center; gap: 10px; text-align: center; padding: 0 24px; }
 .iris-text b { font: italic 900 clamp(34px, 6vw, 72px)/.9 var(--f-display); font-stretch: 122%; letter-spacing: -0.045em; text-transform: uppercase; }
@@ -1052,6 +1064,14 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 
 <!-- ============ TITLE ============ -->
 <main id="title" class="screen title-screen">
+  <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle" hidden>
+    <div class="gate-in">
+      <p class="gate-eyebrow">A microscope game</p>
+      <p class="gate-title" id="gateTitle">PARFOCAL</p>
+      <button class="gate-go" id="gateGo" autofocus>Click, tap or press any key</button>
+      <p class="gate-sub">Sound and music are on · mute them any time from the menu</p>
+    </div>
+  </div>
   <div class="t-word" id="tWord" aria-hidden="true"><span>BRIGHTFIELD</span></div>
   <div class="gutter t-shell">
     <div class="wrap t-grid">
@@ -1066,7 +1086,6 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <button role="tab" data-mode="bright" aria-selected="true">Brightfield</button>
             <button role="tab" data-mode="fluor" aria-selected="false">Fluorescence</button>
             <button role="tab" data-mode="confocal" aria-selected="false">Confocal</button>
-            <button role="tab" data-mode="sem" aria-selected="false">SEM</button>
           </div>
           <button class="mode-arrow shine" data-dir="1" aria-label="Next microscope (E)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         </div>
@@ -1457,7 +1476,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         </div>
       </section>
       <section class="notes-block">
-        <h3 id="scopesTitle">Four microscopes</h3>
+        <h3 id="scopesTitle">Three microscopes</h3>
         <div class="three-grid" id="threeGrid"></div>
       </section>
     </div>
@@ -2045,7 +2064,7 @@ function genHT29(seed) {
 function clamp01(v, hi) { return Math.max(0, Math.min(hi, Math.round(v))); }
 
 function genSpecimen(seed, mode, orgId) {
-  if (mode === "fluor") return (makeRng(seed, "kind")() < 0.5 && plateImgs.ht29) ? genHT29(seed) : genHela(seed);
+  if (mode === "fluor") return (orgId !== "hela" && makeRng(seed, "kind")() < 0.5 && plateImgs.ht29) ? genHT29(seed) : genHela(seed);
   if (mode === "confocal") return genOrganoid(seed);
   return genBright(seed, orgId);
 }
@@ -3932,8 +3951,8 @@ function makeMenu(nav, { onSelect = () => {}, onActivate = () => {} } = {}) {
 
 /* ---------- Title screen ---------- */
 let timedMode = loadStore().timed !== false;
-let homeMode = MODES[loadStore().mode] ? loadStore().mode : "bright";
-const MODE_ORDER = ["bright", "fluor", "confocal", "sem"];
+let homeMode = ["bright", "fluor", "confocal"].includes(loadStore().mode) ? loadStore().mode : "bright";
+const MODE_ORDER = ["bright", "fluor", "confocal"]; // "sem" is built but switched off for now
 const MODE_WORD = { bright: "BRIGHTFIELD", fluor: "FLUORESCENCE", confocal: "CONFOCAL", sem: "ELECTRON" };
 function todayKey() { const dt = new Date(); return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`; }
 const dailyStoreKey = (mode, timed) => todayKey() + (mode === "bright" ? "" : ":" + mode) + (timed ? ":t" : ":u");
@@ -3945,7 +3964,7 @@ function captionFor(act) {
   }
   return {
     practice: `A fresh random ${m} ${thing}, as many times as you like.`,
-    tutorial: sem ? "One guided SEM session: vacuum, voltage, focus and stigmation." : "One guided brightfield round. About two minutes.",
+    tutorial: { bright: "A guided brightfield round: coarse, fine, parfocal lenses and immersion oil. About two minutes.", fluor: "A guided fluorescence round: filter cubes, the shutter and photobleaching, one label per objective. About four minutes.", confocal: "A guided confocal round: the pinhole, optical sections and hunting labelled layers by depth. About four minutes.", sem: "One guided SEM session." }[homeMode],
     notes: sem ? "The physics behind the SEM: the beam cone, depth of field, charging." : "The optics behind the game: light cones, depth of field, immersion oil.",
     credits: "Where the specimens come from, and who built this.",
     identify: "Name the organism from the slide. Coming soon.",
@@ -3962,7 +3981,7 @@ const titleMenu = makeMenu($("titleMenu"), {
     const act = it.dataset.act;
     if (act === "daily") startGame({ daily: true });
     else if (act === "practice") startGame({ daily: false });
-    else if (act === "tutorial") startGame({ daily: false, tut: true, mode: homeMode === "sem" ? "sem" : "bright" });
+    else if (act === "tutorial") startGame({ daily: false, tut: true, mode: homeMode });
     else if (act === "notes") openPanel("notes");
     else if (act === "credits") openPanel("credits");
   },
@@ -3976,7 +3995,7 @@ function syncModeTabs(animate) {
   if (!animate) { void ind.offsetWidth; ind.style.transition = ""; }
 }
 function setMode(mode) {
-  if (mode === homeMode || !MODES[mode]) return;
+  if (mode === homeMode || !MODES[mode] || !MODE_ORDER.includes(mode)) return;
   homeMode = mode; patchStore({ mode });
   root.dataset.mode = mode;
   syncModeTabs(true);
@@ -4016,13 +4035,21 @@ function toggleMusic() {
   patchStore({ music: musicOn }); MUSIC.setEnabled(musicOn && soundOn); syncChips(); sfx(musicOn ? "confirm" : "back");
 }
 $("musicBtn").addEventListener("click", toggleMusic);
-// Browsers only allow audio after a gesture: start the music on the first one.
-function firstGesture(e) {
-  window.removeEventListener("pointerdown", firstGesture, true); window.removeEventListener("keydown", firstGesture, true);
-  if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return;
-  if (musicOn && soundOn) { MUSIC.setEnabled(true); syncChips(); }
+// Browsers only allow audio after a gesture. Every gesture tries to unlock it until the audio
+// context is really running: on phones a touch pointerdown doesn't count, but the pointerup,
+// touchend or click that follows does.
+const UNLOCK_EVENTS = ["pointerdown", "pointerup", "touchend", "click", "keydown"];
+function unlockAudio(e) {
+  if (!soundOn) return;
+  if (e && e.target && e.target.closest && e.target.closest("#musicBtn") && !MUSIC.playing) return; // that button starts it itself
+  try {
+    const A = ac();
+    if (musicOn && !MUSIC.playing) { MUSIC.setEnabled(true); syncChips(); }
+    const done = () => { if (A.state === "running") UNLOCK_EVENTS.forEach(ev => window.removeEventListener(ev, unlockAudio, true)); };
+    if (A.state === "running") done(); else A.resume().then(done, () => {});
+  } catch (err) {}
 }
-window.addEventListener("pointerdown", firstGesture, true); window.addEventListener("keydown", firstGesture, true);
+UNLOCK_EVENTS.forEach(ev => window.addEventListener(ev, unlockAudio, true));
 $("clockChip").addEventListener("click", toggleClock);
 $("soundChip").addEventListener("click", toggleSound);
 
@@ -4177,8 +4204,7 @@ function renderCredits() {
   const withPhoto = ORGS.filter(o => plateImgs[o.id]).length;
   let html = `<h3>Slides</h3>
     <p>Brightfield slides show one of ${ORGS.length} organisms, drawn in code from published cell size, shape, arrangement and stain colour: ${ORGS.map(o => `<i>${o.name}</i>`).join(", ")}.${withPhoto ? ` For ${withPhoto} of them, the 100x view is a real micrograph.` : ""}</p>
-    <p>Fluorescence slides are either drawn cultured cells with DNA, tubulin and actin labels, or a real three-channel field of HT29 cells. Confocal slides are drawn epithelial organoids with nuclear, membrane and lysosome labels.</p>
-    <p>SEM stubs are modelled in 3D from published sizes and shapes: pollen grains (sunflower, ragweed, cherry, lily and pine), a blood clot of biconcave red cells in fibrin, diatom frustules with sieve-plate areolae, <i>Staphylococcus aureus</i> on a track-etched filter, and a fruit fly's compound eye with its corneal nipple array. Each image is rendered from that model the way a secondary-electron detector sees it: yield rising with surface tilt, the edge effect widening with beam voltage, crevices trapping electrons and shadowing toward the side detector. Defocus, astigmatism, shot noise and charging come from the beam's real geometry.</p>`;
+    <p>Fluorescence slides are either drawn cultured cells with DNA, tubulin and actin labels, or a real three-channel field of HT29 cells. Confocal slides are drawn epithelial organoids with nuclear, membrane and lysosome labels.</p>`;
   if (photos.length) {
     html += `<p>Photographs:</p><ul>` + photos.map(id => `<li>${escapeHtml(PLATES[id].credit)} <a href="${PLATES[id].url}" target="_blank" rel="noopener">Source</a></li>`).join("") + `</ul>`;
     if (photos.some(id => /BY-SA/.test(PLATES[id].credit))) html += `<p>The modified CC BY-SA photographs are shared under the same licence.</p>`;
@@ -4188,7 +4214,6 @@ function renderCredits() {
       <li>The one-slide-a-day format comes from <a href="https://dialed.gg" target="_blank" rel="noopener">dialed.gg</a>.</li>
       <li>The menus take their energy from <i>Persona 3 Reload</i> (Atlus): tilted type, a highlight that slides between choices, and screens that cut on a diagonal. The ideas are borrowed; no Atlus art, type or sound is used.</li>
       <li>Writing on menu design and game feel from Mechanics of Magic, Siliconera and Game Developer, and kinetic type experiments on Codrops.</li>
-      <li>The SEM bench follows the layout of real microscope control software and manual control panels: a live quad image with a data bar, vacuum and column status, a histogram, and knobs for focus, magnification, stigmators, contrast and brightness. The software and its brand are invented.</li>
     </ul>
     <h3>Music</h3>
     <p>An original lounge-jazz loop, composed for Parfocal and played live by your browser: electric piano, bass, brushes and vibes. It nods to the acid-jazz feel of the Persona soundtracks without quoting them.</p>
@@ -4211,7 +4236,7 @@ const TURRET_STEP = 46;
 function focusKnob() { if (isPhone()) return; if (G && G.mode === "sem") semFocusKnob(); else $("knob").focus({ preventScroll: true }); }
 function startGame({ daily = false, tut = false, seed = null, mode = null } = {}) {
   if (busy) return;
-  const m = tut ? (mode === "sem" ? "sem" : "bright") : (mode || homeMode);
+  const m = mode || homeMode;
   const from = current === "title" ? $("heroEp") : current === "game" ? (G && G.mode === "sem" ? $("semImg") : $("eyepieceBox")) : null;
   titleMenu.leave();
   irisTo({
@@ -4226,10 +4251,10 @@ function startGameNow({ daily, tut, seed: seedIn, mode }) {
   semLeave();
   OBJ = MODES[mode].objs;
   const key = todayKey();
-  const seed = seedIn != null ? seedIn : tut ? hashString("parfocal-tutorial") : daily ? hashString(mode === "bright" ? "parfocal:" + key : `parfocal:${mode}:${key}`) : (Math.floor(Math.random() * 4294967295) >>> 0);
+  const seed = seedIn != null ? seedIn : tut ? hashString(mode === "bright" ? "parfocal-tutorial" : `parfocal-tutorial-${mode}`) : daily ? hashString(mode === "bright" ? "parfocal:" + key : `parfocal:${mode}:${key}`) : (Math.floor(Math.random() * 4294967295) >>> 0);
   const S = makeRng(seed, "setup");
   const org = mode === "bright" ? (tut ? orgById.saureus : ORGS[seed % ORGS.length]) : null;
-  const sp = genSpecimen(seed, mode, org && org.id);
+  const sp = genSpecimen(seed, mode, tut && mode === "fluor" ? "hela" : org && org.id);
   const info = mode === "bright"
     ? { name: org.name, stain: org.stain, facts: [["Reaction", org.gram], ["Shape", org.shape], ["Arrangement", org.arr], ["Size", org.size]], why: org.why, plateId: org.id }
     : SPEC_INFO[sp.info || (mode === "fluor" ? "hela" : "organoid")];
@@ -4262,7 +4287,7 @@ function startGameNow({ daily, tut, seed: seedIn, mode }) {
   $("artSmear").setAttribute("fill", mode === "bright" ? "var(--acc)" : mode === "fluor" ? "#3fe07a" : "#6f8dff");
   syncCube(); syncPinhole(); syncShutter();
   setScopeMode(); buildTurret(); setTurret(0, true);
-  TUT.start(tut);
+  TUT.start(tut, mode);
   setStageUI();
 }
 const d = () => G.stageZ - G.p[G.k];
@@ -4713,6 +4738,63 @@ const TUT = (() => {
     { stage: 2, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus and see how you did." },
     { stage: 2, post: true, target: () => "#nextBtn", text: () => "Tutorial round done. See your results." },
   ];
+  const cubeIs = (c) => () => G.cube === c;
+  const FLUOR_STEPS = [
+    // 10x: DAPI nuclei
+    { stage: 0, pre: true, target: () => "#eyepieceBox", next: true, text: () => "This is an <b>epifluorescence</b> microscope. The light comes down <b>through the objective</b>, not up through the slide, so the field is dark except where a dye glows. Today's sample is fixed HeLa cells carrying three different labels." },
+    { stage: 0, pre: true, target: () => "#cubeSeg", next: true, text: () => "Each label needs its own <b>filter cube</b>: an excitation filter picks the colour that excites the dye, a dichroic mirror reflects it onto the sample, and an emission filter lets only the dye's glow back to your eye. One cube, one label at a time." },
+    { stage: 0, pre: true, target: () => "#cubeSeg", next: true, text: () => "First target: <b>nuclei, stained with DAPI</b>. DAPI binds DNA, absorbs UV (~358 nm) and glows blue (~461 nm). The <b>DAPI cube</b> is already in. In a real lab you focus on DAPI first: it's bright, tough and on every cell, so you don't waste your weaker labels." },
+    { stage: 0, pre: true, target: () => "#shutterBtn", done: () => !G.shutter, text: () => "Dyes <b>photobleach</b>: every second under the lamp destroys some of them for good. Watch the <b>signal</b> meter. Close the <b>shutter</b> now (or press S)." },
+    { stage: 0, pre: true, target: () => "#shutterBtn", done: () => G.shutter, text: () => "That's the habit: shutter closed whenever you aren't looking. Open it again to focus." },
+    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200,
+      text: () => (isPhone() ? "Drag the <b>Coarse</b> strip right" : "Spin the <b>outer ring</b> of the knob (or hold Shift + ↑)") + " to bring the lens down. Coarse is fine at 10x. Look for blue ovals coming out of the dark." },
+    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7,
+      text: () => (isPhone() ? "Now the <b>Fine</b> strip" : "Now the <b>centre</b> of the knob, or ↑ ↓") + ". Sharpen the nuclei. Out-of-focus light still reaches you in widefield, so blurred cells glow as a soft haze rather than vanishing." },
+    { stage: 0, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Sharp. <b>Lock focus</b>." },
+    { stage: 0, post: true, target: () => "#nextBtn", text: () => "Next, swing in <b>40x</b>. The target changes, and so will the cube." },
+    // 40x: microtubules, Alexa 488
+    { stage: 1, pre: true, target: () => "#cubeSeg", done: cubeIs("fitc"), text: () => "Target: <b>microtubules</b>. They're labelled by <b>indirect immunofluorescence</b>: an anti-α-tubulin primary antibody, then a secondary antibody carrying <b>Alexa Fluor 488</b> (excites ~495 nm, emits green ~519 nm). Switch to the <b>FITC</b> cube, which matches it (or press C)." },
+    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Each label sits at its own height in the cell, so <b>refocus with fine only</b>. Note the meter: bleaching is faster at 40x, because the lamp's light is packed into a smaller field. Close the shutter if you stop to think." },
+    { stage: 1, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock it." },
+    { stage: 1, post: true, target: () => "#nextBtn", text: () => "Last: swing in <b>100x</b>." },
+    // 100x: actin, phalloidin-568
+    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "100x is an oil lens (NA 1.40). Oil matches the glass, so the lens catches the wide cone of light that air would bend away. In fluorescence that matters twice: brightness rises steeply with NA. <b>Add oil</b>." },
+    { stage: 2, pre: true, target: () => "#cubeSeg", done: cubeIs("tritc"), text: () => "Target: <b>actin fibres</b>, stained with <b>phalloidin</b>, a toxin from the death cap mushroom that binds filamentous actin tightly. This one carries a 568 nm dye that glows orange-red. Switch to the <b>TRITC</b> cube." },
+    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Stress fibres run along the <b>bottom of the cell</b>, where it grips the coverslip. Fine focus only, small turns: the depth of field here is under half a micron, and 100x bleaches fastest." },
+    { stage: 2, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus and see how you did." },
+    { stage: 2, post: true, target: () => "#nextBtn", text: () => "Round done. In the lab, you'd now photograph each channel separately and <b>merge</b> them into one false-colour image: blue nuclei, green microtubules, red actin." },
+  ];
+  const CONF_STEPS = [
+    // 10x: nuclei layer
+    { stage: 0, pre: true, target: () => "#eyepieceBox", next: true, text: () => "This is a <b>laser scanning confocal</b>. A focused laser spot sweeps the sample point by point, a detector measures the glow from each point, and a computer builds the image. You watch it on a screen, not through an eyepiece." },
+    { stage: 0, pre: true, target: () => "#eyepieceBox", next: true, text: () => "The sample is an <b>organoid</b>: a hollow ball of epithelial cells grown in 3D, often hundreds of microns thick. Widefield would drown it in out-of-focus haze. A confocal cuts a thin <b>optical section</b> out of it instead, without physically slicing anything." },
+    { stage: 0, pre: true, target: () => "#pinSeg", next: true, text: () => "The trick is the <b>pinhole</b>. It sits where light from the focal plane comes to a point, so that light passes, while light from above and below arrives spread out and is blocked. Its size is in <b>Airy units</b>; 1 AU is the usual balance of sharpness and brightness." },
+    { stage: 0, pre: true, target: () => "#zRead", next: true, text: () => "So out-of-focus layers here don't blur, they <b>go dark</b>. You find each labelled layer by its depth, shown on the <b>Z readout</b>." },
+    { stage: 0, pre: true, target: coarseCtl, done: () => d() > -200,
+      text: () => (isPhone() ? "Drag the <b>Coarse</b> strip right" : "Spin the <b>outer ring</b> (or hold Shift + ↑)") + " to bring the lens down until rings of cells appear." },
+    { stage: 0, pre: true, target: fineCtl, done: () => acc() > 0.7,
+      text: () => "Target: the <b>nuclei layer</b>, stained with DAPI and excited by the <b>405 nm laser</b>. " + (isPhone() ? "Use the <b>Fine</b> strip" : "Use fine focus") + " until the blue nuclei are at their brightest. Brightest is in focus here." },
+    { stage: 0, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus." },
+    { stage: 0, post: true, target: () => "#nextBtn", text: () => "Next, <b>40x</b>, and a different layer." },
+    // 40x: membrane-GFP, pinhole experiment
+    { stage: 1, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Target: the <b>membrane-GFP layer</b>, a few microns away. These cells were engineered to make GFP fused to a membrane protein, so the cell outlines glow; the <b>488 nm laser</b> excites it. Fine focus through Z: the nuclei fade as the outlines appear." },
+    { stage: 1, pre: true, target: () => "#pinSeg", done: () => G.pinhole === 2, text: () => "Try an experiment. Open the pinhole to <b>2 AU</b> (or press P) and watch: the image gets brighter, but the section gets thicker, so neighbouring layers bleed in." },
+    { stage: 1, pre: true, target: () => "#pinSeg", done: () => G.pinhole === 1, text: () => "That's the trade-off. People open the pinhole for dim samples, and keep it near 1 AU when the slice has to be thin. Set it back to <b>1 AU</b> before you lock." },
+    { stage: 1, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Touch up focus if it drifted, then lock." },
+    { stage: 1, post: true, target: () => "#nextBtn", text: () => "Last: swing in the <b>63x oil</b> lens." },
+    // 63x: lysosomes
+    { stage: 2, pre: true, target: () => "#oilBtn", done: () => immersed(), text: () => "63x is an oil lens (NA 1.40). Oil lets it gather the widest cone of light, which also makes the optical section thinnest. <b>Add oil</b>." },
+    { stage: 2, pre: true, target: fineCtl, done: () => acc() > 0.75, text: () => "Target: the <b>lysosome layer</b>, deepest of the three. <b>LysoTracker Red</b> is a dye that collects in acidic compartments; the <b>561 nm laser</b> excites it. The section here is about half a micron, so tiny fine turns." },
+    { stage: 2, pre: true, target: () => "#lockBtn", done: () => G.locked, text: () => "Lock focus and see how you did." },
+    { stage: 2, post: true, target: () => "#nextBtn", text: () => "Round done. In the lab you'd now record a <b>z-stack</b>: one section every few hundred nanometres through the whole organoid, then rebuild it in 3D on the computer." },
+  ];
+  const STEP_SETS = { bright: LIGHT_STEPS, fluor: FLUOR_STEPS, confocal: CONF_STEPS, sem: SEM_STEPS };
+  const FINISH = {
+    bright: "That's the routine: <b>coarse at 10x</b>, fine above it, <b>oil before 100x</b>. Try today's slide next, or switch microscopes on the title screen.",
+    fluor: "That's the routine: <b>focus on DAPI first</b>, one cube per label, <b>shutter closed</b> whenever you're not looking, oil before 100x. Try today's slide next.",
+    confocal: "That's the routine: <b>pinhole at 1 AU</b>, find each layer by depth, oil before 63x, then stack the sections. Try today's slide next.",
+    sem: "That's the routine: <b>pump, pick the voltage, beam on</b>, then focus, stigmate and set contrast before each photo.",
+  };
   let active = false, i = 0, shownIdx = -1, curTarget = null, finished = false, steps = LIGHT_STEPS;
   const coach = $("coach");
   function clearTarget() { if (curTarget) curTarget.classList.remove("coach-target"); curTarget = null; }
@@ -4720,7 +4802,12 @@ const TUT = (() => {
     if (!active || coach.hidden || isPhone()) return;
     const el = curTarget, w = coach.offsetWidth, h = coach.offsetHeight;
     let left, top;
+    const gs = $("gScope"), gr = gs && gs.getBoundingClientRect(), art = $("scopeArt");
     if (!el) { left = innerWidth - w - 24; top = 96; }
+    else if (el.closest("#dock") && gr && gr.width && gr.right < el.getBoundingClientRect().left) {
+      // controls in the dock: park the coach over the side-view panel, so the eyepiece stays in view
+      left = gr.left + (gr.width - w) / 2; top = Math.max(gr.top + 12, art.getBoundingClientRect().top);
+    }
     else {
       const r = el.getBoundingClientRect();
       if (r.left > w + 30) { left = r.left - w - 22; top = r.top + r.height / 2 - h / 2; }
@@ -4747,7 +4834,7 @@ const TUT = (() => {
     sfx("move", { i: 3 });
     requestAnimationFrame(place);
   }
-  function start(on, mode) { stop(); if (!on) return; steps = mode === "sem" ? SEM_STEPS : LIGHT_STEPS; active = true; i = 0; shownIdx = -1; finished = false; }
+  function start(on, mode) { stop(); if (!on) return; steps = STEP_SETS[mode] || LIGHT_STEPS; active = true; i = 0; shownIdx = -1; finished = false; }
   function stop() { active = false; clearTarget(); coach.hidden = true; }
   function tick() {
     if (!active || !G || finished) { place(); return; }
@@ -4765,7 +4852,7 @@ const TUT = (() => {
     if (!active) return;
     finished = true; clearTarget();
     $("coachStep").textContent = "All done";
-    $("coachText").innerHTML = G && G.mode === "sem" ? "That's the routine: <b>pump, pick the voltage, beam on</b>, then focus, stigmate and set contrast before each photo. Try today's stub next." : "That's the routine: <b>coarse at 10x</b>, fine above it, <b>oil before 100x</b>. Try today's slide next, or switch microscopes on the title screen.";
+    $("coachText").innerHTML = FINISH[G ? G.mode : "bright"] || FINISH.bright;
     $("coachNext").parentElement.hidden = false; $("coachNext").textContent = "Got it";
     coach.hidden = false;
     requestAnimationFrame(() => { if (!isPhone()) { coach.style.left = (innerWidth - coach.offsetWidth - 24) + "px"; coach.style.top = "96px"; } });
@@ -6325,15 +6412,38 @@ document.body.dataset.screen = "title";
 $("tWord").querySelector("span").textContent = MODE_WORD[homeMode];
 syncChips();
 buildHero();
-requestAnimationFrame(() => { syncModeTabs(false); titleMenu.quiet = true; titleMenu.select(0); titleMenu.quiet = false; titleMenu.enter(); });
+function introTitle() {
+  requestAnimationFrame(() => { syncModeTabs(false); titleMenu.quiet = true; titleMenu.select(0); titleMenu.quiet = false; titleMenu.enter(); });
+  if (!prefersReduced()) { const wm = $("wordmark"); wm.classList.remove("focusing"); void wm.offsetWidth; wm.classList.add("focusing"); }
+}
+// Start screen: one gesture unlocks the sound before the title appears.
+const gate = $("gate");
+let gateOpen = soundOn;
+function closeGate(e) {
+  if (!gateOpen) return;
+  if (e) { e.preventDefault(); e.stopImmediatePropagation(); }
+  gateOpen = false;
+  unlockAudio();
+  sfx("confirm");
+  window.removeEventListener("keydown", gateKey, true);
+  gate.classList.add("out");
+  setTimeout(() => { gate.hidden = true; gate.classList.remove("out"); }, prefersReduced() ? 0 : 720);
+  introTitle();
+}
+function gateKey(e) { if (["Shift", "Control", "Alt", "Meta", "Tab"].includes(e.key)) return; closeGate(e); }
+if (gateOpen) {
+  gate.hidden = false;
+  gate.addEventListener("click", closeGate);
+  window.addEventListener("keydown", gateKey, true);
+  requestAnimationFrame(() => { syncModeTabs(false); try { $("gateGo").focus({ preventScroll: true }); } catch (e) {} });
+} else introTitle();
 try { document.fonts.ready.then(() => syncModeTabs(false)); } catch (e) {}
 window.addEventListener("resize", () => syncModeTabs(false));
-if (!prefersReduced()) $("wordmark").classList.add("focusing");
 renderNotes(); renderCredits();
 loadPlates(renderCredits);
 requestAnimationFrame(loop);
 /* test hook for local checks only: inert unless the page is opened with #pftest */
-if (location.hash === "#pftest") window.__pf = { get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled }; }, plates() { return Object.keys(plateImgs); },
+if (location.hash === "#pftest") window.__pf = { get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
   renderSpec(mode, seed, k) { const m = MODES[mode], sp = genSpecimen(seed, mode, mode === "bright" ? ORGS[seed % ORGS.length].id : null), o = m.objs[k], cv = newCanvas(); renderField(cv.getContext("2d"), sp, buildLayers(sp, o, k === 2), { o, e: effective(mode, k, true, 1), d: -sp.targets[k].z, cube: "all", shutter: true, signal: 1 }); return { url: cv.toDataURL("image/jpeg", 0.85), kind: sp.plate || sp.orgId || sp.kind }; },
   start(mode, seed) { startGame({ seed, mode }); },
   drive, log: [], grade(off) { const b = bestPlane(), e = eff(); return { acc: focusAccuracy(b.d + off), old: Math.exp(-Math.LN2 * (2 * (b.d + off + tgt().z) / e.dof) ** 2), best: b.d, q: b.q, dof: e.dof }; },
