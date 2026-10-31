@@ -1194,7 +1194,9 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 /* pages */
 .gd-page { max-width: 1320px; margin: 0 auto; padding: clamp(28px, 5vh, 56px) 24px 96px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
 .gd-copy { min-width: 0; }
-.gd-page .gd-h1 { font-size: clamp(36px, 4.3vw, 68px); overflow-wrap: anywhere; hyphens: auto; }
+.gd-copy { container-type: inline-size; }
+.gd-page .gd-h1 { font-size: clamp(30px, 9.6cqi, 68px); overflow-wrap: normal; }
+.ls-h { overflow-wrap: normal; }
 .gd-page .gd-kicker { color: var(--c); }
 :root[data-theme="light"] .gd-page .gd-kicker, :root:not([data-theme="dark"]) .gd-page .gd-kicker { color: color-mix(in srgb, var(--c) 55%, var(--ink)); }
 .gd-sec { margin-top: 36px; }
@@ -4956,6 +4958,13 @@ function updateLoupe(gmm) {
    Each part is a <g data-part="id">; highlight() spotlights one or more
    parts and draws callouts. Used by the tutorial lessons and the guide.
    ===================================================================== */
+// shrink a headline step by step until no word overflows its box
+function fitHeadline(h, min = 22) {
+  if (!h) return;
+  h.style.fontSize = "";
+  let fs = parseFloat(getComputedStyle(h).fontSize);
+  while (h.scrollWidth > h.clientWidth + 1 && fs > min) { fs -= 2; h.style.fontSize = fs + "px"; }
+}
 const ART = (() => {
   let uidN = 0;
   const OBJ_BANDS = { bright: ["#e3c043", "#8ecbea", "#f4f4f4"], fluor: ["#e3c043", "#8ecbea", "#f4f4f4"], confocal: ["#e3c043", "#8ecbea", "#2f5fb0"] };
@@ -5870,6 +5879,7 @@ const GUIDE_UI = (() => {
       scroll.querySelectorAll("[data-art]").forEach(a => { const c = ART.mount(a, a.dataset.art); c.highlight([], { light: true }); });
       return;
     }
+    fitHeadline(scroll.querySelector(".gd-page .gd-h1"));
     const p = GUIDE_PAGES[id];
     if (p.kind === "scope") {
       const art = ART.mount(scroll.querySelector(".gd-art"), p.mode), cap = scroll.querySelector(".gd-cap");
@@ -5994,7 +6004,7 @@ const LESSON = (() => {
   function fill(step, info) {
     $("lsStep").textContent = `Step ${info.n} / ${info.total}`;
     $("lsKicker").textContent = info.kicker;
-    $("lsH").textContent = step.h;
+    $("lsH").textContent = step.h; requestAnimationFrame(() => fitHeadline($("lsH")));
     $("lsText").innerHTML = step.text();
     $("lsLinks").innerHTML = (step.links || []).filter(id => GUIDE_PAGES[id]).map(id => `<button class="ls-link" data-guide="${id}"><span>Learn</span>${GUIDE_PAGES[id].title}<i aria-hidden="true">→</i></button>`).join("");
     $("lsPrev").hidden = !info.canBack;
@@ -6037,7 +6047,8 @@ const LESSON = (() => {
     const b = e.target.closest("[data-guide]"); if (!b) return;
     GUIDE_UI.open(b.dataset.guide, () => { if (open) $("lsNext").focus({ preventScroll: true }); });
   });
-  window.addEventListener("resize", () => { if (open) placeTop(); });
+  window.addEventListener("resize", () => { if (open) { placeTop(); fitHeadline($("lsH")); } });
+  window.addEventListener("resize", () => { if (GUIDE_UI.isOpen()) fitHeadline(document.querySelector(".gd-page .gd-h1")); });
   function key(e) {
     if (e.key === "Escape") { e.preventDefault(); openPause(); return; }
     const tag = (e.target.tagName || "").toLowerCase();
@@ -7863,7 +7874,7 @@ renderNotes(); renderCredits();
 loadPlates(renderCredits);
 requestAnimationFrame(loop);
 /* test hook for local checks only: inert unless the page is opened with #pftest */
-if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
+if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, fitHeadline, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
   renderSpec(mode, seed, k) { const m = MODES[mode], sp = genSpecimen(seed, mode, mode === "bright" ? ORGS[seed % ORGS.length].id : null), o = m.objs[k], cv = newCanvas(); renderField(cv.getContext("2d"), sp, buildLayers(sp, o, k === 2), { o, e: effective(mode, k, true, 1), d: -sp.targets[k].z, cube: "all", shutter: true, signal: 1 }); return { url: cv.toDataURL("image/jpeg", 0.85), kind: sp.plate || sp.orgId || sp.kind }; },
   start(mode, seed) { startGame({ seed, mode }); },
   drive, log: [], grade(off) { const b = bestPlane(), e = eff(); return { acc: focusAccuracy(b.d + off), old: Math.exp(-Math.LN2 * (2 * (b.d + off + tgt().z) / e.dof) ** 2), best: b.d, q: b.q, dof: e.dof }; },
