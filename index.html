@@ -102,7 +102,7 @@ body::before {
 .wrap { max-width: 1280px; margin: 0 auto; }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
-kbd { font-family: var(--f-mono); font-size: 10.5px; line-height: 1; padding: 3px 6px 2px; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 6px; background: var(--glass-strong); color: var(--ink-2); vertical-align: 1px; }
+kbd { font-family: var(--f-mono); font-size: 11.5px; line-height: 1; padding: 3px 6px 2px; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 6px; background: var(--glass-strong); color: var(--ink-2); vertical-align: 1px; }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 .theme-anim, .theme-anim * { transition: background-color .6s ease, color .6s ease, border-color .6s ease, fill .6s ease, stroke .6s ease, box-shadow .6s ease !important; }
 
@@ -184,7 +184,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .ep-timer.low .et-num, .ep-timer.low .et-k { color: #fff; }
 .ep-timer.beat .et-badge { animation: timerBeat .5s var(--e-pop); }
 @keyframes timerBeat { from { transform: rotate(var(--tilt)) scale(1.25); } }
-.ep-label { position: absolute; left: 50%; bottom: 1.6%; transform: translateX(-50%); z-index: 3; font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; color: var(--scope-muted); text-transform: uppercase; white-space: nowrap; }
+.ep-label { position: absolute; left: 50%; bottom: 1.6%; transform: translateX(-50%); z-index: 3; font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; color: var(--scope-muted); text-transform: uppercase; white-space: nowrap; }
 
 /* ============ TITLE ============ */
 .screen { position: relative; }
@@ -345,9 +345,10 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .g-scope { grid-area: scope; z-index: 0; }
 .g-dock { grid-area: dock; z-index: 1; align-items: stretch; }
 .g-view { grid-area: view; position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
-.g-view .eyepiece, .slide-label { width: min(100%, calc(100svh - 250px), 620px); }
+.g-view .eyepiece, .slide-label { width: min(100%, calc(100svh - 236px), 760px); }
+.game-screen > .gutter > .wrap { max-width: 1480px; }
 .g-view .eyepiece { min-width: 260px; }
-.slide-label { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 500 12px var(--f-mono); color: var(--muted); }
+.slide-label { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 500 13px var(--f-mono); color: var(--muted); }
 .slide-label #hintText { color: var(--acc); }
 
 .obj-plate { display: flex; align-items: center; gap: 12px; }
@@ -357,7 +358,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .obj-txt span { display: block; margin-top: 3px; font: 500 11.5px var(--f-mono); color: var(--muted); }
 .obj-plate.swap .obj-txt b { animation: nameStretch .35s var(--e-pop); }
 .target { display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: 12px; background: var(--glass-strong); border: 1px solid var(--glass-edge); font-size: 13.5px; font-weight: 700; }
-.target i { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 10px currentColor; }
+.target i { width: 16px; height: 16px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 10px var(--c, currentColor); display: grid; place-items: center; font: 800 9.5px/1 var(--f-mono); font-style: normal; color: #0c0a0b; }
 .target small { font-weight: 500; color: var(--muted); }
 .scope-wrap { position: relative; }
 .scope-art { width: 100%; height: auto; display: block; }
@@ -370,9 +371,9 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .loupe figcaption::before { content: "Loupe · lens to coverslip"; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .loupe #lpState { color: var(--ink); font: 700 14px var(--f-body); line-height: 1.25; }
 .loupe.oil #lpState { color: #b78a12; }
-.lp-bar text { font: 500 8px var(--f-mono); fill: var(--ink-2); }
+.lp-bar text { font: 500 9px var(--f-mono); fill: var(--ink-2); }
 .loupe.crash #lpState { color: var(--warn); }
-.scope-cap { margin: 0; font: 500 11.5px var(--f-mono); color: var(--muted); text-align: right; min-height: 1.5em; }
+.scope-cap { margin: 0; font: 500 12.5px var(--f-mono); color: var(--muted); text-align: right; min-height: 1.5em; }
 .scope-cap.warn { color: var(--warn); }
 
 .knob { border-radius: 50%; width: 196px; height: 196px; align-self: center; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; overflow: visible;
@@ -386,10 +387,10 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .knob.hover-coarse .k-glow-c, .knob.hover-fine .k-glow-f { opacity: .45; }
 .knob.drag-coarse .k-glow-c, .knob.drag-fine .k-glow-f { opacity: .9; }
 #gameRing { transition: none; }
-.knob-cap { margin: 0; font-size: 12.5px; color: var(--muted); text-align: center; }
+.knob-cap { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--muted); text-align: center; }
 .dock-actions { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; }
 .dock-actions .btn { padding: 0 12px; white-space: nowrap; }
-.keys { margin: 0; font-size: 11.5px; color: var(--muted); line-height: 2; text-align: center; }
+.keys { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 2; text-align: center; }
 .mode-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
 .mode-tools[hidden] { display: none; }
 .tool-row { display: flex; gap: 8px; align-items: center; width: 100%; }
@@ -485,7 +486,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .rank.stamp { animation: stamp .55s var(--e-pop) both; }
 @keyframes stamp { from { opacity: 0; transform: scale(2.4) rotate(14deg); filter: blur(6px); } }
 .r-tierbox { min-width: 0; }
-.big-tier { margin: 0; font: italic 900 clamp(30px, 3.8vw, 52px)/.92 var(--f-display); font-stretch: 118%; letter-spacing: -0.04em; color: var(--acc); text-wrap: balance; }
+.big-tier { margin: 0; overflow-wrap: normal; font: italic 900 clamp(30px, 3.8vw, 52px)/.92 var(--f-display); font-stretch: 118%; letter-spacing: -0.04em; color: var(--acc); text-wrap: balance; }
 .big-quip { margin: 8px 0 0; font-style: italic; color: var(--ink-2); font-size: 16px; }
 .total { margin-top: 22px; display: flex; align-items: baseline; gap: 10px; }
 .total b { font: 900 clamp(72px, 10vw, 128px)/.85 var(--f-display); font-stretch: 112%; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
@@ -635,9 +636,10 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .gate { position: fixed; inset: 0; z-index: 88; display: grid; place-items: center; background: var(--scope); color: #efe6d8; cursor: pointer; clip-path: circle(150% at 50% 50%); }
 .gate[hidden] { display: none; }
 .gate.out { clip-path: circle(0px at 50% 50%); transition: clip-path .7s cubic-bezier(.6,0,.2,1); }
-.gate-in { display: grid; justify-items: center; gap: 14px; padding: 24px; text-align: center; }
+.gate-in { display: grid; justify-items: center; gap: 14px; padding: 24px; text-align: center; width: 100%; box-sizing: border-box; }
+.gate-title { width: 100%; white-space: nowrap; overflow: visible; }
 .gate-eyebrow { margin: 0; font: 500 12px var(--f-mono); letter-spacing: .32em; text-transform: uppercase; opacity: .6; }
-.gate-title { margin: 0; font: italic 900 clamp(56px, 12vw, 150px)/.84 var(--f-display); font-stretch: 125%; letter-spacing: -0.045em; text-shadow: -3px 0 rgba(255, 70, 90, .55), 3px 0 rgba(70, 140, 255, .55); animation: gateFocus 1.4s var(--e-snap, cubic-bezier(.2,.9,.3,1)) both; }
+.gate-title { margin: 0; max-width: 100%; overflow-wrap: normal; font: italic 900 clamp(34px, 12vw, 150px)/.84 var(--f-display); font-stretch: 125%; letter-spacing: -0.045em; text-shadow: -3px 0 rgba(255, 70, 90, .55), 3px 0 rgba(70, 140, 255, .55); animation: gateFocus 1.4s var(--e-snap, cubic-bezier(.2,.9,.3,1)) both; }
 .gate-go { margin-top: 18px; border: 1px solid rgba(239, 230, 216, .35); background: rgba(239, 230, 216, .06); color: inherit; padding: 13px 26px; border-radius: 999px; font: 700 13px var(--f-body); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; animation: gatePulse 2.2s ease-in-out infinite 1.2s; }
 .gate-go:focus-visible { outline: 2px solid #efe6d8; outline-offset: 4px; }
 .gate-sub { margin: 0; font: 500 12px var(--f-body); opacity: .55; }
@@ -725,9 +727,9 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
   .obj-txt b { font-size: 28px; }
   .barrel { height: 32px; width: 20px; } .barrel i { top: 11px; }
   .target { font-size: 12.5px; padding: 7px 10px; }
-  .g-view .eyepiece, .slide-label { width: min(100%, calc(100svh - 440px)); min-width: 220px; }
+  .g-view .eyepiece, .slide-label { width: min(100%, var(--ep-phone, calc(100svh - 440px))); min-width: 200px; }
   .slide-label { font-size: 11px; }
-  .g-dock { position: sticky; bottom: 0; z-index: 6; border-radius: 20px; padding: 12px 12px max(12px, env(safe-area-inset-bottom, 0px)); gap: 10px; }
+  .g-dock { position: relative; bottom: auto; z-index: 6; border-radius: 20px; padding: 12px 12px max(12px, env(safe-area-inset-bottom, 0px)); gap: 10px; }
   .g-dock .knob, .g-dock .knob-cap, .g-dock .keys { display: none; }
   .jogs { display: flex; }
   .dock-actions .btn { min-height: 52px; }
@@ -1272,6 +1274,71 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 }
 
 </style>
+<style>
+/* verdict fact, results recap, folded credits */
+.v-fact { margin: 14px 0 0; padding: 12px 14px; border-radius: 14px; background: color-mix(in srgb, var(--acc) 10%, transparent); border-left: 3px solid var(--acc); font-size: 14.5px; line-height: 1.5; max-width: 46ch; }
+.v-fact b { display: block; font: 600 11px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--acc); margin-bottom: 4px; }
+.recap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 16px 0 4px; }
+.rc-tile { margin: 0; display: grid; gap: 8px; justify-items: center; align-content: start; text-align: center; }
+.rc-ep { position: relative; width: 100%; max-width: 132px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #050506; box-shadow: 0 0 0 4px #1d1719, 0 0 0 5px var(--glass-edge), 0 8px 22px rgba(0,0,0,.35); }
+.rc-ep video { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(var(--g, 0)); }
+.rc-ep i { position: absolute; inset: 0; mix-blend-mode: multiply; }
+.rc-tile figcaption { font-size: 12.5px; line-height: 1.35; }
+.rc-tile figcaption b { font: 700 11px var(--f-mono); color: var(--acc); margin-right: 4px; }
+.rc-tile figcaption small { display: block; color: var(--muted); font-size: 11px; }
+.credits-fold summary { cursor: pointer; font-weight: 600; color: var(--acc); list-style: none; }
+.credits-fold summary::-webkit-details-marker { display: none; }
+.credits-fold summary::before { content: "▸ "; }
+.credits-fold[open] summary::before { content: "▾ "; }
+.credits-fold p { margin: 8px 0 0; }
+</style>
+<style>
+.ep-msg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; margin: 0; width: min(70%, 300px); text-align: center; font: 700 15px/1.3 var(--f-body, inherit); color: #f3ece2; text-shadow: 0 1px 8px #000; pointer-events: none; animation: fadeIn .3s ease both; }
+.ep-msg small { display: block; margin-top: 6px; font-weight: 500; font-size: 12.5px; color: #cfc4b6; }
+#cubeSeg button.want { animation: wantPulse 1.3s ease-in-out infinite; }
+@keyframes wantPulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--acc) 0%, transparent); } 50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 45%, transparent); } }
+@media (prefers-reduced-motion: reduce) { #cubeSeg button.want { animation: none; outline: 2px solid var(--acc); } }
+</style>
+<style>
+.cond { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+.cond input { width: 100%; accent-color: var(--acc); }
+.cond b { font: 600 12.5px var(--f-mono); min-width: 4ch; text-align: right; }
+.tool-note { margin: 0; font-size: 12px; color: var(--muted); }
+.tool-k { font: 600 11px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); min-width: 5ch; }
+.pow-seg button { min-width: 0; }
+</style>
+<style>
+.zs-panel { display: grid; gap: 10px; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--acc) 9%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); }
+.zs-step { margin: 0; font-size: 13.5px; line-height: 1.45; }
+.zs-step > b:first-child { display: block; font: 700 11px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--acc); margin-bottom: 3px; }
+.zs-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.zs-strip figure { margin: 0; display: grid; gap: 4px; justify-items: center; }
+.zs-strip img, .zs-strip span { width: 100%; aspect-ratio: 1; border-radius: 50%; display: block; background: #070708; border: 1px solid var(--glass-edge); object-fit: cover; }
+.zs-strip figure.now span { border: 2px dashed var(--acc); }
+.zs-strip figcaption { font: 500 11px var(--f-mono); color: var(--muted); }
+.zs-res { margin: 14px 0 6px; max-width: 420px; }
+@media (max-width: 760px) { body[data-screen="game"] #game .gutter { padding-bottom: 45svh; } }
+@media (max-width: 760px) { .zs-strip { grid-template-columns: repeat(3, 54px); justify-content: center; gap: 14px; } .zs-panel { gap: 6px; padding: 10px; } .zs-step { font-size: 12.5px; } }
+.zs-res p { margin: 0 0 8px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.zs-res p span { font: 800 22px var(--f-display); color: var(--acc); }
+.zs-res small { color: var(--muted); font-size: 12.5px; flex-basis: 100%; }
+.zs-strip.done { max-width: 300px; }
+</style>
+<style>
+.t-streak { margin: 10px 0 0; max-width: 460px; }
+.t-streak p, .r-cal p { margin: 0 0 6px; font-size: 13px; color: var(--ink-2, var(--muted)); }
+.t-streak p b, .r-cal p b { font: 800 18px var(--f-display); color: var(--acc); }
+.t-streak p span { color: var(--muted); }
+.cal { display: grid; grid-template-columns: repeat(min(var(--n), 14), 1fr); gap: 4px; max-width: 340px; }
+.cal i { aspect-ratio: 1; border-radius: 4px; background: var(--glass-strong); border: 1px solid var(--glass-edge); }
+.cal i.l1 { background: color-mix(in srgb, var(--acc) 30%, transparent); }
+.cal i.l2 { background: color-mix(in srgb, var(--acc) 55%, transparent); }
+.cal i.l3 { background: color-mix(in srgb, var(--acc) 78%, transparent); }
+.cal i.l4 { background: var(--acc); }
+.cal i.today { outline: 2px solid var(--ink, #fff); outline-offset: 1px; }
+.r-cal { margin: 16px 0 4px; }
+.r-cal small { display: block; margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+</style>
 </head>
 <body>
 <header class="topbar gutter" id="topbar">
@@ -1329,9 +1396,9 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
           <button class="m-item" role="menuitem" data-act="guide" data-pose="2" style="--i:3"><span class="m-idx">04</span><span class="m-name">Guide</span></button>
           <button class="m-item" role="menuitem" data-act="notes" data-pose="1" style="--i:4"><span class="m-idx">05</span><span class="m-name">Lab notes</span></button>
           <button class="m-item" role="menuitem" data-act="credits" data-pose="0" style="--i:5"><span class="m-idx">06</span><span class="m-name">Credits</span></button>
-          <button class="m-item m-locked" role="menuitem" aria-disabled="true" data-act="identify" data-pose="2" style="--i:6"><span class="m-idx">07</span><span class="m-name">Identify</span><span class="m-lock">soon</span></button>
         </nav>
         <p class="m-caption" id="titleCaption" aria-live="polite"></p>
+        <div class="t-streak" id="tStreak" hidden></div>
 
         <div class="t-chips">
           <button class="chip-toggle shine" id="clockChip" aria-pressed="true"><span class="ct-k">Clock</span><span class="ct-v" id="clockVal">Timed</span><kbd>T</kbd></button>
@@ -1456,6 +1523,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <svg class="ep-ring" id="gameRing" viewBox="0 0 200 200" aria-hidden="true"></svg>
             <canvas id="scope" width="640" height="640" aria-label="Microscope field of view"></canvas>
             <div class="ep-label" id="epLabel">10x</div>
+            <p class="ep-msg" id="epMsg" hidden></p>
             <div class="ep-timer" id="timer">
               <svg class="et-ring" viewBox="0 0 200 200" aria-hidden="true"><circle class="et-track" cx="100" cy="100" r="98.2"/><circle class="et-arc" id="timerArc" cx="100" cy="100" r="98.2" pathLength="100"/></svg>
               <div class="et-badge" role="timer" aria-label="Time left"><span class="et-k">Time</span><span class="et-num" id="timerText">0:40</span></div>
@@ -1464,12 +1532,17 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         </div>
 
         <aside class="g-dock" id="dock">
+          <div class="mode-tools" id="brightTools" hidden>
+            <label class="cond"><span>Condenser aperture</span><input type="range" id="condRange" min="20" max="100" step="5" value="100" aria-label="Condenser aperture, percent of the objective's NA"><b id="condTxt">100%</b></label>
+            <p class="tool-note" id="condNote">Closing it raises contrast in unstained cells but costs resolution.</p>
+          </div>
           <div class="mode-tools" id="fluorTools" hidden>
             <div class="seg" role="group" aria-label="Filter cube" id="cubeSeg">
               <button data-cube="dapi" aria-pressed="true"><i style="background:#5a7dff"></i>DAPI</button>
               <button data-cube="fitc" aria-pressed="false"><i style="background:#3fe07a"></i>FITC</button>
               <button data-cube="tritc" aria-pressed="false"><i style="background:#ff5a4a"></i>TRITC</button>
             </div>
+            <div class="tool-row"><span class="tool-k">Lamp</span><div class="seg pow-seg" role="group" aria-label="Light power" id="powSegF"><button data-pow="0" aria-pressed="false">Low</button><button data-pow="1" aria-pressed="true">Mid</button><button data-pow="2" aria-pressed="false">High</button></div></div>
             <div class="tool-row">
               <button class="btn small shine" id="shutterBtn">Shutter open</button>
               <div class="signal"><span>signal</span><span class="meter"><i id="signalFill"></i></span><span id="signalTxt">100%</span></div>
@@ -1481,6 +1554,8 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
               <button data-pin="2" aria-pressed="false">2 AU</button>
             </div>
             <span class="zread" id="zRead">Z 0.00 µm</span>
+            <div class="tool-row"><span class="tool-k">Laser</span><div class="seg pow-seg" role="group" aria-label="Light power" id="powSegC"><button data-pow="0" aria-pressed="false">Low</button><button data-pow="1" aria-pressed="true">Mid</button><button data-pow="2" aria-pressed="false">High</button></div></div>
+            <div class="tool-row"><div class="signal"><span>signal</span><span class="meter"><i id="signalFillC"></i></span><span id="signalTxtC">100%</span></div></div>
           </div>
           <p class="knob-cap">Turn fast to travel, slowly to focus. Outer ring is coarse, centre is fine.</p>
           <svg class="knob" id="knob" viewBox="0 0 200 200" role="slider" tabindex="0" aria-label="Focus knob. Outer ring is coarse, centre is fine. Hold the arrow keys for fine, Shift plus arrow for coarse." aria-valuetext="focus">
@@ -1509,6 +1584,10 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <div class="jog"><span>Coarse</span><div class="jog-strip coarse" id="jogCoarse" aria-label="Coarse focus. Drag right to bring the lens down."></div></div>
             <div class="jog"><span>Fine</span><div class="jog-strip fine" id="jogFine" aria-label="Fine focus. Drag right to bring the lens down."></div></div>
           </div>
+          <div class="zs-panel" id="zsPanel" hidden>
+            <p class="zs-step" id="zsStep"></p>
+            <div class="zs-strip" id="zsStrip"></div>
+          </div>
           <div class="dock-actions">
             <button class="btn primary shine" id="lockBtn">Lock focus</button>
             <button class="btn shine" id="oilBtn">Add oil <kbd>O</kbd></button>
@@ -1524,6 +1603,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
           <dl class="v-break" id="vBreak"></dl>
           <ul class="v-notes" id="vNotes"></ul>
           <div class="v-curve" id="vCurve" hidden></div>
+          <p class="v-fact" id="vFact" hidden></p>
           <button class="btn primary shine v-next" id="nextBtn">Swing in 40x <kbd>⏎</kbd></button>
         </section>
       </div>
@@ -1649,6 +1729,8 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         </div>
         <div class="total"><b id="rTotal">0</b><small>/ 3000</small></div>
         <div class="stage-rows" id="rRows"></div>
+        <div class="zs-res" id="rZs" hidden></div>
+        <div class="r-cal" id="rCal" hidden></div>
         <nav class="r-actions" id="rActions" aria-label="What next">
           <button class="btn primary shine" id="shareBtn"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share with friends</button>
           <button class="btn shine" id="cardBtn"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="3.5"/><path d="M8 17h8"/></svg>Victory card</button>
@@ -1665,6 +1747,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
           <p class="eyebrow" id="rWhat">What was on the slide</p>
           <h2 id="rOrg"></h2>
           <p class="of" id="rStain"></p>
+          <div class="recap" id="rRecap" hidden></div>
           <dl class="facts" id="rFacts"></dl>
           <p class="r-why" id="rWhy"></p>
           <ol class="lessons" id="rLessons"></ol>
@@ -1920,6 +2003,8 @@ MODES.sem = { id: "sem", name: "SEM", lam: 0,
 let OBJ = MODES.bright.objs;
 const DUST_Z = 170;
 const BLEACH = [0.006, 0.022, 0.04]; // per second of open shutter
+/* Light power: brighter is easier to see, but bleaches faster. Low saves the dye at the cost of a dim, noisy image. */
+const POWER = [{ name: "Low", gain: 0.55, bleach: 0.4 }, { name: "Mid", gain: 1, bleach: 1 }, { name: "High", gain: 1.7, bleach: 2.4 }];
 
 function effective(mode, k, oil, pinhole) {
   const m = MODES[mode], o = m.objs[k];
@@ -2345,7 +2430,7 @@ const CLIPS = {
   platelets: {"file": "videos/brain-platelets.mp4", "credit": "Platelets and leukocytes in brain arterioles and venules of a living mouse, intravital confocal. Jenne C et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Use-of-Spinning-Disk-Confocal-Microscopy-for-the-Intravital-Analysis-of-Platelet-Dynamics-in-pone.0025109.s021.ogv", "gray": false, "ch": "gfp"},
   centrosomes: {"file": "videos/centrosomes.mp4", "credit": "Centrosomes moving in a live MDA-231 breast cancer cell, confocal. Castiel A et al., via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-phenanthrene-derived-PARP-inhibitor-is-an-extra-centrosomes-de-clustering-agent-exclusively-1471-2407-11-412-S2.ogv", "gray": false, "ch": "red"},
   cystinosin: {"file": "videos/cystinosin.mp4", "credit": "Cystinosin-EGFP vesicles trafficking in a kidney HK-2 cell, confocal. Bellomo F et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Carboxyl-Terminal-SSLKG-Motif-of-the-Human-Cystinosin-LKG-Plays-an-Important-Role-in-Plasma-pone.0154805.s003.ogv", "gray": false, "ch": "gfp"},
-  organoid_wnt: {"file": "videos/organoid-wnt.mp4", "credit": "Fallopian tube organoid with a TCF/GFP Wnt reporter, 72 h confocal time-lapse. Kessler M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Notch-and-Wnt-pathways-regulate-stemness-and-differentiation-in-human-fallopian-tube-organoids-ncomms9989-s4.ogv", "gray": false, "ch": "gfp", "boost": 2.6},
+  organoid_wnt: {"file": "videos/organoid-wnt.mp4", "credit": "Fallopian tube organoid with a TCF/GFP Wnt reporter, 72 h confocal time-lapse. Kessler M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Notch-and-Wnt-pathways-regulate-stemness-and-differentiation-in-human-fallopian-tube-organoids-ncomms9989-s4.ogv", "gray": false, "ch": "gfp", "boost": 1.5},
   paramecium: {"file": "videos/paramecium.mp4", "credit": "Paramecium caudatum swimming, DIC, 20x objective. Alexander Klepnev, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:%D0%98%D0%BD%D1%84%D1%83%D0%B7%D0%BE%D1%80%D0%B8%D1%8F_%D1%82%D1%83%D1%84%D0%B5%D0%BB%D1%8C%D0%BA%D0%B0_7.webm", "gray": false},
   vorticella: {"file": "videos/vorticella.mp4", "credit": "Vorticella feeding, brightfield. smaller.pathological.ca, via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Vorticella_sp._feeding.webm", "gray": false},
   rotifer: {"file": "videos/rotifer.mp4", "credit": "Rotifer moving, brightfield with closed condenser. Brandon Seah, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Rotifer_closeup_moving_DSC_6861.webm", "gray": false},
@@ -2360,6 +2445,40 @@ const CLIPS = {
   celegans: {"file": "videos/c-elegans-embryo.mp4", "credit": "C. elegans embryo dividing from one cell to eight, DIC time-lapse. von Tobel L et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:SAS-1-Is-a-C2-Domain-Protein-Critical-for-Centriole-Integrity-in-C.-elegans-pgen.1004777.s010.ogv", "gray": false, "zoom": 1},
   nematode: {"file": "videos/nematode.mp4", "credit": "Free-living nematode moving, DIC. Alexander Klepnev, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:%D0%9D%D0%B5%D0%BC%D0%B0%D1%82%D0%BE%D0%B4%D0%B0_Nematode.webm", "gray": false},
   organoid: {"file": "videos/organoid.mp4", "credit": "Fallopian tube organoids forming from single cells in Matrigel, time-lapse. Kessler M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Notch-and-Wnt-pathways-regulate-stemness-and-differentiation-in-human-fallopian-tube-organoids-ncomms9989-s3.ogv", "gray": false}
+};
+const CLIP_FACT = {
+ "h2b_hela": "Histone H2B wraps DNA, so H2B-GFP lights up chromatin. Bright, compact nuclei are cells about to divide.",
+ "h2b_wide": "Watch nuclei condense into bars of chromosomes, line up at the metaphase plate, then split in two: mitosis, over about an hour.",
+ "mito_mef": "Mitochondria are a moving network: they constantly divide (fission) and fuse, which mixes their contents and isolates damaged parts.",
+ "eb1_u2os": "Each comet is one microtubule growing. EB1 binds only the newest tip, so the comets trace growth at roughly 10–20 µm per minute.",
+ "er_mito": "The ER (magenta) wraps around mitochondria (green); ER tubules mark the spots where mitochondria will divide.",
+ "virus": "Each dot is a single virus particle, about 100 nm across: far too small to resolve, so you see a diffraction-limited spot.",
+ "eb1_3t3b": "Comets streaming out from the centre are microtubules growing from the centrosome toward the cell edge.",
+ "ecoli": "Each rod is a living E. coli filled with GFP. They swim with flagella that are too thin to see here.",
+ "hela_tub": "Green is GFP-tubulin, red is mCherry-H2B on chromosomes. A cell rounding up with a bright red bar is in mitosis.",
+ "ricin": "Ricin binds sugars on the cell surface and is pulled in by endocytosis; green dots meeting red late endosomes show its route inward.",
+ "zf_notochord": "Notochord cells squeeze between their neighbours (intercalation), which narrows and lengthens the embryo's body axis.",
+ "fly_furrow": "These outlines are cell membranes. During gastrulation the cells constrict at the top and fold a furrow into the embryo.",
+ "borrelia": "The green wave is a Lyme disease spirochete swimming through tissue with flagella that sit inside its own cell wall.",
+ "neutrophils": "Blue neutrophils crawl to red Pseudomonas and swallow them (phagocytosis): innate immunity in a living animal.",
+ "platelets": "Platelets and white cells roll and stick inside living brain vessels; inflammation makes them cling to the vessel wall.",
+ "centrosomes": "The bright dots are centrosomes. Cancer cells often carry extra ones and must cluster them to divide cleanly.",
+ "cystinosin": "Cystinosin moves cystine out of lysosomes. Here GFP-tagged cystinosin travels between lysosomes and the cell surface.",
+ "organoid_wnt": "Green cells have Wnt signalling switched on. These are the dividing cells that keep the organoid growing.",
+ "paramecium": "Paramecium is covered in thousands of cilia beating in waves; it swims in a spiral and backs up when it bumps into things.",
+ "vorticella": "Vorticella's ring of cilia whips up a vortex that carries bacteria into its mouth; its stalk can spring-coil in milliseconds.",
+ "rotifer": "A rotifer is a whole animal under 1 mm long, with a gut, muscles and nerves, feeding with a crown of beating cilia.",
+ "euglena": "Euglena photosynthesises with its chloroplasts but can also feed; it swims with a single flagellum and senses light with an eyespot.",
+ "difflugia": "Difflugia is an amoeba living in a shell it builds from sand grains, reaching out with blunt, lobed pseudopodia.",
+ "bacillaria": "Bacillaria diatoms glide along each other on a slit in their silica walls, so the colony slides open and shut like a ruler.",
+ "cyanobacteria": "Cyanobacteria glide without flagella. They secrete slime and move their surface, rotating as they travel.",
+ "onion": "Organelles stream along actin cables pulled by myosin motors: the cell's own conveyor belt.",
+ "egeria": "Chloroplasts circle around each leaf cell (cyclosis), carried by cytoplasm that myosin drags along actin.",
+ "tradescantia": "The cytoplasm streams along strands that cross the big central vacuole, carrying organelles back and forth.",
+ "stentor": "Stentor is a single cell up to 2 mm long, and it can regrow a whole organism from a small fragment.",
+ "celegans": "The C. elegans embryo divides in the same pattern every time, which let biologists trace the origin of every adult cell.",
+ "nematode": "Nematodes have no cilia or legs; they swim by bending in waves using muscles along their body.",
+ "organoid": "Single epithelial cells in a gel divide and organise themselves into hollow spheres: mini-organs in a dish."
 };
 const MASK = { dapi: "#0000ff", fitc: "#00ff00", tritc: "#ff0000" };
 const VIDS = {};
@@ -2941,8 +3060,8 @@ const LIVE = {
 };
 const LIVE_CROP = [1, 0.78, 0.6]; // each objective sees a smaller part of its clip, but never below its pixels
 
-function genLive(seed, mode) {
-  const R = makeRng(seed, "live"), set = LIVE[mode][R.int(0, LIVE[mode].length - 1)];
+function genLive(seed, mode, id) {
+  const R = makeRng(seed, "live"), set = (id && LIVE[mode].find(x => x.id === id)) || LIVE[mode][R.int(0, LIVE[mode].length - 1)];
   const z1 = R.range(0.9, 1.8), z2 = z1 + R.range(0.8, 1.6);
   const zs = mode === "bright" ? [0, 0, 0] : [0, z1, z2];
   return { kind: mode, live: set, video: set.stages.map(s => s.clip), dust: mode === "bright" ? genDust(seed) : [], bg: { c: [236, 234, 228], e: [206, 202, 194], haze: [150, 150, 150] },
@@ -3219,10 +3338,19 @@ let FILTER_OK = false;
   } catch (e) { FILTER_OK = false; }
 })();
 const tmp = document.createElement("canvas");
-function drawBlurred(ctx, src, sigma, alpha) {
+let FAST_BLUR = false; // set while the focus is moving on a phone: a half-resolution blur, sharpened when it stops
+function drawBlurred(ctx, src, sigma, alpha, extra) {
   ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-  if (sigma < 0.35) ctx.drawImage(src, 0, 0);
-  else if (FILTER_OK) { ctx.filter = `blur(${sigma.toFixed(2)}px)`; ctx.drawImage(src, 0, 0); ctx.filter = "none"; }
+  if (FAST_BLUR && sigma >= 0.35) {
+    const f = Math.max(2, sigma / 1.2), w = Math.max(2, Math.round(SIZE / f));
+    tmp.width = w; tmp.height = w;
+    const t = tmp.getContext("2d"); t.imageSmoothingEnabled = true; t.clearRect(0, 0, w, w); t.drawImage(src, 0, 0, w, w);
+    if (extra && FILTER_OK) ctx.filter = extra;
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, SIZE, SIZE); ctx.filter = "none"; ctx.globalAlpha = 1;
+    return;
+  }
+  if (sigma < 0.35) { if (extra && FILTER_OK) ctx.filter = extra; ctx.drawImage(src, 0, 0); ctx.filter = "none"; }
+  else if (FILTER_OK) { ctx.filter = `${extra || ""} blur(${sigma.toFixed(2)}px)`; ctx.drawImage(src, 0, 0); ctx.filter = "none"; }
   else {
     const f = Math.max(1, sigma / 1.5), w = Math.max(2, Math.round(SIZE / f));
     tmp.width = w; tmp.height = w;
@@ -3245,6 +3373,9 @@ function renderField(ctx, sp, layers, v) {
   ctx.save();
   ctx.beginPath(); ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2); ctx.clip();
   const { o, e, d } = v;
+  const gain = v.gain == null ? 1 : v.gain, cond = v.cond == null ? 1 : v.cond;
+  const bfX = cond < 1 ? `contrast(${(1 + (1 - cond) * (v.live ? 1.3 : 0.5)).toFixed(3)}) brightness(${(0.7 + 0.3 * cond).toFixed(3)})` : "";
+  const flX = gain !== 1 ? `brightness(${gain.toFixed(2)})` : "";
   if (sp.kind === "bright") {
     const g = ctx.createRadialGradient(SIZE * 0.47, SIZE * 0.45, 0, SIZE / 2, SIZE / 2, SIZE / 2);
     g.addColorStop(0, rgba(sp.bg.c, 1)); g.addColorStop(1, rgba(sp.bg.e, 1));
@@ -3254,7 +3385,7 @@ function renderField(ctx, sp, layers, v) {
       let a = 1, use = sig;
       if (sig > 36) { a = 36 / sig; use = 36; }
       if (a < 0.03) continue;
-      drawBlurred(ctx, L.canvas, use, a);
+      drawBlurred(ctx, L.canvas, use, a, L.dust ? "" : bfX);
     }
     if (e.bright < 1) { ctx.fillStyle = `rgba(10,8,20,${(1 - e.bright) * 0.85})`; ctx.fillRect(0, 0, SIZE, SIZE); }
   } else if (sp.kind === "fluor") {
@@ -3267,7 +3398,13 @@ function renderField(ctx, sp, layers, v) {
         let a = L.w * (v.signal == null ? 1 : v.signal) * e.bright, use = sig;
         if (sig > 36) { a *= 36 / sig; use = 36; }
         if (a < 0.02) continue;
-        drawBlurred(ctx, L.canvas, use, a);
+        drawBlurred(ctx, L.canvas, use, a, flX);
+      }
+      if (gain < 1) { // a dim lamp means a noisy camera image
+        ctx.globalAlpha = 0.5 * (1 - gain);
+        const ox = -Math.random() * 256, oy = -Math.random() * 256;
+        for (let x = ox; x < SIZE; x += 256) for (let y = oy; y < SIZE; y += 256) ctx.drawImage(noiseCv, x, y);
+        ctx.globalAlpha = 1;
       }
       ctx.globalCompositeOperation = "source-over";
     }
@@ -3280,9 +3417,9 @@ function renderField(ctx, sp, layers, v) {
       const w = sectionVis(dz, e.dof) * Math.min(1.25, e.bright) * (L.w == null ? 1 : Math.min(1, L.w));
       if (w < 0.02) continue;
       const lateral = Math.min(6, Math.sqrt(diff * diff + (0.12 * sigmaPx(o, e, dz)) ** 2) + e.extra * 0.5);
-      drawBlurred(ctx, L.canvas, lateral, w);
+      drawBlurred(ctx, L.canvas, lateral, w * (v.signal == null ? 1 : v.signal), flX);
     }
-    const nAmt = 0.32 / Math.sqrt(Math.max(0.3, e.bright));
+    const nAmt = 0.32 / Math.sqrt(Math.max(0.3, e.bright * gain * (v.signal == null ? 1 : v.signal)));
     ctx.globalAlpha = nAmt;
     const ox = -Math.random() * 256, oy = -Math.random() * 256;
     for (let x = ox; x < SIZE; x += 256) for (let y = oy; y < SIZE; y += 256) ctx.drawImage(noiseCv, x, y);
@@ -4729,6 +4866,7 @@ const screens = { title: $("title"), game: $("game"), result: $("result") };
 let current = "title", busy = false;
 function show(v) {
   for (const k in screens) { screens[k].hidden = k !== v; screens[k].classList.remove("enter"); }
+  document.querySelectorAll("#rRecap video").forEach(x => { try { v === "result" ? x.play().catch(() => {}) : x.pause(); } catch (e) {} });
   void screens[v].offsetWidth; screens[v].classList.add("enter");
   current = v;
   document.body.dataset.screen = v;
@@ -4877,6 +5015,42 @@ const MODE_ORDER = ["bright", "fluor", "confocal"]; // "sem" is built but switch
 const MODE_WORD = { bright: "BRIGHTFIELD", fluor: "FLUORESCENCE", confocal: "CONFOCAL", sem: "ELECTRON" };
 function todayKey() { const dt = new Date(); return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`; }
 const dailyStoreKey = (mode, timed) => todayKey() + (mode === "bright" ? "" : ":" + mode) + (timed ? ":t" : ":u");
+
+/* ---------- Streaks and a calendar of past dailies ---------- */
+const dateKeyOf = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+function dailyBest(dk, mode, st) {
+  const base = dk + (mode === "bright" ? "" : ":" + mode), a = st.daily && st.daily[base + ":t"], b = st.daily && st.daily[base + ":u"];
+  return a == null && b == null ? null : Math.max(a ?? -1, b ?? -1);
+}
+function streakDays(st) {
+  const any = (dk) => ["bright", "fluor", "confocal"].some(m => dailyBest(dk, m, st) != null);
+  const dt = new Date(); if (!any(dateKeyOf(dt))) dt.setDate(dt.getDate() - 1);
+  let n = 0; while (n < 3650 && any(dateKeyOf(dt))) { n++; dt.setDate(dt.getDate() - 1); }
+  return n;
+}
+function calHTML(mode, days, st) {
+  const today = new Date(), cells = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const dt = new Date(today); dt.setDate(today.getDate() - i);
+    const dk = dateKeyOf(dt), v = dailyBest(dk, mode, st), lvl = v == null ? 0 : v >= 2700 ? 4 : v >= 2100 ? 3 : v >= 1350 ? 2 : 1;
+    cells.push(`<i class="l${lvl}${i === 0 ? " today" : ""}" title="${dt.toLocaleDateString(undefined, { day: "numeric", month: "short" })}: ${v == null ? "not played" : v + " / 3000"}"></i>`);
+  }
+  return `<div class="cal" style="--n:${days}">${cells.join("")}</div>`;
+}
+function renderStreak(act) {
+  const el = $("tStreak"); if (!el) return;
+  if (act !== "daily" || homeMode === "sem") { el.hidden = true; return; }
+  const st = loadStore(), n = streakDays(st);
+  el.hidden = false;
+  el.innerHTML = `<p>${n ? `<b>${n}</b>-day streak` : "Play today to start a streak"} <span>· last 2 weeks of ${MODES[homeMode].name.toLowerCase()} dailies</span></p>${calHTML(homeMode, 14, st)}`;
+}
+function renderResultCal() {
+  const el = $("rCal"); if (!G || !G.daily) { el.hidden = true; return; }
+  const st = loadStore(), n = streakDays(st);
+  el.hidden = false;
+  el.innerHTML = `<p><b>${n}</b>-day streak${n >= 2 ? ". Keep it going tomorrow." : ". Come back tomorrow for a new slide."}</p>${calHTML(G.mode, 28, st)}<small>Last 4 weeks · darker means a higher score</small>`;
+}
+
 function captionFor(act) {
   const sem = homeMode === "sem", m = sem ? "SEM" : MODES[homeMode].name.toLowerCase(), thing = sem ? "stub" : "slide";
   if (act === "daily") {
@@ -4895,7 +5069,7 @@ function captionFor(act) {
 const titleMenu = makeMenu($("titleMenu"), {
   onSelect(it) {
     const cap = $("titleCaption");
-    cap.textContent = captionFor(it.dataset.act);
+    cap.textContent = captionFor(it.dataset.act); renderStreak(it.dataset.act);
     cap.classList.remove("swap"); void cap.offsetWidth; cap.classList.add("swap");
     heroPose(+it.dataset.pose);
   },
@@ -4932,7 +5106,7 @@ function setMode(mode) {
   sfx("swap"); buzz(8);
   buildHero(); heroPose(titleMenu.sel >= 0 ? +titleMenu.items[titleMenu.sel].dataset.pose : 2, true);
   const sel = titleMenu.items[titleMenu.sel];
-  if (sel) $("titleCaption").textContent = captionFor(sel.dataset.act);
+  if (sel) { $("titleCaption").textContent = captionFor(sel.dataset.act); renderStreak(sel.dataset.act); }
   renderNotes();
 }
 document.querySelectorAll(".mode-tabs [role=tab]").forEach(t => t.addEventListener("click", () => setMode(t.dataset.mode)));
@@ -4977,6 +5151,22 @@ function unlockAudio(e) {
 }
 UNLOCK_EVENTS.forEach(ev => window.addEventListener(ev, unlockAudio, true));
 $("clockChip").addEventListener("click", toggleClock);
+// On phones the dock is pinned to the bottom; its mode tools (cubes, pinhole) make it taller, so the eyepiece shrinks to match.
+(() => {
+  // size the phone eyepiece from the space actually left between its top edge and the pinned dock
+  const sync = () => {
+    if (!isPhone() || current !== "game") return;
+    const ep = $("eyepieceBox"), dock = $("dock"), view = $("gView"), bar = document.querySelector(".topbar");
+    if (!ep || !dock || gameGrid.classList.contains("judged")) return;
+    // the view scrolls up under the top bar, so the eyepiece and the dock below it share the screen
+    const above = ep.getBoundingClientRect().top - view.getBoundingClientRect().top, barH = bar ? bar.offsetHeight : 60;
+    const free = window.innerHeight - barH - above - dock.offsetHeight - 30;
+    root.style.setProperty("--ep-phone", Math.max(220, Math.round(free)) + "px");
+  };
+  window.phoneFrame = () => { if (!isPhone() || current !== "game") return; sync(); requestAnimationFrame(() => { const bar = document.querySelector(".topbar"), y = $("gView").getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 60) - 6; window.scrollTo({ top: Math.max(0, y), behavior: prefersReduced() ? "auto" : "smooth" }); }); };
+  try { new ResizeObserver(sync).observe($("dock")); } catch (e) {}
+  window.addEventListener("resize", sync); setInterval(sync, 700); setTimeout(sync, 0);
+})();
 $("soundChip").addEventListener("click", toggleSound);
 
 /* Hero eyepiece: every menu item is a pose. The nosepiece swings and the view hunts focus. */
@@ -4986,7 +5176,7 @@ function buildHero() {
   const mode = homeMode;
   if (mode === "sem") { hero = { mode, sem: true, k: hero ? hero.k : 2, theta: hero ? hero.theta : 55, thetaT: SEMK.alpha() * 180 / Math.PI, ring: hero ? hero.ring : 0 }; $("heroEp").classList.add("sem"); semHeroInit(); return; }
   $("heroEp").classList.remove("sem");
-  const sp = genSpecimen(hashString("hero-" + mode), mode, "saureus");
+  const sp = genLive(hashString("hero-" + mode), mode, { bright: "wet-pond", fluor: "live-cells", confocal: "live-infection" }[mode]);
   hero = { mode, sp, layers: [], k: hero && hero.mode === mode ? hero.k : 2, pull: null, last: 0, theta: hero ? hero.theta : 55, thetaT: 55, ring: hero ? hero.ring : 0 };
 }
 function heroLayers(k) { if (!hero.layers[k]) hero.layers[k] = buildLayers(hero.sp, MODES[hero.mode].objs[k], false); return hero.layers[k]; }
@@ -5009,6 +5199,7 @@ function heroPose(k, force) {
 }
 function heroDrift(t, mode, k) {
   const dof = MODES[mode].objs[k].dof;
+  if (hero.sp.live) return -hero.sp.targets[k].z + dof * (mode === "confocal" ? 0.7 : 1.1) * (0.9 * Math.sin(t * 0.7) + 0.22 * Math.sin(t * 1.9));
   if (mode === "confocal") { const top = hero.sp.zR; return -(top / 2 + (top / 2 + 0.6) * Math.sin(t * 0.45)); }
   if (mode === "fluor") return -(1.8 + 2.4 * Math.sin(t * 0.55));
   return dof * (0.9 * Math.sin(t * 0.7) + 0.22 * Math.sin(t * 1.9));
@@ -5030,6 +5221,11 @@ function heroFrame(now) {
   }
   const t = prefersReduced() ? 0 : now / 1000;
   const o = MODES[hero.mode].objs[hero.k];
+  if (hero.sp.live) {
+    const clip = hero.sp.targets[hero.k].clip, v = clipVideo(clip);
+    if (v.paused) playClips([clip]);
+    for (const L of heroLayers(hero.k)) if (L.live) paintLive(L, "all", hero.mode);
+  }
   renderField(hctx, hero.sp, heroLayers(hero.k), { o, e: effective(hero.mode, hero.k, true, 1), d: heroDrift(t, hero.mode, hero.k) + extra, cube: "all", signal: 1 });
   $("heroRing").style.transform = `rotate(${hero.ring + t * 4}deg)`;
   heroCone(now);
@@ -5198,7 +5394,7 @@ function startGameNow({ daily, tut, seed: seedIn, mode }) {
     t0: performance.now(), locked: false, ready: false, paused: false, pausedAt: 0, dirty: true,
     coarseUm: [0, 0, 0], lastWhole: null,
     quipRng: makeRng(seed, "quips"), setupRng: S,
-    cube: "dapi", shutter: true, exposure: [0, 0, 0], signal: 1, signalDrawn: 1, pinhole: 1, lastNoise: 0, lastT: performance.now(),
+    cube: "dapi", shutter: true, exposure: [0, 0, 0], signal: 1, signalDrawn: 1, pinhole: 1, cond: 1, power: 1, lastNoise: 0, lastT: performance.now(),
   };
   G.zv = G.stageZ;
   if (sp.live) { sp.video.forEach(clipVideo); playClips([sp.targets[0].clip]); } else stopClips();
@@ -5212,7 +5408,10 @@ function startGameNow({ daily, tut, seed: seedIn, mode }) {
   $("nextBtn").disabled = false;
   $("fluorTools").hidden = mode !== "fluor";
   $("confTools").hidden = mode !== "confocal";
-  $("keyExtra").textContent = mode === "fluor" ? "C cube · S shutter · " : mode === "confocal" ? "P pinhole · " : "";
+  $("brightTools").hidden = mode !== "bright";
+  $("zsPanel").hidden = true; $("lockBtn").innerHTML = "Lock focus";
+  $("keyExtra").textContent = mode === "fluor" ? "C cube · S shutter · L lamp · " : mode === "confocal" ? "P pinhole · L laser · " : "[ ] condenser · ";
+  syncPower(); syncCond();
   $("artSmear").setAttribute("fill", mode === "bright" ? "var(--acc)" : mode === "fluor" ? "#3fe07a" : "#6f8dff");
   syncCube(); syncPinhole(); syncShutter();
   setScopeMode(); buildTurret(); setTurret(0, true);
@@ -5225,7 +5424,12 @@ const gapUm = (useVisual) => OBJ[G.k].wd - (useVisual ? dv() : d());
 const tgt = () => G.sp.targets[G.k];
 const err = () => d() + tgt().z;
 const immersed = () => G.oil && G.contact;
-const eff = () => effective(G.mode, G.k, immersed(), G.pinhole);
+const eff = () => {
+  const e = effective(G.mode, G.k, immersed(), G.pinhole);
+  // a closed condenser lowers the illumination NA: more contrast, less resolution
+  if (G.mode === "bright" && G.cond < 1) e.extra = Math.hypot(e.extra, (1 - G.cond) ** 1.5 * [0.8, 1.6, 2.4][G.k]);
+  return e;
+};
 
 /* the nosepiece: objective lengths keep the set parfocal at this drawing scale */
 function buildTurret() {
@@ -5284,12 +5488,14 @@ function setStageUI() {
   else if (G.k === 2 && !G.oil) hint = "Add oil, then fine focus";
   else hint = "Fine knob only";
   if (G.clearNote && !(G.k === 2 && !G.oil)) hint = G.clearNote;
+  if (G.zs && !G.zs.done) hint = zsHint();
   if (G.mode === "fluor" && G.cube !== t.ch) hint = `Switch to the ${CH[t.ch].name} cube`;
   $("hintText").textContent = hint;
   if (!G.timed) $("timerText").textContent = "∞";
   const dot = $("targetDot");
-  if (G.mode === "bright") { dot.style.background = "var(--acc)"; dot.style.color = "transparent"; $("targetText").textContent = `Target: ${t.label}`; }
-  else { const c = `rgb(${CH[t.ch].rgb.join(",")})`; dot.style.background = c; dot.style.color = c; $("targetText").innerHTML = `Target: ${t.label} <small>· ${t.tag}</small>`; }
+  if (G.mode === "bright") { dot.style.background = "var(--acc)"; dot.style.setProperty("--c", "var(--acc)"); dot.textContent = ""; $("targetText").textContent = `Target: ${t.label}`; }
+  else { const c = `rgb(${CH[t.ch].rgb.join(",")})`; dot.style.background = c; dot.style.setProperty("--c", c); dot.textContent = { dapi: "B", fitc: "G", tritc: "R", gfp: "G", red: "R" }[t.ch] || ""; $("targetText").innerHTML = `Target: ${t.label} <small>· ${t.tag}</small>`; }
+  syncNoSignal();
   const oilBtn = $("oilBtn");
   oilBtn.disabled = G.k === 0 || G.oil || G.locked || !G.ready || G.busyAnim;
   oilBtn.innerHTML = G.oil ? "Oil on" : "Add oil <kbd>O</kbd>";
@@ -5300,14 +5506,40 @@ function setStageUI() {
 function syncCube() {
   document.querySelectorAll("#cubeSeg button").forEach(b => b.setAttribute("aria-pressed", String(!!G && b.dataset.cube === G.cube)));
   if (G) { $("epiGlow").setAttribute("fill", `rgb(${CH[G.cube].rgb.join(",")})`); G.dirty = true; }
+  syncNoSignal();
+}
+/* A live label glows under one cube only. Under the wrong cube the field is black, so say so, and pulse the right cube. */
+function syncNoSignal() {
+  const m = $("epMsg"); if (!m) return;
+  let show = false;
+  if (G && G.mode === "fluor" && G.sp && G.sp.live && G.shutter && !G.locked) {
+    const t = tgt(), c = CLIPS[t.clip];
+    show = !(c.chs ? c.chs.includes(G.cube) : G.cube === c.ch);
+    if (show) m.innerHTML = `No signal under ${CH[G.cube].name}<small>This label glows in another colour. Try another cube.</small>`;
+  }
+  m.hidden = !show;
+  document.querySelectorAll("#cubeSeg button").forEach(b => b.classList.toggle("want", show && G && b.dataset.cube === tgt().ch));
 }
 function syncShutter() {
   if (!G) return;
   const b = $("shutterBtn");
   b.textContent = G.shutter ? "Shutter open" : "Shutter closed";
   b.classList.toggle("shut-closed", !G.shutter);
-  G.dirty = true;
+  G.dirty = true; syncNoSignal();
 }
+function syncPower() {
+  document.querySelectorAll(".pow-seg button").forEach(b => b.setAttribute("aria-pressed", String(!!G && +b.dataset.pow === G.power)));
+  if (G) G.dirty = true;
+}
+function syncCond() {
+  if (!G) return;
+  $("condRange").value = Math.round(G.cond * 100); $("condTxt").textContent = `${Math.round(G.cond * 100)}%`;
+  $("condNote").textContent = G.sp && G.sp.live ? "Unstained living cells: close it to about 65–85% for contrast." : "Stained smears have their own contrast: leave it mostly open.";
+  G.best = null; G.dirty = true;
+}
+document.querySelectorAll(".pow-seg button").forEach(b => b.addEventListener("click", () => { if (!canAct()) return; G.power = +b.dataset.pow; syncPower(); sfx("fine"); }));
+$("condRange").addEventListener("input", (e) => { if (!G || G.locked) return; G.cond = clamp(Math.round(+e.target.value / 5) / 20, 0.2, 1); syncCond(); });
+$("condRange").addEventListener("change", () => sfx("fine"));
 function syncPinhole() {
   document.querySelectorAll("#pinSeg button").forEach(b => b.setAttribute("aria-pressed", String(!!G && +b.dataset.pin === G.pinhole)));
   if (G) G.dirty = true;
@@ -6720,6 +6952,7 @@ const LESSON = (() => {
   });
   window.addEventListener("resize", () => { if (open) { placeTop(); fitHeadline($("lsH")); } });
   window.addEventListener("resize", () => { if (GUIDE_UI.isOpen()) fitHeadline(document.querySelector(".gd-page .gd-h1")); });
+  window.addEventListener("resize", () => { if (current === "result") fitHeadline($("rTier")); if (!$("gate").hidden) fitHeadline($("gateTitle")); });
   function key(e) {
     if (e.key === "Escape") { e.preventDefault(); openPause(); return; }
     const tag = (e.target.tagName || "").toLowerCase();
@@ -7068,7 +7301,8 @@ const play = (el, name) => { el.classList.remove("slide-out", "slide-in", "v-in"
 let slamSkip = null;
 $("slam").addEventListener("click", () => slamSkip && slamSkip());
 async function toVerdict(v) {
-  G.ready = false;
+  G.ready = false; syncNoSignal();
+  if (G.sp.live && G.stage < 2) { const nv = clipVideo(G.sp.targets[G.k + 1].clip); nv.preload = "auto"; if (nv.readyState < 3) { const p = nv.play(); if (p && p.then) p.then(() => { if (G && G.sp.targets[G.k].clip !== G.sp.targets[G.k + 1]?.clip && !G.ready) nv.pause(); }).catch(() => {}); } }
   $("lockBtn").disabled = true; $("oilBtn").disabled = true;
   const vEl = $("verdict"), scope = $("gScope"), dock = $("dock"), view = $("gView"), slam = $("slam");
   $("vTitle").textContent = v.title; $("vTier").textContent = v.tier; $("vQuip").textContent = v.quip;
@@ -7077,7 +7311,8 @@ async function toVerdict(v) {
   const ul = $("vNotes"); ul.innerHTML = "";
   v.notes.forEach(n => { const li = document.createElement("li"); li.textContent = n; ul.appendChild(li); });
   $("vCurve").innerHTML = v.curve || ""; $("vCurve").hidden = !v.curve;
-  $("nextBtn").innerHTML = (v.final ? "See results" : v.crash ? `New slide, swing in ${OBJ[G.k + 1].mag}x` : `Swing in ${OBJ[G.k + 1].mag}x`) + " <kbd>⏎</kbd>";
+  { const t = tgt(), f = G.sp.live && t.clip && CLIP_FACT[t.clip]; $("vFact").hidden = !f; if (f) $("vFact").innerHTML = `<b>What you're seeing · ${escapeHtml(t.label)}</b>${escapeHtml(f)}`; }
+  $("nextBtn").innerHTML = (v.final ? (zsAvailable() ? "Next: capture a z-stack" : "See results") : v.crash ? `New slide, swing in ${OBJ[G.k + 1].mag}x` : `Swing in ${OBJ[G.k + 1].mag}x`) + " <kbd>⏎</kbd>";
   $("vScore").parentElement.classList.toggle("win", v.score >= WIN);
   await wait(v.crash ? 700 : 160);
   // the slam
@@ -7136,7 +7371,7 @@ async function toNextStage() {
   beginStage();
   if (!isPhone()) $("knob").focus({ preventScroll: true });
 }
-function beginStage() { G.ready = true; G.t0 = performance.now(); G.lastT = performance.now(); G.lastWhole = null; $("timer").classList.remove("low", "beat"); $("timerArc").style.strokeDashoffset = "0"; MUSIC.setScene(current === "game" && !pauseOpen ? "game" : "menu"); setStageUI(); }
+function beginStage() { if (window.phoneFrame) setTimeout(window.phoneFrame, 60); G.ready = true; G.t0 = performance.now(); G.lastT = performance.now(); G.lastWhole = null; $("timer").classList.remove("low", "beat"); $("timerArc").style.strokeDashoffset = "0"; MUSIC.setScene(current === "game" && !pauseOpen ? "game" : "menu"); setStageUI(); }
 function crash(how) {
   G.crashed = true; G.locked = true; G.ready = false; haltFocus();
   const o = OBJ[G.k];
@@ -7210,6 +7445,7 @@ function focusCurve(you) {
 }
 
 function lock(timeout) {
+  if (G && G.zs && !G.zs.done) { if (G.ready && !G.paused) zsCapture(); return; }
   if (!G || G.locked || !G.ready || G.paused || G.busyAnim) return;
   G.locked = true; haltFocus(); if (MUSIC) MUSIC.setScene("game");
   const o = OBJ[G.k], e = eff(), t = tgt();
@@ -7241,6 +7477,18 @@ function lock(timeout) {
     if (G.signal < 0.9) { bd.push(["Bleaching", `×${sf.toFixed(2)}`, true]); notes.push(`Photobleaching left ${Math.round(G.signal * 100)}% of the signal. Close the shutter while you think.`); }
     score *= sf;
   }
+  if (G.mode === "confocal") {
+    const sf = 0.4 + 0.6 * G.signal;
+    if (G.signal < 0.9) { bd.push(["Bleaching", `×${sf.toFixed(2)}`, true]); notes.push(`The laser bleached the dye to ${Math.round(G.signal * 100)}%.${G.power === 2 ? " High power bleaches 2.4× faster; Mid is usually enough." : " Focus faster, or turn the laser down."}`); }
+    score *= sf;
+  }
+  if (G.mode === "fluor" && G.power === 2 && G.signal < 0.9) notes.push("The lamp was on High, which bleaches 2.4× faster than Mid.");
+  if (G.mode === "bright") {
+    const a = G.cond, live = !!(G.sp && G.sp.live);
+    if (live && a > 0.88) { score *= 0.92; bd.push(["Condenser wide open", "×0.92", true]); notes.push("Unstained living cells are nearly transparent, so with the condenser wide open they wash out. Closing it to about 65–85% raises contrast."); }
+    else if (a < 0.45) { score *= 0.9; bd.push(["Condenser closed", "×0.90", true]); notes.push("Condenser closed too far: contrast is high, but diffraction blurs fine detail and adds halos. About 65–85% is the usual compromise."); }
+    else if (live) bd.push(["Condenser", `${Math.round(a * 100)}%`]);
+  }
   if (G.mode === "confocal" && G.pinhole === 2) { score *= 0.85; bd.push(["Pinhole 2 AU", "×0.85", true]); notes.push("Pinhole at 2 AU: brighter, but a 1.6× thicker section lets neighbouring layers bleed in."); }
   const onDust = G.mode === "bright" && G.k === 0 && Math.abs(er + DUST_Z) < 12;
   if (onDust) notes.push("You focused on dust on top of the coverslip, 170 µm above the smear.");
@@ -7263,7 +7511,7 @@ $("lockBtn").addEventListener("click", () => lock(false));
 $("nextBtn").addEventListener("click", () => {
   if (!G || $("nextBtn").disabled || busy) return;
   sfx("confirm");
-  if (G.stage === 2) { finish(); return; }
+  if (G.stage === 2) { if (zsAvailable()) startZStack(); else finish(); return; }
   if (G.mode === "sem") semNextStage(); else toNextStage();
 });
 
@@ -7331,12 +7579,55 @@ function quitToTitle() {
   wipeTo({ reveal: () => {
     G = null; stopClips(); OBJ = MODES.bright.objs; show("title"); titleMenu.enter(); heroPose(+titleMenu.items[titleMenu.sel].dataset.pose, true);
     const wm = $("wordmark"); wm.classList.remove("focusing"); void wm.offsetWidth; if (!prefersReduced()) wm.classList.add("focusing");
-    const s = titleMenu.items[titleMenu.sel]; if (s) $("titleCaption").textContent = captionFor(s.dataset.act);
+    const s = titleMenu.items[titleMenu.sel]; if (s) { $("titleCaption").textContent = captionFor(s.dataset.act); renderStreak(s.dataset.act); }
   } });
 }
 
 /* ---------- Results ---------- */
 const RANKS = [[2700, "S"], [2250, "A"], [1800, "B"], [1200, "C"], [0, "D"]];
+
+/* ---------- Z-stack: after 63x on a live confocal slide, capture the sharpest plane and the planes 1.2 µm either side ---------- */
+const ZS_STEP = 1.2;
+const zsAvailable = () => !!(G && G.mode === "confocal" && G.sp.live && !G.tut && G.stage === 2 && !G.results[2]?.crashed && !G.zs);
+function zsTarget(i) { const z0 = G.zs.caps[0] && G.zs.caps[0].z; return i === 0 ? null : z0 + (i === 1 ? ZS_STEP : -ZS_STEP); }
+function zsHint() {
+  if (!G.zs || G.zs.done) return "";
+  const i = G.zs.caps.length;
+  return i === 0 ? "Z-stack: capture the sharpest plane" : `Z-stack: go to Z ${zsTarget(i).toFixed(2)} µm and capture`;
+}
+function renderZS() {
+  const z = G.zs, i = z.caps.length;
+  $("zsStep").innerHTML = i < 3 ? `<b>Z-stack · plane ${i + 1} of 3</b>${i === 0 ? "Find the sharpest plane and capture it. That sets the middle of the stack." : `Now ${i === 1 ? ZS_STEP + " µm one way" : ZS_STEP + " µm the other way"}: turn fine focus until the Z readout says <b>${zsTarget(i).toFixed(2)} µm</b>.`}` : "<b>Z-stack captured</b>";
+  $("zsStrip").innerHTML = [0, 1, 2].map(k => { const c = z.caps[k]; return `<figure class="${k === i ? "now" : ""}">${c ? `<img src="${c.img}" alt="">` : "<span></span>"}<figcaption>${k === 0 ? "middle" : k === 1 ? "+" + ZS_STEP : "−" + ZS_STEP}${c ? ` · ${c.z.toFixed(2)}` : ""}</figcaption></figure>`; }).join("");
+  $("hintText").textContent = zsHint();
+}
+function startZStack() {
+  G.zs = { caps: [], done: false, timed: G.timed };
+  G.timed = false; G.locked = false; G.crashed = false;
+  $("timer").classList.add("off");
+  flip($("gView"), () => { gameGrid.classList.remove("judged"); });
+  $("zsPanel").hidden = false;
+  $("lockBtn").innerHTML = "Capture plane <kbd>⏎</kbd>"; $("lockBtn").disabled = false;
+  G.ready = true; G.dirty = true;
+  renderZS();
+  if (window.phoneFrame) setTimeout(window.phoneFrame, 700);
+  if (!isPhone()) $("knob").focus({ preventScroll: true });
+}
+function zsCapture() {
+  const z = G.zs, sc = $("scope"), t = document.createElement("canvas"); t.width = t.height = 120;
+  t.getContext("2d").drawImage(sc, 0, 0, 120, 120);
+  z.caps.push({ z: -G.stageZ, dd: d(), img: t.toDataURL("image/jpeg", 0.8) });
+  sfx("fine"); buzz(10);
+  if (z.caps.length < 3) { renderZS(); return; }
+  z.done = true; renderZS();
+  const mid = focusAccuracy(z.caps[0].dd);
+  const side = [1, 2].map(i => Math.exp(-(((z.caps[i].z - zsTarget(i)) / 0.3) ** 2)));
+  z.score = Math.round(100 * (mid + side[0] + side[1]) / 3);
+  z.errs = [1, 2].map(i => z.caps[i].z - zsTarget(i));
+  G.ready = false; G.timed = z.timed;
+  setTimeout(finish, 650);
+}
+
 function finish() {
   wipeTo({ reveal: finishNow, forward: true });
 }
@@ -7369,7 +7660,11 @@ function finishNow() {
   if (!uniq.length) uniq.push(G.mode === "sem" ? "Clean technique: the right voltage for the stub, focus and stigmation at high magnification, and a full histogram." : G.mode === "fluor" ? "Clean technique: right cube for each label, shutter closed while thinking, oil before 100x." : G.mode === "confocal" ? "Clean technique: coarse only at 10x, a tight pinhole, and oil before 63x." : "Clean technique: coarse only at 10x, fine focus above it, oil before 100x.");
   uniq.forEach(t => { const li = document.createElement("li"); li.textContent = t; ls.appendChild(li); });
   const plate = info.plateId && plateImgs[info.plateId] ? PLATES[info.plateId] : null;
-  $("rCredit").innerHTML = G.sp && G.sp.live ? "Live footage: " + [...new Set(G.sp.video)].map(k => `${escapeHtml(CLIPS[k].credit)} <a href="${CLIPS[k].url}" target="_blank" rel="noopener">Source</a>`).join(" · ") : G.mode === "sem" ? `Stub modelled in 3D from published sizes and rendered as a secondary-electron image.${G.info.lead || ""}` : plate ? `${G.mode === "bright" ? "100x plate" : "Photograph"}: ${escapeHtml(plate.credit)} <a href="${plate.url}" target="_blank" rel="noopener">Source</a>` : "Specimen drawn in code from published size, shape and labelling.";
+  { const rc = $("rRecap"); rc.hidden = !(G.sp && G.sp.live);
+    if (G.sp && G.sp.live) rc.innerHTML = G.sp.targets.map((t, i) => { const c = CLIPS[t.clip], tint = c.gray && t.ch ? `rgb(${CH[t.ch].rgb.join(",")})` : "";
+      return `<figure class="rc-tile"><span class="rc-ep"${c.gray ? ' style="--g:1"' : ""}><video src="${c.file}" muted loop autoplay playsinline preload="metadata"></video>${tint ? `<i style="background:${tint}"></i>` : ""}</span><figcaption><b>${OBJ[i].mag}x</b> ${escapeHtml(t.label)}${t.tag ? `<small>${escapeHtml(t.tag)}</small>` : ""}</figcaption></figure>`; }).join("");
+    else rc.innerHTML = ""; }
+  $("rCredit").innerHTML = G.sp && G.sp.live ? `<details class="credits-fold"><summary>Footage credits (${new Set(G.sp.video).size} clips)</summary>${[...new Set(G.sp.video)].map(k => `<p>${escapeHtml(CLIPS[k].credit)} <a href="${CLIPS[k].url}" target="_blank" rel="noopener">Source</a></p>`).join("")}</details>` : G.mode === "sem" ? `Stub modelled in 3D from published sizes and rendered as a secondary-electron image.${G.info.lead || ""}` : plate ? `${G.mode === "bright" ? "100x plate" : "Photograph"}: ${escapeHtml(plate.credit)} <a href="${plate.url}" target="_blank" rel="noopener">Source</a>` : "Specimen drawn in code from published size, shape and labelling.";
   $("shareText").textContent = shareMessage().replace(/\n/g, " · ");
   $("rWhat").textContent = G.mode === "sem" ? "What was on the stub" : "What was on the slide";
   $("againBtn").textContent = G.mode === "sem" ? "Practice stub" : "Practice slide";
@@ -7382,7 +7677,11 @@ function finishNow() {
     saveStore(st);
   }
   if (G.tut) { patchStore({ tutorialDone: true }); TUT.finishAt(); }
+  renderResultCal();
   show("result");
+  requestAnimationFrame(() => fitHeadline($("rTier")));
+  { const z = G.zs, el = $("rZs"); el.hidden = !(z && z.done);
+    if (z && z.done) el.innerHTML = `<p><b>Z-stack</b> <span>${z.score}%</span><small>${z.errs.every(e => Math.abs(e) < 0.15) ? "Planes spaced right on 1.2 µm." : `Side planes off by ${z.errs.map(e => Math.abs(e).toFixed(2)).join(" and ")} µm.`}</small></p><div class="zs-strip done">${[2, 0, 1].map(k => `<figure><img src="${z.caps[k].img}" alt=""><figcaption>${z.caps[k].z.toFixed(2)} µm</figcaption></figure>`).join("")}</div>`; }
   revealResults(total);
 }
 async function revealResults(total) {
@@ -7641,6 +7940,8 @@ document.addEventListener("keydown", (e) => {
     else if ((e.key === "c" || e.key === "C") && G.mode === "fluor" && canAct()) { const order = ["dapi", "fitc", "tritc"]; G.cube = order[(order.indexOf(G.cube) + 1) % 3]; syncCube(); setStageUI(); sfx("fine"); }
     else if ((e.key === "s" || e.key === "S") && G.mode === "fluor" && canAct()) { G.shutter = !G.shutter; syncShutter(); sfx("coarse"); }
     else if ((e.key === "p" || e.key === "P") && G.mode === "confocal" && canAct()) { G.pinhole = G.pinhole === 1 ? 2 : 1; syncPinhole(); sfx("fine"); }
+    else if ((e.key === "l" || e.key === "L") && G.mode !== "bright" && canAct()) { G.power = (G.power + 1) % 3; syncPower(); sfx("fine"); }
+    else if ((e.key === "[" || e.key === "]") && G.mode === "bright" && canAct()) { G.cond = clamp(Math.round((G.cond + (e.key === "]" ? 0.05 : -0.05)) * 20) / 20, 0.2, 1); syncCond(); sfx("fine"); }
     return;
   }
   if (current === "result" && e.key === "Escape") { e.preventDefault(); quitToTitle(); }
@@ -7686,21 +7987,31 @@ function loop(now) {
         if (rem <= 0) { sfx("timeup"); lock(true); }
       } else if (!G.timed) $("timer").classList.remove("low");
       if (G.mode === "fluor" && G.ready && !G.locked && G.shutter && !LESSON.isOpen()) {
-        G.exposure[G.k] += dt; G.signal = Math.exp(-BLEACH[G.k] * G.exposure[G.k]);
+        G.exposure[G.k] += dt * POWER[G.power].bleach; G.signal = Math.exp(-BLEACH[G.k] * G.exposure[G.k]);
         if (Math.abs(G.signal - G.signalDrawn) > 0.012) G.dirty = true;
       }
-      if (G.mode === "confocal" && G.ready && !G.locked && now - G.lastNoise > 140) { G.lastNoise = now; G.dirty = true; }
+      if (G.mode === "confocal" && G.ready && !G.locked && !LESSON.isOpen()) {
+        // the scanning laser bleaches too, more gently than a widefield lamp
+        G.exposure[G.k] += dt * POWER[G.power].bleach * 0.3; G.signal = Math.exp(-BLEACH[G.k] * G.exposure[G.k]);
+        if (Math.abs(G.signal - G.signalDrawn) > 0.012) G.dirty = true;
+      }
+      if ((G.mode === "confocal" || (G.mode === "fluor" && G.power === 0)) && G.ready && !G.locked && now - G.lastNoise > 140) { G.lastNoise = now; G.dirty = true; }
     }
     if (G.mode === "fluor") { $("signalFill").style.transform = `scaleX(${G.signal.toFixed(3)})`; $("signalTxt").textContent = `${Math.round(G.signal * 100)}%`; }
+    if (G.mode === "confocal") { $("signalFillC").style.transform = `scaleX(${G.signal.toFixed(3)})`; $("signalTxtC").textContent = `${Math.round(G.signal * 100)}%`; }
     // the focus drive: pending knob rotation reaches the stage smoothly, frame by frame
     if (!G.paused) stepFocus(Math.max(0.001, dt)); else knobSound(0, 0);
-    if (G.zv !== G.stageZ) { G.zv = G.stageZ; G.dirty = true; }
+    if (G.zv !== G.stageZ) { G.zv = G.stageZ; G.dirty = true; G.movedAt = now; }
+    if (G.needSharp && now - (G.movedAt || 0) > 160) { G.needSharp = false; G.dirty = true; }
     if (G.ready) checkOil();
     TUT.tick();
     if (G.sp.live && !document.hidden) for (const L of G.layers) if (L.live && paintLive(L, G.mode === "fluor" ? G.cube : "all", G.mode)) G.dirty = true;
     if (G.dirty) {
-      const v = { o, e: eff(), d: dv(), cube: G.cube, shutter: G.shutter, signal: G.signal, crashed: G.crashed, oilSmear: G.k === 1 && G.oilOn40 };
+      const v = { o, e: eff(), d: dv(), cube: G.cube, shutter: G.shutter, signal: G.signal, crashed: G.crashed, oilSmear: G.k === 1 && G.oilOn40, gain: G.mode === "bright" ? 1 : POWER[G.power].gain, cond: G.mode === "bright" ? G.cond : 1, live: !!G.sp.live };
+      FAST_BLUR = isPhone() && now - (G.movedAt || 0) < 160;
+      if (FAST_BLUR) G.needSharp = true;
       renderField(sctx, G.sp, G.layers, v);
+      FAST_BLUR = false;
       G.signalDrawn = G.signal;
       $("epLabel").textContent = G.mode === "fluor" && !G.shutter ? "shutter closed" : G.k === 2 ? (immersed() ? `${o.mag}x oil` : `${o.mag}x · no oil`) : G.mode === "fluor" ? `${o.mag}x · ${CH[G.cube].name}` : `${o.mag}x`;
       updateScopeArt();
@@ -8547,6 +8858,8 @@ if (gateOpen) {
   gate.addEventListener("click", closeGate);
   window.addEventListener("keydown", gateKey, true);
   requestAnimationFrame(() => { syncModeTabs(false); try { $("gateGo").focus({ preventScroll: true }); } catch (e) {} });
+  const fitGate = () => fitHeadline($("gateTitle"), 30);
+  requestAnimationFrame(fitGate); try { document.fonts.ready.then(fitGate); } catch (e) {}
 } else introTitle();
 try { document.fonts.ready.then(() => syncModeTabs(false)); } catch (e) {}
 window.addEventListener("resize", () => syncModeTabs(false));

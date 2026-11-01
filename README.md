@@ -77,3 +77,14 @@ Every fluorescence and confocal slide, and most brightfield ones, are real recor
 - Each slide plays one clip per objective. Defocus blur, confocal dimming, photobleaching and the filter cube are applied live: a cube shows only the colour channel it passes, so a label goes dark under the wrong cube.
 - Only the clip in view decodes; playback stops when the tab is hidden or you quit.
 - Fixed slides remain only as Gram smears in brightfield, in the tutorials, and as a fallback if a clip fails to load.
+
+## Lab technique and progress
+
+- **Condenser aperture** (brightfield, `[` `]`): closing it raises contrast in unstained living cells but adds diffraction blur. About 65–85% open is the target for wet mounts; stained smears can stay open.
+- **Lamp and laser power** (fluorescence and confocal, `L`): High is brighter but bleaches 2.4× faster; Low saves the dye but gives a dim, noisy image. Confocal now bleaches too, with its own signal meter.
+- **Wrong cube cue**: a live label that a cube can't pass leaves the field black, so the eyepiece says "No signal" and the right cube pulses.
+- **What you're seeing**: every verdict on a live slide adds one fact about that clip.
+- **Z-stack** (confocal, after 63x): capture the sharpest plane, then the planes 1.2 µm either side using the Z readout. Scored separately on the results.
+- **Results recap**: the three clips you focused play as small eyepieces, with folded footage credits.
+- **Streaks and calendar**: a streak counter and the last two weeks of dailies on the title screen, four weeks on daily results.
+- **Phones**: the eyepiece and its controls share one screen; the blur is drawn at half resolution while the knob turns and sharpened when it stops. The next objective's clip starts decoding during each verdict.
