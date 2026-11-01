@@ -4976,7 +4976,7 @@ const MUSIC = (() => {
     out = A.createGain(); out.gain.value = 0;
     const room = A.createBiquadFilter(); room.type = "lowpass"; room.frequency.value = 16000; room.Q.value = 0.5;
     const comp = A.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.25;
-    out.connect(room).connect(comp).connect(bus(A, "music"));
+    out.connect(room).connect(comp).connect(audioBus(A, "music"));
     bus.room = room;
     // a small synthetic hall
     const ir = A.createBuffer(2, Math.floor(A.sampleRate * 2.4), A.sampleRate);
@@ -5204,7 +5204,7 @@ function burst(A, dest, { t = 0, dur = 0.05, type = "bandpass", f = 1500, f2 = n
 }
 /* Volume buses: every sound effect and the music each pass through one gain, set from Settings. */
 const BUSES = new WeakMap();
-function bus(A, kind) {
+function audioBus(A, kind) {
   let b = BUSES.get(A);
   if (!b) { b = {}; for (const k of ["sfx", "music"]) { const g = A.createGain(); g.gain.value = k === "sfx" ? SET.sfxVol : SET.musicVol; g.connect(A.destination); b[k] = g; } BUSES.set(A, b); }
   return b[kind];
@@ -5214,7 +5214,7 @@ function sfx(name, opt = {}) {
   if (window.__pf && window.__pf.log) window.__pf.log.push(name);
   if (!soundOn) return;
   try {
-    const A = ac(), out = bus(A, "sfx");
+    const A = ac(), out = audioBus(A, "sfx");
     switch (name) {
       case "coarse": burst(A, out, { dur: 0.014, f: 1700, q: 2, g: 0.45 }); break;
       case "fine": burst(A, out, { dur: 0.012, f: 3600, q: 2, g: 0.26 }); break;
@@ -6358,13 +6358,13 @@ function knobAudio(A) {
   const cLfo = A.createOscillator(); cLfo.type = "triangle"; cLfo.frequency.value = 10;
   const cDepth = A.createGain(); cDepth.gain.value = 0.28; cLfo.connect(cDepth).connect(cAm.gain);
   const cOut = A.createGain(); cOut.gain.value = 0;
-  src.connect(cBp).connect(cLp).connect(cAm).connect(cOut).connect(bus(A, "sfx"));
+  src.connect(cBp).connect(cLp).connect(cAm).connect(cOut).connect(audioBus(A, "sfx"));
   const hum = A.createOscillator(); hum.type = "sine"; hum.frequency.value = 60;
-  const humG = A.createGain(); humG.gain.value = 0; hum.connect(humG).connect(bus(A, "sfx"));
+  const humG = A.createGain(); humG.gain.value = 0; hum.connect(humG).connect(audioBus(A, "sfx"));
   const fBp = A.createBiquadFilter(); fBp.type = "bandpass"; fBp.frequency.value = 2000; fBp.Q.value = 1.1;
   const fLp = A.createBiquadFilter(); fLp.type = "lowpass"; fLp.frequency.value = 5200;
   const fOut = A.createGain(); fOut.gain.value = 0;
-  src.connect(fBp).connect(fLp).connect(fOut).connect(bus(A, "sfx"));
+  src.connect(fBp).connect(fLp).connect(fOut).connect(audioBus(A, "sfx"));
   src.start(); cLfo.start(); hum.start();
   return { A, cBp, cOut, cLfo, hum, humG, fBp, fOut, lc: 0, lf: 0 };
 }
@@ -7965,8 +7965,8 @@ function popSound() {
       const n = A.createBufferSource(); n.buffer = buf;
       const hp = A.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 900;
       const g = A.createGain(); g.gain.value = 0.55;
-      const pn = A.createStereoPanner ? A.createStereoPanner() : null, out = pn || bus(A, "sfx");
-      if (pn) { pn.pan.value = pan; pn.connect(bus(A, "sfx")); }
+      const pn = A.createStereoPanner ? A.createStereoPanner() : null, out = pn || audioBus(A, "sfx");
+      if (pn) { pn.pan.value = pan; pn.connect(audioBus(A, "sfx")); }
       n.connect(hp).connect(g).connect(out); n.start(t);
       const o = A.createOscillator(), og = A.createGain();
       o.frequency.setValueAtTime(170, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
@@ -7987,7 +7987,7 @@ function victoryTune() {
   if (!soundOn) return;
   try {
     const A = ac(), t0 = A.currentTime + 0.02;
-    const master = A.createGain(); master.gain.value = 0.16; master.connect(bus(A, "sfx"));
+    const master = A.createGain(); master.gain.value = 0.16; master.connect(audioBus(A, "sfx"));
     const note = (f, t, dur, type = "square", vol = 1) => {
       const o = A.createOscillator(), g = A.createGain(), lp = A.createBiquadFilter();
       lp.type = "lowpass"; lp.frequency.value = 2600; o.type = type; o.frequency.value = f;
@@ -9473,7 +9473,7 @@ function semPumpSound(on) {
   if (!on) { if (pumpSnd) { const p = pumpSnd; pumpSnd = null; try { const t = p.A.currentTime; p.g.gain.cancelScheduledValues(t); p.g.gain.setTargetAtTime(0, t, 0.5); setTimeout(() => { try { p.o.stop(); p.n.stop(); p.o2.stop(); } catch (e) {} }, 2500); } catch (e) {} } return; }
   if (!soundOn) return;
   try {
-    const A = ac(), t = A.currentTime, g = A.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + 0.4); g.gain.setTargetAtTime(0.018, t + 3.6, 0.8); g.connect(bus(A, "sfx"));
+    const A = ac(), t = A.currentTime, g = A.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + 0.4); g.gain.setTargetAtTime(0.018, t + 3.6, 0.8); g.connect(audioBus(A, "sfx"));
     const o = A.createOscillator(); o.type = "sine"; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(980, t + 4.8); o.connect(g);
     const o2 = A.createOscillator(); o2.type = "triangle"; o2.frequency.setValueAtTime(45, t); o2.frequency.exponentialRampToValueAtTime(490, t + 4.8);
     const g2 = A.createGain(); g2.gain.value = 0.35; o2.connect(g2).connect(g);
