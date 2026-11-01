@@ -87,4 +87,13 @@ Every fluorescence and confocal slide, and most brightfield ones, are real recor
 - **Z-stack** (confocal, after 63x): capture the sharpest plane, then the planes 1.2 µm either side using the Z readout. Scored separately on the results.
 - **Results recap**: the three clips you focused play as small eyepieces, with folded footage credits.
 - **Streaks and calendar**: a streak counter and the last two weeks of dailies on the title screen, four weeks on daily results.
-- **Phones**: the eyepiece and its controls share one screen; the blur is drawn at half resolution while the knob turns and sharpened when it stops. The next objective's clip starts decoding during each verdict.
+- **Phones**: the eyepiece and its controls share one screen. The next objective's clip starts decoding during each verdict.
+
+## Rendering and performance
+
+- **GPU live view.** Live footage is not drawn into a canvas. The `<video>` sits in the eyepiece and its blur, colour channel (a multiply tint), brightness and opacity are CSS filters the browser composites on the GPU. Each frame the game only changes a few style values, and only when focus or settings change. Confocal sections and their fainter neighbouring planes are merged into one blur and one brightness.
+- **Drawn slides** (Gram smears, tutorials) use the same path: each pre-drawn layer is its own element with its own CSS blur, stacked with normal or additive blending. The dust plane, far from focus, is pre-blurred and only redrawn when its blur changes by about 12%.
+- The canvas renderer (`renderField`) remains for the share card, z-stack thumbnails, tests and browsers without CSS filters.
+- **No frosted glass** on the screens or top bar (it re-blurred the moving footage every frame); overlays keep it. Entrance animations no longer leave a `filter` behind, the confetti canvas exists only while confetti flies, empty overlay canvases are hidden, and the timer arc has no drop-shadow filter.
+- Per-frame DOM writes are deduplicated; the microscope side drawing redraws at most about 20 times a second while the knob turns on phones; the title's light cone only redraws when it moves.
+- Measured in headless Chromium on a phone profile with the CPU throttled 4×: idle game 10 → 60 fps, turning the knob 11 → 47–56 fps, title 16 → 60 fps.

@@ -163,7 +163,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .eyepiece, .hero-ep { position: relative; aspect-ratio: 1; border-radius: 50%; background: var(--scope); padding: 6.5%;
   box-shadow: inset 0 0 0 10px #1c1613, inset 0 0 0 11px #4a4038, 0 34px 80px -36px rgba(30, 18, 8, .7); }
 .eyepiece canvas, .hero-ep canvas { position: relative; width: 100%; height: 100%; display: block; border-radius: 50%; z-index: 1; }
-.ep-ring { position: absolute; inset: 1.4%; width: 97.2%; height: 97.2%; z-index: 2; pointer-events: none; transition: transform .25s var(--e-snap); }
+.ep-ring { position: absolute; inset: 1.4%; width: 97.2%; height: 97.2%; z-index: 2; pointer-events: none; transition: transform .25s var(--e-snap); will-change: transform; }
 .ep-ring line { stroke: #8d8174; }
 .ep-ring line.maj { stroke: #c8b9a6; }
 /* timer: a draining arc on the eyepiece rim and a slanted plate, where your eyes already are */
@@ -172,8 +172,8 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .ep-timer.off { display: none; }
 .et-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
 .et-track { fill: none; stroke: rgba(255, 240, 220, .1); stroke-width: 2.4; }
-.et-arc { fill: none; stroke: var(--acc); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 100 100; filter: drop-shadow(0 0 3px var(--acc)); transition: stroke .3s; }
-.ep-timer.low .et-arc { stroke: var(--warn); filter: drop-shadow(0 0 6px var(--warn)); }
+.et-arc { fill: none; stroke: var(--acc); stroke-width: 2.8; stroke-linecap: round; stroke-dasharray: 100 100; transition: stroke .3s; }
+.ep-timer.low .et-arc { stroke: var(--warn); stroke-width: 3.4; }
 .ep-timer.beat .et-arc { animation: arcFlash .5s ease-out; }
 @keyframes arcFlash { from { stroke-width: 5.5; } }
 .et-badge { position: absolute; right: -3%; top: 3%; display: grid; justify-items: center; padding: 6px 16px 8px; isolation: isolate; transform: rotate(var(--tilt)); }
@@ -208,7 +208,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .wordmark .wm-k { color: var(--ink); }
 :root[data-theme="dark"] .wordmark .wm-r, :root[data-theme="dark"] .wordmark .wm-b { mix-blend-mode: screen; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wordmark .wm-r, :root:not([data-theme="light"]) .wordmark .wm-b { mix-blend-mode: screen; } }
-.wordmark.focusing .wm-k { animation: wmFocus 1.1s var(--e-snap) both; }
+.wordmark.focusing .wm-k { animation: wmFocus 1.1s var(--e-snap) backwards; }
 .wordmark.focusing .wm-r { animation: wmFringeR 1.1s var(--e-snap) both; }
 .wordmark.focusing .wm-b { animation: wmFringeB 1.1s var(--e-snap) both; }
 @keyframes wmFocus { from { filter: blur(14px); opacity: .2; } 60% { filter: blur(1px); } to { filter: none; opacity: 1; } }
@@ -445,7 +445,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .vc-you { font: 600 10px var(--f-mono); fill: var(--ink); letter-spacing: .06em; text-transform: uppercase; }
 .vc-cap { font: 500 9px var(--f-mono); fill: var(--muted); }
 .v-next { align-self: flex-start; margin-top: 12px; min-width: 230px; }
-.g-verdict.v-in > * { animation: vIn .55s var(--e-snap) both; }
+.g-verdict.v-in > * { animation: vIn .55s var(--e-snap) backwards; }
 .g-verdict.v-in > :nth-child(2) { animation-delay: .05s; } .g-verdict.v-in > :nth-child(3) { animation-delay: .1s; }
 .g-verdict.v-in > :nth-child(4) { animation-delay: .14s; } .g-verdict.v-in > :nth-child(5) { animation-delay: .18s; }
 .g-verdict.v-in > :nth-child(6) { animation-delay: .22s; } .g-verdict.v-in > :nth-child(7) { animation-delay: .28s; }
@@ -471,7 +471,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .slam-inner { display: grid; justify-items: center; gap: 6px; padding: 0 24px; text-align: center; transform: skewY(calc(var(--tilt) * -1)) rotate(var(--tilt)); }
 .slam-eyebrow { font: 500 13px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; opacity: .8; }
 .slam-tier { font: italic 900 clamp(44px, 9vw, 132px)/.86 var(--f-display); font-stretch: 125%; letter-spacing: -0.05em; text-wrap: balance; }
-.slam.go .slam-tier { animation: tierPop .6s var(--e-pop) .12s both; }
+.slam.go .slam-tier { animation: tierPop .6s var(--e-pop) .12s backwards; }
 @keyframes tierPop { from { opacity: 0; transform: scale(1.5) skewX(-12deg); filter: blur(8px); } }
 .slam-score { font: 500 16px var(--f-mono); opacity: .9; }
 .slam-score b { font: 900 34px var(--f-display); font-variant-numeric: tabular-nums; }
@@ -483,7 +483,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .rank { position: relative; isolation: isolate; flex: 0 0 auto; width: clamp(112px, 12vw, 150px); aspect-ratio: 1; display: grid; place-items: center; color: var(--acc-ink);
   font: italic 900 clamp(82px, 9vw, 116px)/1 var(--f-display); font-stretch: 112%; }
 .rank::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 18px; background: var(--acc); transform: rotate(var(--tilt)) skewX(var(--skew)); box-shadow: -9px 7px 0 var(--acc-2); }
-.rank.stamp { animation: stamp .55s var(--e-pop) both; }
+.rank.stamp { animation: stamp .55s var(--e-pop) backwards; }
 @keyframes stamp { from { opacity: 0; transform: scale(2.4) rotate(14deg); filter: blur(6px); } }
 .r-tierbox { min-width: 0; }
 .big-tier { margin: 0; overflow-wrap: normal; font: italic 900 clamp(30px, 3.8vw, 52px)/.92 var(--f-display); font-stretch: 118%; letter-spacing: -0.04em; color: var(--acc); text-wrap: balance; }
@@ -643,7 +643,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .gate-go { margin-top: 18px; border: 1px solid rgba(239, 230, 216, .35); background: rgba(239, 230, 216, .06); color: inherit; padding: 13px 26px; border-radius: 999px; font: 700 13px var(--f-body); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; animation: gatePulse 2.2s ease-in-out infinite 1.2s; }
 .gate-go:focus-visible { outline: 2px solid #efe6d8; outline-offset: 4px; }
 .gate-sub { margin: 0; font: 500 12px var(--f-body); opacity: .55; }
-@keyframes gateFocus { 0% { filter: blur(14px); opacity: 0; letter-spacing: .02em; } 100% { filter: blur(0); opacity: 1; } }
+@keyframes gateFocus { 0% { filter: blur(14px); opacity: 0; letter-spacing: .02em; } 100% { filter: none; opacity: 1; } }
 @keyframes gatePulse { 50% { background: rgba(239, 230, 216, .16); box-shadow: 0 0 0 6px rgba(239, 230, 216, .07); } }
 @media (prefers-reduced-motion: reduce) { .gate-title, .gate-go { animation: none; } .gate.out { transition: none; } }
 .iris { position: fixed; inset: 0; z-index: 90; background: var(--scope); color: #efe6d8; display: grid; place-items: center; clip-path: circle(0px at 50% 50%); }
@@ -664,12 +664,12 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .dash.go .flash { animation: dashFlash .45s ease both; }
 @keyframes dashFlash { 30%, 55% { opacity: 1; } }
 
-#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 95; }
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 95; display: none; }
 
 /* entrances */
-.screen.enter .hud, .screen.enter .g-scope, .screen.enter .g-view, .screen.enter .g-dock { animation: fadeUp .6s var(--e-snap) both; }
+.screen.enter .hud, .screen.enter .g-scope, .screen.enter .g-view, .screen.enter .g-dock { animation: fadeUp .6s var(--e-snap) backwards; }
 .screen.enter .g-scope { animation-delay: .12s; } .screen.enter .g-dock { animation-delay: .2s; }
-.screen.enter .r-left > .eyebrow, .screen.enter .idcard { animation: fadeUp .6s var(--e-snap) both; }
+.screen.enter .r-left > .eyebrow, .screen.enter .idcard { animation: fadeUp .6s var(--e-snap) backwards; }
 .screen.enter .idcard { animation-delay: .3s; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); filter: blur(4px); } }
 
@@ -1092,7 +1092,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 @keyframes lsUp { from { opacity: 0; transform: translateY(18px); } }
 @keyframes lsStageIn { from { opacity: 0; transform: translateX(40px) scale(.97); } }
 .ls-copy { display: flex; flex-direction: column; justify-content: center; gap: clamp(10px, 1.8vh, 20px); min-height: 0; overflow-y: auto; padding: 6px 4px 6px 2px; scrollbar-width: thin; }
-.ls-copy.ls-turn > .ls-kicker, .ls-copy.ls-turn > .ls-h, .ls-copy.ls-turn > .ls-text, .ls-copy.ls-turn > .ls-links { animation: lsTurn .55s var(--e-snap) both; }
+.ls-copy.ls-turn > .ls-kicker, .ls-copy.ls-turn > .ls-h, .ls-copy.ls-turn > .ls-text, .ls-copy.ls-turn > .ls-links { animation: lsTurn .55s var(--e-snap) backwards; }
 .ls-copy.ls-turn > .ls-h { animation-delay: .03s; } .ls-copy.ls-turn > .ls-text { animation-delay: .07s; } .ls-copy.ls-turn > .ls-links { animation-delay: .1s; }
 @keyframes lsTurn { from { opacity: 0; transform: translateX(-26px); filter: blur(4px); } }
 .ls-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -1119,7 +1119,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
   background: radial-gradient(90% 70% at 50% 38%, #241a16, #0c0908 72%); color: #f3eadc; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 240, 220, .08); overflow: hidden; isolation: isolate; }
 .ls-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 240, 220, .07); }
 .ls-visual { min-height: 0; display: grid; place-items: center; }
-.ls-visual.swap { animation: lsSwap .6s var(--e-snap) both; }
+.ls-visual.swap { animation: lsSwap .6s var(--e-snap) backwards; }
 @keyframes lsSwap { from { opacity: 0; transform: scale(.96); filter: blur(6px); } }
 .ls-visual { position: relative; }
 .ls-visual > .art-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -1295,9 +1295,11 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 <style>
 .ep-msg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; margin: 0; width: min(70%, 300px); text-align: center; font: 700 15px/1.3 var(--f-body, inherit); color: #f3ece2; text-shadow: 0 1px 8px #000; pointer-events: none; animation: fadeIn .3s ease both; }
 .ep-msg small { display: block; margin-top: 6px; font-weight: 500; font-size: 12.5px; color: #cfc4b6; }
-#cubeSeg button.want { animation: wantPulse 1.3s ease-in-out infinite; }
+#cubeSeg button.want { position: relative; }
+#cubeSeg button.want::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 55%, transparent); pointer-events: none; animation: wantFade 1.3s ease-in-out infinite; }
+@keyframes wantFade { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
 @keyframes wantPulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--acc) 0%, transparent); } 50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 45%, transparent); } }
-@media (prefers-reduced-motion: reduce) { #cubeSeg button.want { animation: none; outline: 2px solid var(--acc); } }
+@media (prefers-reduced-motion: reduce) { #cubeSeg button.want::after { animation: none; opacity: 1; } }
 </style>
 <style>
 .cond { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
@@ -1338,6 +1340,56 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .cal i.today { outline: 2px solid var(--ink, #fff); outline-offset: 1px; }
 .r-cal { margin: 16px 0 4px; }
 .r-cal small { display: block; margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+</style>
+<style>
+/* live view (GPU path) */
+.lv { position: absolute; inset: 6.5%; border-radius: 50%; overflow: hidden; z-index: 1; background: #030305; isolation: isolate; contain: strict; }
+.lv[hidden] { display: none; }
+.lv-img { position: absolute; inset: 0; will-change: filter, opacity; }
+.lv-v { position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; isolation: isolate; transform: translate(-50%, -50%) scale(1.12); }
+.lv-v video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.lv-tint { position: absolute; inset: 0; mix-blend-mode: multiply; display: none; }
+.lv-dust { position: absolute; inset: 0; width: 100%; height: 100%; display: none; will-change: filter, opacity; }
+.lv-dark { position: absolute; inset: 0; background: rgb(10, 8, 20); opacity: 0; }
+.lv-oil { position: absolute; inset: 0; background: rgba(240, 220, 160, .18); opacity: 0; }
+.lv-noise { position: absolute; inset: -30%; background-size: 30.8% 30.8%; mix-blend-mode: screen; opacity: 0; will-change: transform; }
+@supports (mix-blend-mode: plus-lighter) { .lv-noise { mix-blend-mode: plus-lighter; } }
+.lv-noise { display: none; }
+.lv-noise.on { display: block; animation: lvNoise .7s steps(1, end) infinite; }
+@keyframes lvNoise { 0% { transform: translate(0, 0); } 20% { transform: translate(7%, -5%); } 40% { transform: translate(-6%, 4%); } 60% { transform: translate(3%, 8%); } 80% { transform: translate(-8%, -3%); } }
+.lv::after { content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(circle closest-side, transparent 72%, rgba(0, 0, 0, .38) 100%); }
+</style>
+<style>
+/* Performance: phones and touch screens. Frosted glass (backdrop blur) re-blurs whatever changes behind it every frame,
+   which is the single biggest cost while a live clip plays, so touch devices get solid panels instead. */
+.ibtn .eq i { animation-timing-function: steps(5, jump-none); }
+/* No frosted glass on the screens or the top bar on any device: live footage changes behind them every frame, and
+   re-blurring it costs more than anything else on the page. The panels sit on a smooth gradient, so the blur showed
+   almost nothing. Overlays (pause, dialogs) keep theirs; they are only up for a moment. */
+.screen *, .screen, .topbar, .topbar * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.topbar.scrolled { background: color-mix(in srgb, var(--bg) 94%, transparent); }
+@media (pointer: coarse), (max-width: 760px) {
+  *, *::before, *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .ibtn .eq i { animation: none !important; transform: scaleY(.7); }
+  .eyepiece, .hero-ep { box-shadow: inset 0 0 0 10px #1c1613, inset 0 0 0 11px #4a4038; }
+}
+@media (pointer: coarse) and (prefers-color-scheme: light), (max-width: 760px) and (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --glass: rgba(255, 252, 246, 0.84); --glass-strong: rgba(255, 252, 246, 0.95); }
+}
+@media (pointer: coarse), (max-width: 760px) {
+  :root[data-theme="light"] { --glass: rgba(255, 252, 246, 0.84); --glass-strong: rgba(255, 252, 246, 0.95); }
+  :root[data-theme="dark"] { --glass: rgba(40, 32, 30, 0.72); --glass-strong: rgba(52, 42, 40, 0.86); }
+}
+@media (pointer: coarse) and (prefers-color-scheme: dark), (max-width: 760px) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --glass: rgba(40, 32, 30, 0.72); --glass-strong: rgba(52, 42, 40, 0.86); }
+}
+</style>
+<style>
+.lv-stack { position: absolute; inset: 0; }
+.lv .lv-layer, .lv .lv-dust { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 0; z-index: auto; }
+.lv .lv-layer { display: none; }
+.lv-layer.add { mix-blend-mode: screen; }
+@supports (mix-blend-mode: plus-lighter) { .lv-layer.add { mix-blend-mode: plus-lighter; } }
 </style>
 </head>
 <body>
@@ -1924,7 +1976,11 @@ function patchStore(p) { const s = loadStore(); Object.assign(s, p); saveStore(s
 
 const $ = (id) => document.getElementById(id);
 const prefersReduced = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-const isPhone = () => !!(window.matchMedia && window.matchMedia("(max-width: 760px)").matches);
+const isPhone = (() => { // cached: this runs several times a frame
+  let mq = null, v = false;
+  try { mq = window.matchMedia("(max-width: 760px)"); v = mq.matches; const on = (e) => { v = e.matches; }; mq.addEventListener ? mq.addEventListener("change", on) : mq.addListener(on); } catch (e) {}
+  return () => v;
+})();
 
 /* ---------- Header: theme ---------- */
 const root = document.documentElement;
@@ -3073,7 +3129,7 @@ function buildLiveLayers(sp, o) {
   const k = liveStage(sp, o), t = sp.targets[k], cv = newCanvas();
   const L = { live: true, n: 1, clip: t.clip, crop: CLIPS[t.clip].zoom || LIVE_CROP[k], ch: t.ch || "all", z: t.z, w: CLIPS[t.clip].gain || 1, canvas: cv, ctx: cv.getContext("2d"), drawnAt: -1, cube: null };
   if (G && G.sp === sp) playClips([t.clip]);
-  paintLive(L, "all", sp.kind);
+  if (!LV_OK) paintLive(L, "all", sp.kind);
   const layers = [L];
   if (sp.kind === "confocal") {
     // a real cell is a few microns thick: fainter planes above and below glow as you approach focus
@@ -3106,6 +3162,158 @@ function paintLive(L, cube, mode) {
   const tint = c.gray ? rgba(CH[cube === "all" || mode !== "fluor" ? c.ch : cube].rgb, 1) : cube === "all" ? null : MASK[cube];
   if (tint) { x.globalCompositeOperation = "multiply"; x.fillStyle = tint; x.fillRect(0, 0, SIZE, SIZE); x.globalCompositeOperation = "source-over"; }
   return true;
+}
+
+
+/* =====================================================================
+   LIVE VIEW · GPU path for live footage. The video plays straight into the
+   page; its blur, channel, brightness and opacity are CSS filters that the
+   browser composites on the GPU. Each frame we only touch a few styles, and
+   only when focus or settings change. Equivalent to renderField for a live
+   slide: one image, blurred evenly, so a CSS blur is the same picture.
+   ===================================================================== */
+const LV_OK = (() => { try { return CSS.supports("filter", "blur(1px)") && CSS.supports("mix-blend-mode", "multiply"); } catch (e) { return false; } })();
+let NOISE_URL = null;
+function makeLiveView(host, before) {
+  if (NOISE_URL === null) { try { NOISE_URL = noiseCv.toDataURL("image/png"); } catch (e) { NOISE_URL = ""; } }
+  const el = document.createElement("div");
+  el.className = "lv"; el.hidden = true; el.setAttribute("aria-hidden", "true");
+  el.innerHTML = '<div class="lv-img"><div class="lv-v"><i class="lv-tint"></i></div></div><div class="lv-stack"></div><canvas class="lv-dust" width="' + SIZE + '" height="' + SIZE + '"></canvas><i class="lv-dark"></i><i class="lv-noise"></i><i class="lv-oil"></i>';
+  host.insertBefore(el, before);
+  const stack = el.querySelector(".lv-stack"), img = el.querySelector(".lv-img"), vbox = el.querySelector(".lv-v"), tint = el.querySelector(".lv-tint"), dust = el.querySelector(".lv-dust"),
+    dark = el.querySelector(".lv-dark"), noise = el.querySelector(".lv-noise"), oil = el.querySelector(".lv-oil");
+  if (NOISE_URL) noise.style.backgroundImage = `url(${NOISE_URL})`;
+  let w = 0, clip = null, layersRef = null, vid = null;
+  const measure = () => { w = el.clientWidth || w; };
+  try { new ResizeObserver(measure).observe(el); } catch (e) { window.addEventListener("resize", measure); }
+  // the dust layer sits far from focus: its blur barely changes, so it is pre-blurred into the canvas when it does
+  let dustQ = null, dustAt = 0, dustSrc = null;
+  function dustBlur(ds, k) {
+    if (!dustSrc) return;
+    if (!FILTER_OK) { S(dust, "filter", ds >= 0.35 ? `blur(${(Math.min(ds, 36) * k).toFixed(2)}px)` : "none"); return; }
+    const q = Math.round(Math.log(Math.max(0.35, Math.min(ds, 36))) / Math.log(1.12)), now = performance.now();
+    if (q === dustQ || (dustQ !== null && now - dustAt < 120)) return;
+    dustQ = q; dustAt = now;
+    const x = dust.getContext("2d"); x.clearRect(0, 0, SIZE, SIZE);
+    if (ds >= 0.35) x.filter = `blur(${Math.min(ds, 36).toFixed(2)}px)`;
+    x.drawImage(dustSrc, 0, 0); x.filter = "none";
+    S(dust, "filter", "none");
+  }
+  const S = (node, prop, val) => { const c = node.__lv || (node.__lv = {}); if (c[prop] !== val) { c[prop] = val; node.style[prop] = val; } };
+  const T = (node, cls, on) => { const c = node.__lvc || (node.__lvc = {}); if (c[cls] !== on) { c[cls] = on; node.classList.toggle(cls, on); } };
+  function attach(L) {
+    clip = L.clip; vid = clipVideo(clip);
+    if (vid.parentNode !== vbox) { vbox.insertBefore(vid, tint); }
+    if (vid.paused) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+    S(vbox, "transform", `translate(-50%, -50%) scale(${(1.12 / L.crop).toFixed(4)})`);
+  }
+  return {
+    el,
+    hide() { if (!el.hidden) el.hidden = true; },
+    update(sp, layers, v, cube) {
+      if (!LV_OK) { this.hide(); return false; }
+      const L = layers.find(x => x.live);
+      if (!L) return this.updateStack(sp, layers, v);
+      if (el.hidden) { el.hidden = false; measure(); }
+      if (stack.childElementCount) stack.replaceChildren();
+      S(img, "display", "block");
+      if (!w) measure();
+      if (L.clip !== clip || !vid || vid.parentNode !== vbox) attach(L);
+      const mode = sp.kind, c = CLIPS[L.clip], { o, e, d } = v, k = (w || 360) / SIZE;
+      const gain = v.gain == null ? 1 : v.gain, cond = v.cond == null ? 1 : v.cond, sig = v.signal == null ? 1 : v.signal;
+      if (layersRef !== layers) {
+        layersRef = layers;
+        const D = layers.find(x => x.dust), x = dust.getContext("2d");
+        x.clearRect(0, 0, SIZE, SIZE); if (D) x.drawImage(D.canvas, 0, 0);
+        dustSrc = D ? D.canvas : null; dustQ = null;
+        S(dust, "display", D ? "block" : "none");
+        S(el, "background", mode === "bright" ? `radial-gradient(circle closest-side at 48% 46%, ${rgba(sp.bg.c, 1)}, ${rgba(sp.bg.e, 1)})` : mode === "fluor" ? "#030305" : "#020203");
+      }
+      // what the clip shows under this cube, and its own colour processing (as paintLive did)
+      const shows = mode === "bright" || cube === "all" || (c.chs ? c.chs.includes(cube) : cube === c.ch);
+      const clipGain = mode === "bright" ? 1 : (c.boost || 1) * (mode === "confocal" ? 1.6 : 1);
+      S(vid, "filter", mode !== "bright" && (c.gray || clipGain !== 1) ? `${c.gray ? "grayscale(1) " : ""}brightness(${clipGain})` : "none");
+      const tc = mode === "bright" ? null : c.gray ? rgba(CH[cube === "all" || mode !== "fluor" ? c.ch : cube].rgb, 1) : cube === "all" ? null : MASK[cube];
+      S(tint, "display", tc ? "block" : "none"); if (tc) S(tint, "background", tc);
+      // focus: blur, brightness and opacity of the field
+      let blur = 0, op = 1, bri = 1, extra = "";
+      if (mode === "bright") {
+        const sg = sigmaPx(o, e, d + L.z); if (sg > 36) op = 36 / sg; blur = Math.min(sg, 36);
+        if (cond < 1) extra = `contrast(${(1 + (1 - cond) * 1.3).toFixed(3)}) brightness(${(0.7 + 0.3 * cond).toFixed(3)})`;
+        const ds = sigmaPx(o, e, d + DUST_Z), da = ds > 36 ? 36 / ds : 1;
+        S(dust, "opacity", da < 0.03 ? "0" : da.toFixed(3));
+        dustBlur(ds, k);
+        S(dark, "opacity", e.bright < 1 ? ((1 - e.bright) * 0.85).toFixed(3) : "0");
+      } else if (mode === "fluor") {
+        const sg = sigmaPx(o, e, d + L.z); let a = (L.w || 1) * sig * e.bright; if (sg > 36) a *= 36 / sg;
+        blur = Math.min(sg, 36); op = v.shutter === false || !shows || a < 0.02 ? 0 : Math.min(1, a); bri = gain;
+        S(dark, "opacity", "0");
+      } else {
+        const diff = 0.26 * e.lam / e.NA * o.s; let W = 0, lat = 0;
+        for (const X of layers) {
+          if (X.canvas !== L.canvas) continue;
+          const dz = d + X.z, wv = sectionVis(dz, e.dof) * Math.min(1.25, e.bright) * (X.w == null ? 1 : Math.min(1, X.w));
+          if (wv < 0.02) continue;
+          const a = Math.min(1, wv * sig), l = Math.min(6, Math.sqrt(diff * diff + (0.12 * sigmaPx(o, e, dz)) ** 2) + e.extra * 0.5);
+          W += a; lat += a * l;
+        }
+        blur = W ? lat / W : 0; op = shows && W > 0.02 ? 1 : 0; bri = W * gain;
+        S(dark, "opacity", "0");
+      }
+      const f = `${blur >= 0.35 ? `blur(${(blur * k).toFixed(2)}px) ` : ""}${extra}${bri !== 1 ? ` brightness(${bri.toFixed(3)})` : ""}`.trim();
+      S(img, "filter", f || "none"); S(img, "opacity", op.toFixed(3));
+      const nAmt = mode === "confocal" ? 0.32 / Math.sqrt(Math.max(0.3, e.bright * gain * sig)) : mode === "fluor" && gain < 1 && v.shutter !== false ? 0.5 * (1 - gain) : 0;
+      S(noise, "opacity", nAmt.toFixed(3)); T(noise, "on", nAmt > 0);
+      S(oil, "opacity", v.oilSmear ? "1" : "0");
+      return true;
+    },
+    updateStack(sp, layers, v) {
+      if (el.hidden) { el.hidden = false; measure(); }
+      if (!w) measure();
+      const mode = sp.kind, { o, e, d } = v, k = (w || 360) / SIZE;
+      const gain = v.gain == null ? 1 : v.gain, cond = v.cond == null ? 1 : v.cond, sig = v.signal == null ? 1 : v.signal;
+      if (layersRef !== layers) {
+        layersRef = layers; clip = null;
+        S(img, "display", "none"); S(dust, "display", "none");
+        stack.replaceChildren(...layers.map(L => {
+          let c = L.canvas;
+          if (L.dust && FILTER_OK) { L.disp = L.disp || newCanvas(); L.dq = null; c = L.disp; }
+          c.className = "lv-layer" + (mode === "bright" ? "" : " add"); c.__lv = {}; return c;
+        }));
+        S(el, "background", mode === "bright" ? `radial-gradient(circle closest-side at 48% 46%, ${rgba(sp.bg.c, 1)}, ${rgba(sp.bg.e, 1)})` : mode === "fluor" ? "#030305" : "#020203");
+      }
+      const bfX = cond < 1 ? `contrast(${(1 + (1 - cond) * 0.5).toFixed(3)}) brightness(${(0.7 + 0.3 * cond).toFixed(3)})` : "";
+      const diff = 0.26 * e.lam / e.NA * o.s;
+      for (const L of layers) {
+        const c = L.dust && L.disp ? L.disp : L.canvas; let a = 0, blur = 0, f = "";
+        if (mode === "bright") {
+          const sg = sigmaPx(o, e, d + L.z); a = sg > 36 ? 36 / sg : 1; blur = Math.min(sg, 36); if (a < 0.03) a = 0;
+          if (!L.dust) f = bfX;
+        } else if (mode === "fluor") {
+          if (v.shutter !== false && (v.cube === "all" || L.ch === v.cube)) {
+            const sg = sigmaPx(o, e, d + L.z); a = L.w * sig * e.bright; if (sg > 36) a *= 36 / sg; blur = Math.min(sg, 36);
+            a = a < 0.02 ? 0 : Math.min(1, a); if (gain !== 1) f = `brightness(${gain.toFixed(2)})`;
+          }
+        } else {
+          const dz = d + L.z, wv = sectionVis(dz, e.dof) * Math.min(1.25, e.bright) * (L.w == null ? 1 : Math.min(1, L.w));
+          if (wv >= 0.02) { a = Math.min(1, wv * sig); blur = Math.min(6, Math.sqrt(diff * diff + (0.12 * sigmaPx(o, e, dz)) ** 2) + e.extra * 0.5); if (gain !== 1) f = `brightness(${gain.toFixed(2)})`; }
+        }
+        if (!a) { S(c, "display", "none"); continue; }
+        S(c, "display", "block"); S(c, "opacity", a.toFixed(3));
+        if (c === L.disp) { // pre-blurred dust
+          const q = Math.round(Math.log(Math.max(0.35, blur)) / Math.log(1.12)), now = performance.now();
+          if (q !== L.dq && (L.dq == null || now - (L.dqAt || 0) > 120)) { L.dq = q; L.dqAt = now; const x = c.getContext("2d"); x.clearRect(0, 0, SIZE, SIZE); if (blur >= 0.35) x.filter = `blur(${blur.toFixed(2)}px)`; x.drawImage(L.canvas, 0, 0); x.filter = "none"; }
+          S(c, "filter", "none"); continue;
+        }
+        S(c, "filter", `${blur >= 0.35 ? `blur(${(blur * k).toFixed(2)}px) ` : ""}${f}`.trim() || "none");
+      }
+      S(dark, "opacity", mode === "bright" && e.bright < 1 ? ((1 - e.bright) * 0.85).toFixed(3) : "0");
+      const nAmt = mode === "confocal" ? 0.32 / Math.sqrt(Math.max(0.3, e.bright * gain * sig)) : mode === "fluor" && gain < 1 && v.shutter !== false ? 0.5 * (1 - gain) : 0;
+      S(noise, "opacity", nAmt.toFixed(3)); T(noise, "on", nAmt > 0);
+      S(oil, "opacity", v.oilSmear ? "1" : "0");
+      return true;
+    },
+  };
 }
 
 /* ---------- Drawing ---------- */
@@ -4866,6 +5074,7 @@ const screens = { title: $("title"), game: $("game"), result: $("result") };
 let current = "title", busy = false;
 function show(v) {
   for (const k in screens) { screens[k].hidden = k !== v; screens[k].classList.remove("enter"); }
+  if (v === "title" && window.resetCone) { window.resetCone(); setTimeout(window.resetCone, 900); }
   document.querySelectorAll("#rRecap video").forEach(x => { try { v === "result" ? x.play().catch(() => {}) : x.pause(); } catch (e) {} });
   void screens[v].offsetWidth; screens[v].classList.add("enter");
   current = v;
@@ -5171,6 +5380,8 @@ $("soundChip").addEventListener("click", toggleSound);
 
 /* Hero eyepiece: every menu item is a pose. The nosepiece swings and the view hunts focus. */
 const heroCanvas = $("heroCanvas"), hctx = heroCanvas.getContext("2d");
+const heroLV = makeLiveView($("heroEp"), heroCanvas);
+let heroCanvasClear = false;
 let hero = null;
 function buildHero() {
   const mode = homeMode;
@@ -5224,18 +5435,35 @@ function heroFrame(now) {
   if (hero.sp.live) {
     const clip = hero.sp.targets[hero.k].clip, v = clipVideo(clip);
     if (v.paused) playClips([clip]);
+    if (LV_OK) {
+      heroLV.update(hero.sp, heroLayers(hero.k), { o, e: effective(hero.mode, hero.k, true, 1), d: heroDrift(t, hero.mode, hero.k) + extra, cube: "all", signal: 1 }, "all");
+      if (!heroCanvasClear) { hctx.setTransform(1, 0, 0, 1, 0, 0); hctx.clearRect(0, 0, SIZE, SIZE); heroCanvas.style.visibility = "hidden"; heroCanvasClear = true; }
+      $("heroRing").style.transform = `rotate(${hero.ring + t * 4}deg)`;
+      heroCone(now);
+      return;
+    }
     for (const L of heroLayers(hero.k)) if (L.live) paintLive(L, "all", hero.mode);
   }
+  heroLV.hide(); heroCanvasClear = false; heroCanvas.style.visibility = "";
   renderField(hctx, hero.sp, heroLayers(hero.k), { o, e: effective(hero.mode, hero.k, true, 1), d: heroDrift(t, hero.mode, hero.k) + extra, cube: "all", signal: 1 });
   $("heroRing").style.transform = `rotate(${hero.ring + t * 4}deg)`;
   heroCone(now);
 }
 /* The cone of light: its half-angle is the real θ = asin(NA / n) of the posed objective. */
+const coneMQ = (() => { try { return window.matchMedia("(max-width: 980px)"); } catch (e) { return { matches: false }; } })();
+let coneGeo = null, coneDrawn = null;
+window.addEventListener("resize", () => { coneGeo = null; });
+window.resetCone = () => { coneGeo = null; coneDrawn = null; };
 function heroCone() {
-  if (!hero || window.matchMedia("(max-width: 980px)").matches) return;
-  hero.theta += (hero.thetaT - hero.theta) * 0.14;
+  if (!hero || coneMQ.matches) return;
+  const dTheta = hero.thetaT - hero.theta;
+  hero.theta = Math.abs(dTheta) < 0.01 ? hero.thetaT : hero.theta + dTheta * 0.14;
   const box = $("tRight"), ep = $("heroEp");
-  const br = box.getBoundingClientRect(), er = ep.getBoundingClientRect();
+  if (!coneGeo || (hero.pull && performance.now() - hero.pull.t0 < 700)) coneGeo = { br: box.getBoundingClientRect(), er: ep.getBoundingClientRect() };
+  const key = `${hero.theta.toFixed(2)}|${coneGeo.br.width}|${coneGeo.er.left.toFixed(1)}|${coneGeo.er.top.toFixed(1)}|${hero.sem ? 1 : 0}`;
+  if (key === coneDrawn) return;
+  coneDrawn = key;
+  const { br, er } = coneGeo;
   const cx = er.left - br.left + er.width / 2, cy = er.top - br.top + er.height / 2;
   const phi = (128) * Math.PI / 180, th = hero.theta * Math.PI / 180, L = Math.max(br.width, br.height) * 1.6;
   const p1 = [cx + L * Math.cos(phi - th), cy + L * Math.sin(phi - th)], p2 = [cx + L * Math.cos(phi + th), cy + L * Math.sin(phi + th)];
@@ -5351,6 +5579,23 @@ function renderCredits() {
 let G = null;
 const gameGrid = $("gameGrid");
 const scopeCanvas = $("scope"), sctx = scopeCanvas.getContext("2d");
+const gameLV = makeLiveView($("eyepieceBox"), scopeCanvas);
+let scopeOverlayState = null; // what the canvas holds while the live view draws the field: "" (clear) or "crack"
+function scopeOverlay(crashed) {
+  const want = crashed ? "crack" : "";
+  if (scopeOverlayState === want) return;
+  scopeOverlayState = want;
+  sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, SIZE, SIZE);
+  scopeCanvas.style.visibility = crashed ? "" : "hidden"; // an empty canvas is still a layer to composite
+  if (crashed) { sctx.save(); sctx.beginPath(); sctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2); sctx.clip(); drawCrack(sctx); sctx.restore(); }
+}
+/* A 2D snapshot of the current field (for z-stack thumbnails): the canvas renderer, run once offscreen. */
+function snapshotField(px) {
+  const cv = newCanvas(), x = cv.getContext("2d"), o = OBJ[G.k];
+  for (const L of G.layers) if (L.live) { L.drawnAt = -1; paintLive(L, G.mode === "fluor" ? G.cube : "all", G.mode); }
+  renderField(x, G.sp, G.layers, { o, e: eff(), d: dv(), cube: G.cube, shutter: G.shutter, signal: G.signal, crashed: G.crashed, gain: G.mode === "bright" ? 1 : POWER[G.power].gain, cond: G.mode === "bright" ? G.cond : 1, live: !!G.sp.live });
+  const t = document.createElement("canvas"); t.width = t.height = px; t.getContext("2d").drawImage(cv, 0, 0, px, px); return t;
+}
 const OIL_BEAD_UM = 800, OIL_BREAK_UM = 1600; // drop height; column snaps when stretched past this
 const PD = 90; // parfocal distance in drawing units, turret centre to coverslip
 const gpx = (mm) => 30 * Math.log(1 + Math.max(0, mm) / 3); // lens-to-coverslip gap in drawing units
@@ -5765,34 +6010,39 @@ function checkOil(audible) {
 }
 
 /* ---------- Microscope drawing and loupe ---------- */
+const setA = (el, a, v) => { const c = el.__a || (el.__a = {}); if (c[a] !== v) { c[a] = v; el.setAttribute(a, v); } };
+const setT = (el, v) => { if (el.__t !== v) { el.__t = v; el.textContent = v; } };
 function updateScopeArt() {
+  const now = performance.now();
+  if (isPhone() && now - (G.movedAt || 0) < 120 && now - (G.artAt || 0) < 50) { G.artPending = true; return; }
+  G.artAt = now; G.artPending = false;
   const o = OBJ[G.k], gmm = Math.max(0, gapUm(true)) / 1000, len = objLen(o);
   const gp = gpx(gmm), slideTop = 243, tipY = slideTop - gp;
-  $("headMove").setAttribute("transform", `translate(0 ${(tipY - len - 108).toFixed(2)})`);
+  setA($("headMove"), "transform", `translate(0 ${(tipY - len - 108).toFixed(2)})`);
   const pts = `112,${slideTop} 124,${slideTop} 121,${(tipY + 2).toFixed(1)} 115,${(tipY + 2).toFixed(1)}`;
-  $("beamUp").setAttribute("points", pts);
+  setA($("beamUp"), "points", pts);
   const epi = $("epiBeam");
-  epi.setAttribute("points", pts);
-  if (G.mode === "fluor") { epi.setAttribute("fill", `rgb(${CH[G.cube].rgb.join(",")})`); epi.setAttribute("opacity", G.shutter ? "0.55" : "0"); }
-  else if (G.mode === "confocal") { epi.setAttribute("fill", "#b9a7ff"); epi.setAttribute("opacity", "0.6"); }
-  else epi.setAttribute("opacity", "0");
+  setA(epi, "points", pts);
+  if (G.mode === "fluor") { setA(epi, "fill", `rgb(${CH[G.cube].rgb.join(",")})`); setA(epi, "opacity", G.shutter ? "0.55" : "0"); }
+  else if (G.mode === "confocal") { setA(epi, "fill", "#b9a7ff"); setA(epi, "opacity", "0.6"); }
+  else setA(epi, "opacity", "0");
   // oil: a bead on the coverslip, or a column wetting the front lens
   const oil = $("oilArt");
-  if (!G.oil) oil.setAttribute("opacity", "0");
+  if (!G.oil) setA(oil, "opacity", "0");
   else {
-    oil.setAttribute("opacity", "0.92");
+    setA(oil, "opacity", "0.92");
     const hb = gpx(OIL_BEAD_UM / 1000);
     if (G.contact && !G.busyAnim) {
       const top = Math.min(tipY - 2.5, slideTop - 1), wb = 11, wl = 6.5;
       const st = clamp((gmm * 1000 - OIL_BEAD_UM) / (OIL_BREAK_UM - OIL_BEAD_UM), 0, 1), nw = wl * (1 - 0.6 * st) + 1.5 * (1 - st), mid = (top + slideTop) / 2;
-      oil.setAttribute("d", `M${118 - wb},${slideTop} C${118 - wb + 3},${slideTop - 1} ${118 - nw},${mid + 1} ${118 - nw},${mid} C${118 - nw},${mid - 1} ${118 - wl - 1},${top + 2} ${118 - wl},${top} L${118 + wl},${top} C${118 + wl + 1},${top + 2} ${118 + nw},${mid - 1} ${118 + nw},${mid} C${118 + nw},${mid + 1} ${118 + wb - 3},${slideTop - 1} ${118 + wb},${slideTop} Z`);
-    } else oil.setAttribute("d", `M${118 - 9},${slideTop} Q118,${slideTop - hb * 2} ${118 + 9},${slideTop} Z`);
+      setA(oil, "d", `M${118 - wb},${slideTop} C${118 - wb + 3},${slideTop - 1} ${118 - nw},${mid + 1} ${118 - nw},${mid} C${118 - nw},${mid - 1} ${118 - wl - 1},${top + 2} ${118 - wl},${top} L${118 + wl},${top} C${118 + wl + 1},${top + 2} ${118 + nw},${mid - 1} ${118 + nw},${mid} C${118 + nw},${mid + 1} ${118 + wb - 3},${slideTop - 1} ${118 + wb},${slideTop} Z`);
+    } else setA(oil, "d", `M${118 - 9},${slideTop} Q118,${slideTop - hb * 2} ${118 + 9},${slideTop} Z`);
   }
-  if (G.mode === "confocal") $("zRead").textContent = `Z ${(-G.stageZ).toFixed(2)} µm`;
+  if (G.mode === "confocal") setT($("zRead"), `Z ${(-G.stageZ).toFixed(2)} µm`);
   updateLoupe(gmm);
   const cap = $("scopeCap");
   const close = gapUm(false) < o.wd * 0.5;
-  cap.textContent = G.crashed ? "the lens hit the slide" : immersed() ? "front lens in the oil" : close ? "lens is very close to the slide" : `${o.mag}x in place`;
+  setT(cap, G.crashed ? "the lens hit the slide" : immersed() ? "front lens in the oil" : close ? "lens is very close to the slide" : `${o.mag}x in place`);
   cap.classList.toggle("warn", (close && !immersed()) || G.crashed);
 }
 function updateLoupe(gmm) {
@@ -7214,7 +7464,7 @@ function fireConfetti() {
         round: Math.random() < 0.35, c: cols[(Math.random() * cols.length) | 0], life: 0, max: 110 + Math.random() * 60, wob: Math.random() * 6.28 });
     }
   });
-  if (!fxRunning) { fxRunning = true; requestAnimationFrame(stepFx); }
+  if (!fxRunning) { fxRunning = true; $("fx").style.display = "block"; requestAnimationFrame(stepFx); }
 }
 function stepFx() {
   fxc.clearRect(0, 0, innerWidth, innerHeight);
@@ -7227,7 +7477,7 @@ function stepFx() {
     else { fxc.scale(1, Math.cos(p.wob)); fxc.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
     fxc.restore();
   }
-  if (parts.length) requestAnimationFrame(stepFx); else { fxRunning = false; fxc.clearRect(0, 0, innerWidth, innerHeight); }
+  if (parts.length) requestAnimationFrame(stepFx); else { fxRunning = false; fxc.clearRect(0, 0, innerWidth, innerHeight); $("fx").style.display = "none"; }
 }
 function popSound() {
   if (!soundOn) return;
@@ -7614,8 +7864,7 @@ function startZStack() {
   if (!isPhone()) $("knob").focus({ preventScroll: true });
 }
 function zsCapture() {
-  const z = G.zs, sc = $("scope"), t = document.createElement("canvas"); t.width = t.height = 120;
-  t.getContext("2d").drawImage(sc, 0, 0, 120, 120);
+  const z = G.zs, t = snapshotField(120);
   z.caps.push({ z: -G.stageZ, dd: d(), img: t.toDataURL("image/jpeg", 0.8) });
   sfx("fine"); buzz(10);
   if (z.caps.length < 3) { renderZS(); return; }
@@ -7972,8 +8221,9 @@ function loop(now) {
     if (!G.paused) {
       if (G.timed && G.ready && !G.locked && !G.crashed && !G.busyAnim) {
         const rem = Math.max(0, o.time - (now - G.t0) / 1000), whole = Math.ceil(rem), low = rem <= 5;
-        $("timerArc").style.strokeDashoffset = (100 * (1 - rem / o.time)).toFixed(2);
-        $("timer").classList.toggle("low", low);
+        const arc = (Math.round(400 * (1 - rem / o.time)) / 4).toFixed(2);
+        if (arc !== G.arcShown) { G.arcShown = arc; $("timerArc").style.strokeDashoffset = arc; }
+        if (low !== G.lowShown) { G.lowShown = low; $("timer").classList.toggle("low", low); }
         if (whole !== G.lastWhole) {
           G.lastWhole = whole;
           $("timerText").textContent = `0:${String(whole).padStart(2, "0")}`;
@@ -7995,25 +8245,33 @@ function loop(now) {
         G.exposure[G.k] += dt * POWER[G.power].bleach * 0.3; G.signal = Math.exp(-BLEACH[G.k] * G.exposure[G.k]);
         if (Math.abs(G.signal - G.signalDrawn) > 0.012) G.dirty = true;
       }
-      if ((G.mode === "confocal" || (G.mode === "fluor" && G.power === 0)) && G.ready && !G.locked && now - G.lastNoise > 140) { G.lastNoise = now; G.dirty = true; }
+      if (!LV_OK && (G.mode === "confocal" || (G.mode === "fluor" && G.power === 0)) && G.ready && !G.locked && now - G.lastNoise > 140) { G.lastNoise = now; G.dirty = true; }
     }
-    if (G.mode === "fluor") { $("signalFill").style.transform = `scaleX(${G.signal.toFixed(3)})`; $("signalTxt").textContent = `${Math.round(G.signal * 100)}%`; }
-    if (G.mode === "confocal") { $("signalFillC").style.transform = `scaleX(${G.signal.toFixed(3)})`; $("signalTxtC").textContent = `${Math.round(G.signal * 100)}%`; }
+    if ((G.mode === "fluor" || G.mode === "confocal") && G.signalShown !== Math.round(G.signal * 200)) {
+      G.signalShown = Math.round(G.signal * 200); const C = G.mode === "confocal" ? "C" : "";
+      $("signalFill" + C).style.transform = `scaleX(${G.signal.toFixed(3)})`; $("signalTxt" + C).textContent = `${Math.round(G.signal * 100)}%`;
+    }
     // the focus drive: pending knob rotation reaches the stage smoothly, frame by frame
     if (!G.paused) stepFocus(Math.max(0.001, dt)); else knobSound(0, 0);
     if (G.zv !== G.stageZ) { G.zv = G.stageZ; G.dirty = true; G.movedAt = now; }
     if (G.needSharp && now - (G.movedAt || 0) > 160) { G.needSharp = false; G.dirty = true; }
+    if (G.artPending && now - (G.movedAt || 0) > 130) G.dirty = true;
     if (G.ready) checkOil();
     TUT.tick();
-    if (G.sp.live && !document.hidden) for (const L of G.layers) if (L.live && paintLive(L, G.mode === "fluor" ? G.cube : "all", G.mode)) G.dirty = true;
+    const useLV = LV_OK;
+    if (G.sp.live && !useLV && !document.hidden) for (const L of G.layers) if (L.live && paintLive(L, G.mode === "fluor" ? G.cube : "all", G.mode)) G.dirty = true;
     if (G.dirty) {
       const v = { o, e: eff(), d: dv(), cube: G.cube, shutter: G.shutter, signal: G.signal, crashed: G.crashed, oilSmear: G.k === 1 && G.oilOn40, gain: G.mode === "bright" ? 1 : POWER[G.power].gain, cond: G.mode === "bright" ? G.cond : 1, live: !!G.sp.live };
-      FAST_BLUR = isPhone() && now - (G.movedAt || 0) < 160;
-      if (FAST_BLUR) G.needSharp = true;
-      renderField(sctx, G.sp, G.layers, v);
-      FAST_BLUR = false;
+      if (useLV) { gameLV.update(G.sp, G.layers, v, G.mode === "fluor" ? G.cube : "all"); scopeOverlay(G.crashed); }
+      else {
+        gameLV.hide(); scopeOverlayState = null; scopeCanvas.style.visibility = "";
+        FAST_BLUR = isPhone() && now - (G.movedAt || 0) < 160;
+        if (FAST_BLUR) G.needSharp = true;
+        renderField(sctx, G.sp, G.layers, v);
+        FAST_BLUR = false;
+      }
       G.signalDrawn = G.signal;
-      $("epLabel").textContent = G.mode === "fluor" && !G.shutter ? "shutter closed" : G.k === 2 ? (immersed() ? `${o.mag}x oil` : `${o.mag}x · no oil`) : G.mode === "fluor" ? `${o.mag}x · ${CH[G.cube].name}` : `${o.mag}x`;
+      setT($("epLabel"), G.mode === "fluor" && !G.shutter ? "shutter closed" : G.k === 2 ? (immersed() ? `${o.mag}x oil` : `${o.mag}x · no oil`) : G.mode === "fluor" ? `${o.mag}x · ${CH[G.cube].name}` : `${o.mag}x`);
       updateScopeArt();
       G.dirty = false;
     } else if (G.lpMoving) updateLoupe(Math.max(0, gapUm(true)) / 1000);
@@ -8867,7 +9125,7 @@ renderNotes(); renderCredits();
 loadPlates(renderCredits);
 requestAnimationFrame(loop);
 /* test hook for local checks only: inert unless the page is opened with #pftest */
-if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, VIDS, MODES, lockNow: (t) => lock(t), eff: () => eff(), fitHeadline, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
+if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, VIDS, MODES, snapshotField, gameLV, LV_OK, swapDrawn() { G.sp = genSpecimen(G.seed, G.mode, G.mode === "fluor" ? "hela" : G.mode === "bright" ? ORGS[G.seed % ORGS.length].id : null, false); G.layers = buildLayers(G.sp, OBJ[G.k], G.k === 2); G.best = null; G.dirty = true; }, lockNow: (t) => lock(t), eff: () => eff(), fitHeadline, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
   renderSpec(mode, seed, k) { const m = MODES[mode], sp = genSpecimen(seed, mode, mode === "bright" ? ORGS[seed % ORGS.length].id : null), o = m.objs[k], cv = newCanvas(); renderField(cv.getContext("2d"), sp, buildLayers(sp, o, k === 2), { o, e: effective(mode, k, true, 1), d: -sp.targets[k].z, cube: "all", shutter: true, signal: 1 }); return { url: cv.toDataURL("image/jpeg", 0.85), kind: sp.plate || sp.orgId || sp.kind }; },
   start(mode, seed) { startGame({ seed, mode }); },
   drive, log: [], grade(off) { const b = bestPlane(), e = eff(); return { acc: focusAccuracy(b.d + off), old: Math.exp(-Math.LN2 * (2 * (b.d + off + tgt().z) / e.dof) ** 2), best: b.d, q: b.q, dof: e.dof }; },
