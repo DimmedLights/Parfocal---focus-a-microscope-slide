@@ -2496,7 +2496,7 @@ const CLIPS = {
   er_mito: {"file": "videos/er-mito.mp4", "credit": "Mitochondria and ER in a live COS-7 cell. Bottanelli F et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Two-colour-live-cell-nanoscale-imaging-of-intracellular-targets-ncomms10778-s2.ogv", "gray": false, "ch": "tritc", "chs": ["fitc", "tritc"]},
   virus: {"file": "videos/virus.mp4", "credit": "Prototype foamy virus particles (Env-mCherry channel) entering HeLa cells. Stirnnagel K et al., via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Differential-pH-dependent-cellular-uptake-pathways-among-foamy-viruses-elucidated-using-dual-1742-4690-9-71-S3.ogv", "gray": true, "ch": "tritc", "boost": 1.2},
   eb1_3t3b: {"file": "videos/eb1-3t3b.mp4", "credit": "EB1-GFP in NIH 3T3 fibroblasts, confocal time-lapse. Bozonhiggsa, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:MAX_3T3_23Mar2015_EB1-GFP-06.ogv", "gray": true, "ch": "fitc", "boost": 2.2},
-  ecoli: {"file": "videos/ecoli.mp4", "credit": "GFP-expressing Escherichia coli swimming. Cuenca M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:D-Alanine-Controlled-Transient-Intestinal-Mono-Colonization-with-Non-Laboratory-Adapted-Commensal-pone.0151872.s006.ogv", "gray": false, "ch": "fitc", "boost": 1.3},
+  ecoli: {"file": "videos/ecoli.mp4", "credit": "GFP-expressing Escherichia coli swimming. Cuenca M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, red annotation ring removed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:D-Alanine-Controlled-Transient-Intestinal-Mono-Colonization-with-Non-Laboratory-Adapted-Commensal-pone.0151872.s006.ogv", "gray": false, "ch": "fitc", "boost": 1.3},
   hela_tub: {"file": "videos/hela-tubulin-h2b.mp4", "credit": "HeLa cells expressing GFP-α-tubulin and mCherry-H2B, live time-lapse. Pillai S et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Tank-binding-kinase-1-is-a-centrosome-associated-kinase-necessary-for-microtubule-dynamics-and-ncomms10072-s5.ogv", "gray": false, "ch": "tritc", "chs": ["fitc", "tritc"]},
   ricin: {"file": "videos/ricin-endosomes.mp4", "credit": "Ricin-FITC entering A549 cells, late endosomes in red. Herrera C et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-Bispecific-Antibody-Promotes-Aggregation-of-Ricin-Toxin-on-Cell-Surfaces-and-Alters-Dynamics-of-pone.0156893.s011.ogv", "gray": false, "ch": "fitc", "chs": ["fitc", "tritc"], "boost": 1.4},
   zf_notochord: {"file": "videos/zf-notochord.mp4", "credit": "Zebrafish notochord cells intercalating, membrane RFP, confocal time-lapse. Edeling M et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Structural-Requirements-for-PACSINSyndapin-Operation-during-Zebrafish-Embryonic-Notochord-pone.0008150.s008.ogv", "gray": true, "ch": "red", "boost": 1.5},
@@ -5517,6 +5517,14 @@ const HERO_REEL = {
     { clip: "organoid", label: "Organoids forming", crop: 1 },
     { clip: "tardigrade", label: "Tardigrade", crop: 1 },
     { clip: "para2", label: "Paramecium", crop: 0.78 },
+  ],
+  fluor: [
+    { clip: "mito_mef", label: "Mitochondria", crop: 0.78 },
+    { clip: "eb1_u2os", label: "Growing microtubule ends", crop: 0.6 },
+    { clip: "er_mito", label: "ER network", crop: 0.78 },
+    { clip: "ricin", label: "Ricin entering cells", crop: 0.78 },
+    { clip: "pdlim5", label: "Stress fibres", crop: 0.78 },
+    { clip: "eb1_dendrite", label: "Microtubules in a dendrite", crop: 0.6 },
   ],
 };
 const REEL_MS = 8000;
