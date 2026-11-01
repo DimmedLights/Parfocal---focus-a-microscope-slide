@@ -7611,9 +7611,15 @@ async function toNextStage() {
   const wasBroken = G.crashed;
   G.stage++; G.k++;
   G.crashed = false; G.fresh = wasBroken;
-  if (wasBroken) { const o = OBJ[G.k]; G.stageZ = G.p[G.k] - tgt().z - G.setupRng.range(3, 6) * o.dof; G.zv = G.stageZ; G.oil = false; G.contact = false; }
+  if (wasBroken) { const o = OBJ[G.k]; G.stageZ = G.p[G.k] - tgt().z - (G.tut ? G.setupRng.range(3, 6) * o.dof : G.k === 1 ? G.setupRng.range(20, 45) : G.setupRng.range(12, 28)); G.zv = G.stageZ; G.oil = false; G.contact = false; }
   G.clearNote = null;
-  if (!wasBroken && d() > OBJ[G.k].wd - 2) {
+  if (!wasBroken && !G.tut) {
+    // Daily and practice rounds: the new lens never arrives in focus. It backs off (away from the slide, never toward it)
+    // by a random distance that fine focus can cover in a few seconds. Only the tutorials keep the parfocal carry-over.
+    const o = OBJ[G.k], away = G.k === 1 ? G.setupRng.range(20, 45) : G.setupRng.range(12, 28);
+    G.stageZ = Math.min(G.stageZ, G.p[G.k] - tgt().z - away); G.zv = G.stageZ;
+    G.clearNote = "Lens backed off for the swing. Find focus with fine focus.";
+  } else if (!wasBroken && d() > OBJ[G.k].wd - 2) {
     // The higher-power lens would hit the slide, so the stage drops first, the way you would on a real scope.
     const o = OBJ[G.k], prev = OBJ[G.k - 1];
     G.stageZ = G.p[G.k] - tgt().z - G.setupRng.range(3, 6) * o.dof; G.zv = G.stageZ;
@@ -7763,7 +7769,7 @@ function lock(timeout) {
     if (lay[0].x !== t && lay[0].dd < 1) notes.push(`You were sitting on the ${lay[0].x.label}, not the ${t.label}.`);
   }
   if (timeout) notes.push("Time ran out, so focus was locked where it was.");
-  if (acc > 0.8 && G.k === 1 && !G.coarseHigh[1] && !G.fresh) notes.push("Parfocal lenses: the 10x focus carried over, so a small turn of fine was enough.");
+  if (G.tut && acc > 0.8 && G.k === 1 && !G.coarseHigh[1] && !G.fresh) notes.push("Parfocal lenses: the 10x focus carried over, so a small turn of fine was enough.");
   score = Math.max(0, Math.round(score));
   G.results[G.stage] = { mag: o.mag, score, acc, err: er };
   const curve = focusCurve(d());
