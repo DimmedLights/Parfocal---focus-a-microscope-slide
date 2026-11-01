@@ -1446,6 +1446,103 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 :root.rm .ibtn .eq i:nth-child(1) { transform: scaleY(.55); } :root.rm .ibtn .eq i:nth-child(2) { transform: scaleY(.95); }
 :root.rm .ibtn .eq i:nth-child(3) { transform: scaleY(.7); } :root.rm .ibtn .eq i:nth-child(4) { transform: scaleY(.4); }
 </style>
+<style>
+/* ---------- Identify ---------- */
+.ident-screen .wrap.idf { max-width: 1280px; padding: 18px 0 40px; }
+.idf-head { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 18px; }
+.idf-title { display: grid; gap: 2px; }
+.idf-title b { font: italic 900 30px/1 var(--f-display); text-transform: uppercase; color: var(--acc); letter-spacing: -.01em; }
+.idf-title span { font: 500 12px var(--f-mono); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.idf-dots { list-style: none; display: flex; gap: 8px; margin: 0 0 0 auto; padding: 0; }
+.idf-dots li { width: 34px; height: 10px; border-radius: 6px; background: var(--glass-strong); border: 1px solid var(--glass-edge); transition: background .25s, transform .25s; }
+.idf-dots li.now { border-color: var(--acc); transform: scaleY(1.3); }
+.idf-dots li.gold { background: #46c46b; } .idf-dots li.ok { background: #e2b53f; } .idf-dots li.bad { background: #e5533f; } .idf-dots li.out { background: #555; }
+.idf-score { display: grid; justify-items: end; min-width: 110px; position: relative; }
+.idf-score small { font: 600 11px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.idf-score b { font: 900 34px/1 var(--f-display); }
+.idf-streak { position: absolute; top: -10px; right: -12px; font: 800 12px var(--f-mono); background: var(--acc); color: var(--acc-ink); padding: 3px 8px; border-radius: 999px; transform: rotate(6deg); }
+.idf-main { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+.idf-view { display: grid; justify-items: center; gap: 12px; }
+.idf-scope { margin: 0; font: 600 13px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.idf-ep { width: min(100%, 520px, calc(100svh - 280px)); position: relative; }
+.idf-ep canvas { position: relative; z-index: 1; }
+.idf-badge { position: absolute; z-index: 3; left: 50%; bottom: 9%; transform: translateX(-50%); white-space: nowrap; font: 800 13px var(--f-mono); padding: 6px 12px; border-radius: 999px; background: var(--acc); color: var(--acc-ink); box-shadow: 0 10px 30px -10px rgba(0,0,0,.6); animation: fadeUp .4s var(--e-snap) backwards; }
+.idf-timer { width: min(100%, 420px); height: 6px; border-radius: 6px; background: var(--glass-strong); overflow: hidden; }
+.idf-timer i { display: block; height: 100%; width: 100%; background: var(--acc); transform-origin: 0 50%; }
+.idf-pts { margin: 0; font-size: 13.5px; color: var(--muted); } .idf-pts b { font: 800 18px var(--f-mono); color: var(--ink); }
+.idf-step { margin: 0; font: 600 12px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--acc); }
+.idf-q { margin: 6px 0 4px; font: italic 900 clamp(30px, 3.4vw, 48px)/1.02 var(--f-display); text-transform: uppercase; letter-spacing: -.01em; }
+.idf-hint { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+.idf-opts { display: grid; gap: 10px; }
+.idf-opt { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--glass-edge); background: var(--glass-strong); color: var(--ink); font: 700 17px var(--f-body, inherit); cursor: pointer; transition: transform .15s, border-color .15s, background .2s; }
+.idf-opt:hover:not([disabled]) { transform: translateX(6px); border-color: var(--acc); }
+.idf-opt kbd { flex: none; }
+.idf-opt small { display: block; font: 500 12px var(--f-mono); color: var(--muted); margin-top: 2px; }
+.idf-opt.right { background: color-mix(in srgb, #46c46b 26%, var(--glass-strong)); border-color: #46c46b; }
+.idf-opt.wrong { background: color-mix(in srgb, #e5533f 24%, var(--glass-strong)); border-color: #e5533f; }
+.idf-opt[disabled] { cursor: default; }
+.idf-fb { margin: 16px 0 12px; padding: 14px 16px; border-radius: 14px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); font-size: 14.5px; line-height: 1.5; }
+.idf-fb b.v { display: block; font: italic 900 22px var(--f-display); text-transform: uppercase; margin-bottom: 4px; }
+.idf-fb small { display: block; color: var(--muted); margin-top: 6px; font-size: 12.5px; }
+.idf-fb .atlas-new { display: inline-block; margin-top: 8px; }
+.idf-end { display: grid; gap: 14px; justify-items: start; }
+.idf-end-top { display: flex; align-items: flex-end; gap: 28px; flex-wrap: wrap; }
+.idf-grid { margin: 0 0 12px; font-size: 34px; letter-spacing: 4px; }
+.idf-end-line { margin: 0; color: var(--muted); font-size: 15px; }
+.idf-end-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; width: 100%; max-width: 980px; }
+.idf-end-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+/* ---------- Atlas ---------- */
+.atlas-sheet { width: min(980px, 100%); }
+.atlas-top { display: grid; gap: 8px; margin-bottom: 20px; }
+.atlas-top p { margin: 0; color: var(--muted); font-size: 14px; }
+.atlas-prog { height: 10px; border-radius: 6px; background: var(--glass-strong); overflow: hidden; } .atlas-prog i { display: block; height: 100%; background: var(--acc); }
+.atlas-top b { font: 900 30px var(--f-display); }
+.atlas-sec h3 { margin: 22px 0 10px; font: 700 12px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--acc); }
+.atlas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 14px; }
+.at-card { display: grid; justify-items: center; gap: 6px; padding: 10px 6px 12px; border-radius: 14px; border: 1px solid var(--glass-edge); background: var(--glass-strong); color: var(--ink); cursor: pointer; text-align: center; font: inherit; }
+.at-card:hover { border-color: var(--acc); }
+.at-ep { position: relative; width: 92px; height: 92px; border-radius: 50%; overflow: hidden; background: #070708; box-shadow: inset 0 0 0 3px #1a1416; isolation: isolate; }
+.at-ep img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(var(--g, 0)); }
+.at-ep i { position: absolute; inset: 0; mix-blend-mode: multiply; }
+.at-card.locked .at-ep img { filter: grayscale(1) blur(7px) brightness(.55); transform: scale(1.15); }
+.at-card.locked .at-ep i { display: none; }
+.at-card.locked .at-name { color: var(--muted); }
+.at-lock { position: absolute; inset: 0; display: grid; place-items: center; font: 900 26px var(--f-display); color: rgba(255,255,255,.75); }
+.at-name { font-weight: 700; font-size: 13px; line-height: 1.25; }
+.at-how { font: 500 10.5px var(--f-mono); color: var(--muted); }
+.at-detail { grid-column: 1 / -1; padding: 14px 16px; border-radius: 14px; background: color-mix(in srgb, var(--acc) 9%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); font-size: 14px; line-height: 1.5; }
+.at-detail small { display: block; color: var(--muted); margin-top: 8px; font-size: 12px; }
+.atlas-new { font: 800 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; background: var(--acc); color: var(--acc-ink); padding: 3px 8px; border-radius: 999px; }
+.m-new, .m-count { align-self: center; margin-left: 10px; font: 800 10.5px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; padding: 3px 7px; border-radius: 999px; background: var(--acc); color: var(--acc-ink); transform: translateY(-.2em); }
+.m-count { background: transparent; color: inherit; border: 1px solid currentColor; opacity: .75; }
+.m-new[hidden], .m-count:empty { display: none; }
+@media (max-width: 980px) { .idf-main { grid-template-columns: 1fr; } .idf-end-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } .idf-dots { margin-left: 0; } }
+</style>
+<style>
+/* eight menu items: tighter rows so the title still fits one screen */
+.menu { gap: 0; }
+.m-item { margin-left: calc(var(--i) * 11px); padding-block: 4px 5px; }
+.m-name { font-size: clamp(22px, min(2.9vw, 3.75svh), 40px); }
+</style>
+<style>
+.t-left { padding-bottom: 10px; }
+@media (min-width: 981px) and (max-height: 820px) {
+  .m-name { font-size: clamp(20px, 3.25svh, 32px); }
+  .m-caption { margin-top: 6px; min-height: 0; }
+  .t-streak { margin-top: 6px; }
+  .t-chips { margin-top: 10px; }
+  .modes { margin-top: 12px; }
+}
+</style>
+<style>
+.t-left { padding-bottom: 2px; }
+.t-keys { margin-top: 8px !important; margin-bottom: 0 !important; }
+@media (min-width: 981px) and (max-height: 740px) {
+  .wordmark { font-size: clamp(48px, min(7.4vw, 12.5svh), 110px); }
+  .m-name { font-size: clamp(19px, 3svh, 30px); }
+}
+</style>
+<style>.idf-tier { margin: 0; font: italic 900 clamp(40px, 5vw, 76px)/1 var(--f-display); text-transform: uppercase; color: var(--acc); letter-spacing: -.02em; }</style>
 </head>
 <body>
 <header class="topbar gutter" id="topbar">
@@ -1507,11 +1604,12 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
           <span class="menu-cursor" aria-hidden="true"><i></i></span>
           <button class="m-item" role="menuitem" data-act="daily" data-pose="2" style="--i:0"><span class="m-idx">01</span><span class="m-name">Today's slide</span></button>
           <button class="m-item" role="menuitem" data-act="practice" data-pose="1" style="--i:1"><span class="m-idx">02</span><span class="m-name">Practice</span></button>
-          <button class="m-item" role="menuitem" data-act="tutorial" data-pose="0" style="--i:2"><span class="m-idx">03</span><span class="m-name">Tutorial</span></button>
-          <button class="m-item" role="menuitem" data-act="guide" data-pose="2" style="--i:3"><span class="m-idx">04</span><span class="m-name">Guide</span></button>
-          <button class="m-item" role="menuitem" data-act="notes" data-pose="1" style="--i:4"><span class="m-idx">05</span><span class="m-name">Lab notes</span></button>
-          <button class="m-item" role="menuitem" data-act="credits" data-pose="0" style="--i:5"><span class="m-idx">06</span><span class="m-name">Credits</span></button>
-          <button class="m-item" role="menuitem" data-act="settings" data-pose="1" style="--i:6"><span class="m-idx">07</span><span class="m-name">Settings</span></button>
+          <button class="m-item" role="menuitem" data-act="identify" data-pose="0" style="--i:2"><span class="m-idx">03</span><span class="m-name">Identify</span><span class="m-new" id="idfNew">New</span></button>
+          <button class="m-item" role="menuitem" data-act="tutorial" data-pose="0" style="--i:3"><span class="m-idx">04</span><span class="m-name">Tutorial</span></button>
+          <button class="m-item" role="menuitem" data-act="atlas" data-pose="2" style="--i:4"><span class="m-idx">05</span><span class="m-name">Atlas</span><span class="m-count" id="atlasCount"></span></button>
+          <button class="m-item" role="menuitem" data-act="guide" data-pose="2" style="--i:5"><span class="m-idx">06</span><span class="m-name">Guide</span></button>
+          <button class="m-item" role="menuitem" data-act="notes" data-pose="1" style="--i:6"><span class="m-idx">07</span><span class="m-name">Lab notes</span></button>
+          <button class="m-item" role="menuitem" data-act="settings" data-pose="1" style="--i:7"><span class="m-idx">08</span><span class="m-name">Settings</span></button>
         </nav>
         <p class="m-caption" id="titleCaption" aria-live="polite"></p>
         <div class="t-streak" id="tStreak" hidden></div>
@@ -1847,6 +1945,48 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 </main>
 
 <!-- ============ RESULT ============ -->
+<main id="ident" class="screen ident-screen" hidden>
+  <div class="gutter">
+    <div class="wrap idf">
+      <header class="idf-head">
+        <button class="hud-menu shine" id="idfBack" aria-label="Back to the title screen"><span class="hud-menu-t">← Title</span><kbd>Esc</kbd></button>
+        <div class="idf-title"><b>Identify</b><span id="idfSub">Daily</span></div>
+        <ol class="idf-dots" id="idfDots" aria-label="Specimens"></ol>
+        <div class="idf-score"><small>Score</small><b id="idfScore">0</b><span class="idf-streak" id="idfStreak" hidden></span></div>
+      </header>
+      <div class="idf-main" id="idfMain">
+        <div class="idf-view">
+          <p class="idf-scope" id="idfScope">Brightfield</p>
+          <div class="eyepiece idf-ep"><canvas id="idfCv" width="480" height="480" aria-label="Specimen coming into focus"></canvas><div class="idf-badge" id="idfBadge" hidden></div></div>
+          <div class="idf-timer" aria-hidden="true"><i id="idfBar"></i></div>
+          <p class="idf-pts"><b id="idfPts">1000</b> points if you're right now</p>
+        </div>
+        <div class="idf-side">
+          <p class="idf-step" id="idfStep">Specimen 1 of 5</p>
+          <h2 class="idf-q">What's on the slide?</h2>
+          <p class="idf-hint">It sharpens as you wait. Answer early for more points. <kbd>1</kbd>–<kbd>4</kbd></p>
+          <div class="idf-opts" id="idfOpts"></div>
+          <div class="idf-fb" id="idfFb" hidden></div>
+          <button class="btn primary" id="idfNext" hidden>Next <kbd>⏎</kbd></button>
+        </div>
+      </div>
+      <div class="idf-end" id="idfEnd" hidden>
+        <p class="eyebrow" id="idfEndEyebrow">Daily identify</p>
+        <p class="big-tier idf-tier" id="idfTier"></p>
+        <div class="idf-end-top"><div class="total"><b id="idfTotal">0</b><small>/ 5000</small></div><p class="idf-grid" id="idfGrid"></p></div>
+        <p class="idf-end-line" id="idfEndLine"></p>
+        <div class="idf-end-cards" id="idfEndCards"></div>
+        <div class="idf-end-btns">
+          <button class="btn primary" id="idfCopy">Copy result</button>
+          <button class="btn" id="idfAgain">Practice run <kbd>⏎</kbd></button>
+          <button class="btn" id="idfAtlas">Open Atlas</button>
+          <button class="btn ghost" id="idfHome">Title screen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
 <main id="result" class="screen result-screen" hidden>
   <div class="gutter">
     <div class="wrap result">
@@ -1933,6 +2073,12 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
   <div class="panel-sheet">
     <header class="panel-head"><button class="back shine" data-close>← Back <kbd>Esc</kbd></button><h2 id="settingsTitle">Settings</h2></header>
     <div class="panel-body settings" id="settingsBody"></div>
+  </div>
+</section>
+<section class="panel" id="panelAtlas" hidden role="dialog" aria-modal="true" aria-labelledby="atlasTitle">
+  <div class="panel-sheet atlas-sheet">
+    <header class="panel-head"><button class="back shine" data-close>← Back <kbd>Esc</kbd></button><h2 id="atlasTitle">Atlas</h2></header>
+    <div class="panel-body" id="atlasBody"></div>
   </div>
 </section>
 <section class="panel" id="panelCredits" hidden role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
@@ -5284,11 +5430,12 @@ function svgEl(tag, attrs, parent) { const e = document.createElementNS(NS, tag)
 })();
 
 /* ---------- Screens and transitions ---------- */
-const screens = { title: $("title"), game: $("game"), result: $("result") };
+const screens = { title: $("title"), game: $("game"), result: $("result"), ident: $("ident") };
 let current = "title", busy = false;
 function show(v) {
   for (const k in screens) { screens[k].hidden = k !== v; screens[k].classList.remove("enter"); }
   if (v === "title" && window.resetCone) { window.resetCone(); setTimeout(window.resetCone, 900); }
+  if (v === "title") { try { menuBadges(); } catch (e) {} }
   document.querySelectorAll("#rRecap video").forEach(x => { try { v === "result" && !stillMode ? x.play().catch(() => {}) : x.pause(); } catch (e) {} });
   void screens[v].offsetWidth; screens[v].classList.add("enter");
   current = v;
@@ -5493,7 +5640,8 @@ function captionFor(act) {
     guide: "How each microscope works, its parts, and the dyes and tricks behind every image. Interactive.",
     credits: "Where the specimens come from, and who built this.",
     settings: "Clock, footage, sound and music volume, knob sensitivity, the stage, hints, theme and your saved progress.",
-    identify: "Name the organism from the slide. Coming soon.",
+    identify: (() => { const st = loadStore(), b = st.idDaily && st.idDaily[todayKey()]; return b != null ? `Today's five are done: ${b} / 5000. Play a practice run with five random specimens.` : "Five specimens come slowly into focus. Name each one: the sooner you answer, the more it scores. Same five for everyone today."; })(),
+    atlas: (() => { const n = Object.keys(loadStore().atlas || {}).filter(k => CLIPS[k]).length; return `Your specimen collection: ${n} of ${Object.keys(CLIPS).length} found. Focus a specimen to 700+ or name it in Identify to add it.`; })(),
   }[act] || "";
 }
 const titleMenu = makeMenu($("titleMenu"), {
@@ -5508,6 +5656,8 @@ const titleMenu = makeMenu($("titleMenu"), {
     if (act === "daily") startGame({ daily: true });
     else if (act === "practice") startGame({ daily: false });
     else if (act === "tutorial") startGame({ daily: false, tut: true, mode: homeMode });
+    else if (act === "identify") IDF.start(!IDF.playedToday());
+    else if (act === "atlas") openPanel("atlas");
     else if (act === "guide") GUIDE_UI.open(null);
     else if (act === "notes") openPanel("notes");
     else if (act === "credits") openPanel("credits");
@@ -5759,8 +5909,8 @@ function heroCone() {
 let openPanelId = null, naK = 2, naAnim = null;
 function openPanel(which) {
   if (openPanelId) return;
-  const p = which === "notes" ? $("panelNotes") : which === "settings" ? $("panelSettings") : $("panelCredits");
-  if (which === "notes") renderNotes(); else if (which === "settings") renderSettings(); else renderCredits();
+  const p = which === "notes" ? $("panelNotes") : which === "settings" ? $("panelSettings") : which === "atlas" ? $("panelAtlas") : $("panelCredits");
+  if (which === "notes") renderNotes(); else if (which === "settings") renderSettings(); else if (which === "atlas") renderAtlas(); else renderCredits();
   p.hidden = false; p.classList.remove("closing"); p.classList.add("open");
   openPanelId = p.id; sfx("whoosh");
   if (current === "title") titleMenu.leave();
@@ -5815,6 +5965,7 @@ function settingsHTML() {
   <section class="set-group"><h3>Data</h3>
     ${row("Your progress", "Scores, streaks and settings live in this browser only. Export them to keep a copy or move to another computer.", `<div class="set-btns"><button class="set-btn" id="setExport">Export</button><button class="set-btn" id="setImport">Import</button><button class="set-btn danger" id="setReset">Reset progress</button></div>`)}
     <input type="file" id="setFile" accept="application/json,.json" hidden>
+    ${row("Credits", "Where every clip comes from, its author and licence, and who built Parfocal.", `<div class="set-btns"><button class="set-btn" id="setCredits">Credits and licences</button></div>`)}
     <p class="set-note" id="setNote" aria-live="polite"></p>
   </section>`;
 }
@@ -5847,6 +5998,7 @@ function renderSettings() {
     } catch (e) { $("setNote").textContent = "Couldn't export in this browser."; }
   });
   $("setImport").addEventListener("click", () => $("setFile").click());
+  $("setCredits").addEventListener("click", async () => { await closePanel(); openPanel("credits"); });
   $("setFile").addEventListener("change", async () => {
     const f = $("setFile").files[0]; if (!f) return;
     try {
@@ -5871,6 +6023,222 @@ $("gearBtn").addEventListener("click", () => {
   if (current === "game" && G && !pauseOpen) openPause();
   openPanel("settings");
 });
+
+
+/* =====================================================================
+   IDENTIFY: five specimens come slowly into focus; name each one.
+   Answer early for more points. The daily run is the same for everyone.
+   ===================================================================== */
+const ID_NAME = {
+  paramecium: ["Paramecium", "protist"], para2: ["Paramecium", "protist"], vorticella: ["Vorticella", "protist"], vort_stalk: ["Vorticella", "protist"],
+  euglena: ["Euglena", "protist"], euglena_mut: ["Euglena", "protist"], euglena_gigas: ["Euglena", "protist"], difflugia: ["Testate amoeba (Difflugia)", "protist"],
+  stentor: ["Stentor", "protist"], stentor1000: ["Stentor", "protist"], phacus: ["Phacus", "protist"], trachelo: ["Trachelomonas", "protist"],
+  tardigrade: ["Tardigrade", "animal"], nematode: ["Nematode worm", "animal"], daphnia: ["Water flea (Daphnia)", "animal"], celegans: ["Nematode embryo (C. elegans)", "animal"], mnemi: ["Comb jelly embryo", "animal"],
+  bacillaria: ["Diatoms", "alga"], cyanobacteria: ["Cyanobacteria", "alga"], pediastrum: ["Pediastrum", "alga"],
+  onion: ["Plant cells (cytoplasmic streaming)", "alga"], egeria: ["Plant cells (cytoplasmic streaming)", "alga"], tradescantia: ["Plant cells (cytoplasmic streaming)", "alga"],
+  psc: ["Dividing cells in culture", "cells"], organoid: ["Organoids", "cells"],
+  mito_mef: ["Mitochondria", "organelle"], eb1_u2os: ["Growing microtubule ends", "organelle"], eb1_3t3b: ["Growing microtubule ends", "organelle"], eb1_dendrite: ["Growing microtubule ends", "organelle"],
+  er_mito: ["Endoplasmic reticulum", "organelle"], h2b_hela: ["Chromosomes", "organelle"], h2b_wide: ["Chromosomes", "organelle"], hela_tub: ["Chromosomes", "organelle"],
+  centrosomes: ["Centrosomes", "organelle"], cystinosin: ["Lysosomes", "organelle"], ricin: ["Endosomes", "organelle"], pdlim5: ["Actin stress fibres", "organelle"],
+  virus: ["Virus particles", "microbe"], ecoli: ["Bacteria (E. coli)", "microbe"], borrelia: ["Lyme spirochetes", "microbe"], dengue: ["Virus-infected cells", "microbe"],
+  zf_notochord: ["Notochord cells", "tissue"], fly_furrow: ["Embryo epithelium", "tissue"], platelets: ["Blood vessels and platelets", "tissue"], neutrophils: ["Neutrophils eating bacteria", "tissue"],
+  organoid_wnt: ["Organoid with a Wnt reporter", "tissue"], axon_deg: ["A cut nerve axon", "tissue"], trkb: ["Sympathetic neuron precursors", "tissue"], intestine: ["Gut lining", "tissue"],
+  ncc: ["Neural crest cells", "tissue"], rb_axon: ["Sensory axons", "tissue"], dicty: ["Social amoebae (Dictyostelium)", "tissue"],
+};
+const ID_EXTRA = {
+  protist: ["Amoeba", "Volvox", "Didinium", "Blepharisma"], animal: ["Rotifer", "Hydra", "Copepod", "Mosquito larva"], alga: ["Spirogyra", "Volvox", "Desmids", "Chlamydomonas"],
+  cells: ["Red blood cells", "Yeast cells", "Cheek epithelial cells", "Sperm cells"], organelle: ["Golgi apparatus", "Nuclear envelope", "Peroxisomes", "Focal adhesions"],
+  microbe: ["Yeast", "Malaria parasites", "Bacterial biofilm", "Fungal hyphae"], tissue: ["Heart muscle", "Liver lobule", "Retina", "Skin wound healing"],
+};
+const ID_N = 5, ID_REVEAL = 13, ID_LIMIT = 20, ID_MAXB = 30;   // specimens per run; seconds to sharpen; seconds before time out; starting blur (px at 480)
+const ID_MODE = (() => { const m = {}; for (const mode of ["bright", "fluor", "confocal"]) for (const st of LIVE[mode]) for (const g of st.stages) if (!m[g.clip]) m[g.clip] = { mode, ch: g.ch }; return m; })();
+/* ---------- Atlas: every specimen you focus well or identify is collected ---------- */
+function atlasData() { return loadStore().atlas || {}; }
+function atlasUnlock(clip, how) {
+  if (!clip || !CLIPS[clip]) return false;
+  const st = loadStore(); st.atlas = st.atlas || {};
+  if (st.atlas[clip]) return false;
+  st.atlas[clip] = { how, at: todayKey() }; saveStore(st); atlasCountChip(); return true;
+}
+function atlasCountChip() { const n = Object.keys(atlasData()).filter(k => CLIPS[k]).length; const el = $("atlasCount"); if (el) el.textContent = n ? `${n}/${Object.keys(CLIPS).length}` : ""; }
+const thumbOf = (k) => "videos/thumbs/" + CLIPS[k].file.split("/").pop().replace(".mp4", ".jpg");
+function tintOf(k) { const c = CLIPS[k], m = ID_MODE[k]; if (!m || m.mode === "bright" || !c.gray) return null; return rgba(CH[c.ch || m.ch || "fitc"].rgb, 1); }
+function atlasCard(k, opts = {}) {
+  const have = opts.force || !!atlasData()[k], n = ID_NAME[k] ? ID_NAME[k][0] : k, tint = tintOf(k);
+  return `<button class="at-card${have ? "" : " locked"}" data-clip="${k}" type="button"><span class="at-ep"${CLIPS[k].gray && tint ? ' style="--g:1"' : ""}><img src="${thumbOf(k)}" alt="" loading="lazy">${tint ? `<i style="background:${tint}"></i>` : ""}${have ? "" : '<span class="at-lock">?</span>'}</span><span class="at-name">${have ? escapeHtml(n) : "Not found yet"}</span>${opts.sub ? `<span class="at-how">${opts.sub}</span>` : ""}</button>`;
+}
+function renderAtlas() {
+  const A = atlasData(), keys = Object.keys(CLIPS), got = keys.filter(k => A[k]).length;
+  const by = { bright: [], fluor: [], confocal: [] }; for (const k of keys) by[(ID_MODE[k] || { mode: "bright" }).mode].push(k);
+  const title = { bright: "Brightfield", fluor: "Fluorescence", confocal: "Confocal" };
+  $("atlasBody").innerHTML = `<div class="atlas-top"><b>${got} / ${keys.length} specimens</b><div class="atlas-prog"><i style="width:${(100 * got / keys.length).toFixed(1)}%"></i></div>
+    <p>Collect a specimen by focusing it to 700 or more in a round, or by naming it in Identify. Each card keeps its fact and footage credit.</p></div>` +
+    ["bright", "fluor", "confocal"].map(m => `<section class="atlas-sec"><h3>${title[m]} · ${by[m].filter(k => A[k]).length} of ${by[m].length}</h3><div class="atlas-grid">${by[m].map(k => atlasCard(k)).join("")}</div></section>`).join("") +
+    `<p class="set-note" style="margin-top:22px"><button class="set-btn" id="atlasCredits" type="button">Footage credits and licences</button></p>`;
+  $("atlasBody").querySelectorAll(".at-card").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.clip, have = !!atlasData()[k], grid = b.parentElement;
+    grid.querySelectorAll(".at-detail").forEach(x => x.remove());
+    if (b.classList.contains("open")) { b.classList.remove("open"); return; }
+    grid.querySelectorAll(".at-card.open").forEach(x => x.classList.remove("open")); b.classList.add("open");
+    const d = document.createElement("div"); d.className = "at-detail";
+    d.innerHTML = have ? `<b>${escapeHtml(ID_NAME[k] ? ID_NAME[k][0] : k)}</b> · ${escapeHtml(CLIP_FACT[k] || "")}<small>${escapeHtml(CLIPS[k].credit)} <a href="${CLIPS[k].url}" target="_blank" rel="noopener">Source</a></small>`
+      : `Not collected yet. Focus it to 700 or more on a ${ { bright: "brightfield", fluor: "fluorescence", confocal: "confocal" }[(ID_MODE[k] || {}).mode] || ""} slide, or name it in Identify.`;
+    const cols = Math.max(1, Math.round(grid.clientWidth / (b.offsetWidth + 14))), idx = [...grid.children].indexOf(b), end = Math.min(grid.children.length - 1, Math.floor(idx / cols) * cols + cols - 1);
+    grid.children[end].after(d); sfx("move", { i: 3 });
+  }));
+  $("atlasCredits").addEventListener("click", async () => { await closePanel(); openPanel("credits"); });
+}
+/* ---------- the Identify run ---------- */
+const IDF = (() => {
+  let run = null, raf = 0;
+  const tmp = document.createElement("canvas"); tmp.width = tmp.height = 480; const tx = tmp.getContext("2d");
+  const cv = () => $("idfCv"), ease = (u) => 1 - Math.pow(1 - Math.min(1, Math.max(0, u)), 2.2);
+  function pick(R) {
+    const keys = Object.keys(ID_NAME).filter(k => CLIPS[k] && ID_MODE[k]), out = [], names = new Set();
+    // shuffle, then keep distinct answers and at least one from each microscope
+    for (let i = keys.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [keys[i], keys[j]] = [keys[j], keys[i]]; }
+    for (const mode of ["bright", "fluor", "confocal"]) { const k = keys.find(x => ID_MODE[x].mode === mode && !names.has(ID_NAME[x][0])); if (k) { out.push(k); names.add(ID_NAME[k][0]); } }
+    for (const k of keys) { if (out.length >= ID_N) break; if (!out.includes(k) && !names.has(ID_NAME[k][0])) { out.push(k); names.add(ID_NAME[k][0]); } }
+    for (let i = out.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [out[i], out[j]] = [out[j], out[i]]; }
+    return out;
+  }
+  function options(k, R) {
+    const [ans, grp] = ID_NAME[k];
+    const pool = [...new Set(Object.values(ID_NAME).filter(v => v[1] === grp).map(v => v[0]).concat(ID_EXTRA[grp]))].filter(n => n !== ans);
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    const opts = [ans, ...pool.slice(0, 3)];
+    for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; }
+    return opts;
+  }
+  function start(daily) {
+    const key = todayKey(), seed = daily ? hashString("identify:" + key) : (Math.random() * 2 ** 31) >>> 0, R = makeRng(seed, "identify");
+    const clips = pick(R);
+    run = { daily, key, R, clips, i: -1, score: 0, streak: 0, best: 0, res: [] };
+    wipeTo({ forward: true, reveal: () => {
+      G = null; stopClips(); show("ident"); $("idfMain").hidden = false; $("idfEnd").hidden = true;
+      $("idfSub").textContent = daily ? `Daily · ${key}` : "Practice run";
+      $("idfDots").innerHTML = clips.map(() => "<li></li>").join("");
+      $("idfScore").textContent = "0"; $("idfStreak").hidden = true;
+      next();
+    } });
+  }
+  function next() {
+    run.i++;
+    if (run.i >= run.clips.length) { end(); return; }
+    const k = run.clips[run.i], m = ID_MODE[k];
+    run.cur = { k, opts: options(k, run.R), t0: performance.now(), done: false };
+    root.dataset.mode = m.mode;
+    $("idfScope").textContent = `${{ bright: "Brightfield", fluor: "Fluorescence", confocal: "Confocal" }[m.mode]} microscope`;
+    $("idfStep").textContent = `Specimen ${run.i + 1} of ${run.clips.length}`;
+    [...$("idfDots").children].forEach((li, j) => li.classList.toggle("now", j === run.i));
+    $("idfOpts").innerHTML = run.cur.opts.map((n, j) => `<button class="idf-opt" data-i="${j}"><kbd>${j + 1}</kbd><span>${escapeHtml(n)}</span></button>`).join("");
+    $("idfOpts").querySelectorAll(".idf-opt").forEach(b => b.addEventListener("click", () => answer(+b.dataset.i)));
+    $("idfFb").hidden = true; $("idfNext").hidden = true; $("idfBadge").hidden = true;
+    const v = clipVideo(k); v.preload = "auto"; playClips([k]);
+    const nk = run.clips[run.i + 1]; if (nk) clipVideo(nk);          // start loading the next one
+    sfx("stage");
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+  }
+  const potential = (t) => Math.round(1000 - 800 * Math.min(1, t / ID_REVEAL));
+  function draw(blur) {
+    const k = run.cur.k, c = CLIPS[k], v = VIDS[k], x = cv().getContext("2d"), m = ID_MODE[k], S2 = 480;
+    if (!v || v.readyState < 2) { x.fillStyle = "#0b0909"; x.fillRect(0, 0, S2, S2); return; }
+    const vw = v.videoWidth, vh = v.videoHeight, s0 = Math.min(vw, vh) * (c.zoom || 0.8);
+    tx.globalCompositeOperation = "source-over"; tx.globalAlpha = 1; tx.filter = "none";
+    tx.drawImage(v, (vw - s0) / 2, (vh - s0) / 2, s0, s0, 0, 0, S2, S2);
+    if (m.mode !== "bright") {
+      if (c.gray) { tx.globalCompositeOperation = "saturation"; tx.fillStyle = "#808080"; tx.fillRect(0, 0, S2, S2); }
+      const gain = (c.boost || 1) * (m.mode === "confocal" ? 1.6 : 1);
+      for (let g = gain - 1; g > 0.01; g -= 1) { tx.globalCompositeOperation = "lighter"; tx.globalAlpha = Math.min(1, g); tx.drawImage(tmp, 0, 0); }
+      tx.globalAlpha = 1;
+      if (c.gray) { tx.globalCompositeOperation = "multiply"; tx.fillStyle = rgba(CH[c.ch || m.ch || "fitc"].rgb, 1); tx.fillRect(0, 0, S2, S2); }
+    } else {
+      const B = clipBg(k, v, (vw - s0) / 2, s0);
+      for (let g = B.gain - 1; g > 0.01; g -= 1) { tx.globalCompositeOperation = "lighter"; tx.globalAlpha = Math.min(1, g); tx.drawImage(tmp, 0, 0); }
+      tx.globalAlpha = 1;
+    }
+    tx.globalCompositeOperation = "source-over";
+    x.save(); x.clearRect(0, 0, S2, S2); x.beginPath(); x.arc(S2 / 2, S2 / 2, S2 / 2, 0, Math.PI * 2); x.clip();
+    const bg = m.mode === "bright" ? ((CLIP_BG[k] && CLIP_BG[k].rgb) ? rgba(CLIP_BG[k].rgb, 1) : "#d9d4cb") : "#030305";
+    x.fillStyle = bg; x.fillRect(0, 0, S2, S2);
+    if (blur > 0.4 && FILTER_OK) { x.filter = `blur(${blur.toFixed(2)}px)`; x.drawImage(tmp, -blur, -blur, S2 + 2 * blur, S2 + 2 * blur); x.filter = "none"; }
+    else if (blur > 0.4) { const w = Math.max(8, Math.round(S2 / (blur / 1.5))); tx.drawImage(tmp, 0, 0, w, w); x.imageSmoothingEnabled = true; x.drawImage(tmp, 0, 0, w, w, 0, 0, S2, S2); }
+    else x.drawImage(tmp, 0, 0);
+    const vg = x.createRadialGradient(S2 / 2, S2 / 2, S2 * 0.36, S2 / 2, S2 / 2, S2 / 2); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,0.38)");
+    x.fillStyle = vg; x.fillRect(0, 0, S2, S2); x.restore();
+  }
+  function frame(now) {
+    if (current !== "ident" || !run || !run.cur) return;
+    const t = (now - run.cur.t0) / 1000;
+    if (!run.cur.done) {
+      const u = prefersReduced() ? Math.min(1, t / ID_REVEAL) : ease(t / ID_REVEAL);
+      draw(ID_MAXB * (1 - u));
+      const p = potential(t); $("idfPts").textContent = p; $("idfBar").style.transform = `scaleX(${Math.max(0, 1 - t / ID_LIMIT).toFixed(3)})`;
+      if (t >= ID_LIMIT) answer(-1);
+    } else draw(0);
+    raf = requestAnimationFrame(frame);
+  }
+  function answer(j) {
+    const c = run.cur; if (!c || c.done) return;
+    c.done = true;
+    const t = (performance.now() - c.t0) / 1000, ans = ID_NAME[c.k][0], right = j >= 0 && c.opts[j] === ans;
+    let pts = 0, kind = j < 0 ? "out" : right ? (t < 4.5 ? "gold" : "ok") : "bad";
+    if (right) { run.streak++; pts = potential(t) + (run.streak > 1 ? 50 * (run.streak - 1) : 0); }
+    else run.streak = 0;
+    run.best = Math.max(run.best, run.streak);
+    run.score += pts; run.res.push({ k: c.k, kind, pts, t });
+    $("idfOpts").querySelectorAll(".idf-opt").forEach((b, i) => { b.disabled = true; if (c.opts[i] === ans) b.classList.add("right"); else if (i === j) b.classList.add("wrong"); });
+    const li = $("idfDots").children[run.i]; li.classList.add(kind); li.classList.remove("now");
+    $("idfScore").textContent = run.score;
+    const sk = $("idfStreak"); sk.hidden = run.streak < 2; sk.textContent = `${run.streak} in a row`;
+    const fresh = right && atlasUnlock(c.k, "identify");
+    const verdict = j < 0 ? "Time's up" : right ? (kind === "gold" ? "Sharp eye!" : "Correct") : "Not quite";
+    $("idfFb").innerHTML = `<b class="v">${verdict}${pts ? ` · +${pts}` : ""}</b>It's <b>${escapeHtml(ans)}</b>. ${escapeHtml(CLIP_FACT[c.k] || "")}${fresh ? '<br><span class="atlas-new">New in your Atlas</span>' : ""}<small>${escapeHtml(CLIPS[c.k].credit.split(". ")[0])}.</small>`;
+    $("idfFb").hidden = false; $("idfNext").hidden = false; $("idfNext").innerHTML = (run.i + 1 >= run.clips.length ? "See results" : "Next") + " <kbd>⏎</kbd>";
+    const bd = $("idfBadge"); bd.hidden = false; bd.textContent = ans;
+    sfx(right ? "confirm" : "back"); buzz(right ? 12 : 30);
+    if (right && run.streak >= 3) { const r = $("idfScore").getBoundingClientRect(); }
+    $("idfNext").focus({ preventScroll: true });
+  }
+  const EMO = { gold: "🟩", ok: "🟨", bad: "🟥", out: "⬛" };
+  function shareText() { return `Parfocal Identify ${run.daily ? run.key : "practice"} · ${run.score}/5000\n${run.res.map(r => EMO[r.kind]).join("")}${run.best >= 2 ? ` · best streak ${run.best}` : ""}\nparfocal.vercel.app`; }
+  function end() {
+    cancelAnimationFrame(raf); stopClips(); run.cur = null;
+    let line = "";
+    if (run.daily) {
+      const st = loadStore(); st.idDaily = st.idDaily || {}; const prev = st.idDaily[run.key];
+      if (prev == null || run.score > prev) st.idDaily[run.key] = run.score; saveStore(st);
+      let n = 0; const d = new Date(); for (;;) { const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; if (st.idDaily[k] == null) break; n++; d.setDate(d.getDate() - 1); }
+      line = `${n}-day Identify streak.` + (prev != null && run.score <= prev ? ` Your best today is ${prev}.` : " A new set of five arrives at midnight.");
+    } else line = "Practice runs pick five random specimens each time.";
+    const right = run.res.filter(r => r.kind === "gold" || r.kind === "ok").length;
+    $("idfEndEyebrow").textContent = run.daily ? `Daily identify · ${run.key}` : "Practice identify";
+    $("idfTotal").textContent = run.score;
+    $("idfTier").textContent = run.score >= 4300 ? "Taxonomist" : run.score >= 3300 ? "Sharp-eyed" : run.score >= 2300 ? "Field naturalist" : run.score >= 1200 ? "Getting there" : "Back to the textbook"; $("idfGrid").textContent = run.res.map(r => EMO[r.kind]).join(" ");
+    $("idfEndLine").textContent = `${right} of ${run.res.length} named${run.best >= 2 ? `, best streak ${run.best}` : ""}. ${line}`;
+    $("idfEndCards").innerHTML = run.res.map(r => atlasCard(r.k, { force: true, sub: `${EMO[r.kind]} ${r.pts ? "+" + r.pts : "0"}` })).join("");
+    $("idfEndCards").querySelectorAll(".at-card").forEach(b => b.addEventListener("click", () => { openPanel("atlas"); }));
+    $("idfMain").hidden = true; $("idfEnd").hidden = false; $("idfCopy").textContent = "Copy result";
+    if (right >= 4) fireConfetti();
+    sfx(right >= 3 ? "confirm" : "back");
+    $("idfAgain").focus({ preventScroll: true });
+    menuBadges();
+  }
+  function leave() { cancelAnimationFrame(raf); stopClips(); run = null; sfx("back"); quitToTitle(); }
+  $("idfNext").addEventListener("click", () => { if (run && run.cur && run.cur.done) { sfx("confirm"); next(); } });
+  $("idfBack").addEventListener("click", leave); $("idfHome").addEventListener("click", leave);
+  $("idfAgain").addEventListener("click", () => start(false));
+  $("idfAtlas").addEventListener("click", () => openPanel("atlas"));
+  $("idfCopy").addEventListener("click", async () => { try { await navigator.clipboard.writeText(shareText()); $("idfCopy").textContent = "Copied"; sfx("confirm"); } catch (e) { $("idfCopy").textContent = "Copy failed"; } });
+  function key(e) {
+    if (e.key === "Escape") { e.preventDefault(); leave(); return; }
+    if (!run) return;
+    if (run.cur && !run.cur.done && /^[1-4]$/.test(e.key)) { e.preventDefault(); answer(+e.key - 1); return; }
+    if (e.key === "Enter") { e.preventDefault(); if (run.cur && run.cur.done) { sfx("confirm"); next(); } else if (!run.cur && !$("idfEnd").hidden) start(false); }
+  }
+  return { start, key, playedToday: () => { const st = loadStore(); return !!(st.idDaily && st.idDaily[todayKey()] != null); } };
+})();
+function menuBadges() { const n = $("idfNew"); if (n) n.hidden = IDF.playedToday(); atlasCountChip(); }
 
 function fmtWD(um) { return um >= 1000 ? `${+(um / 1000).toFixed(1)} mm` : `${(um / 1000).toFixed(2)} mm`; }
 const LIGHT_NOTES = { title: "The cone of light", text: "An objective collects a cone of light from each point of the specimen. Its half-angle θ is set by the numerical aperture, NA = n sin θ. A wider cone resolves finer detail but squeezes the depth of field, which is why 100x is so twitchy.", optics: "Objectives on this microscope", rules: null };
@@ -8040,7 +8408,7 @@ async function toVerdict(v) {
   const ul = $("vNotes"); ul.innerHTML = "";
   v.notes.forEach(n => { const li = document.createElement("li"); li.textContent = n; ul.appendChild(li); });
   $("vCurve").innerHTML = v.curve || ""; $("vCurve").hidden = !v.curve;
-  { const t = tgt(), f = G.sp.live && t.clip && CLIP_FACT[t.clip]; $("vFact").hidden = !f; if (f) $("vFact").innerHTML = `<b>What you're seeing · ${escapeHtml(t.label)}</b>${escapeHtml(f)}`; }
+  { const t = tgt(), f = G.sp.live && t.clip && CLIP_FACT[t.clip]; $("vFact").hidden = !f; if (f) $("vFact").innerHTML = `<b>What you're seeing · ${escapeHtml(t.label)}</b>${escapeHtml(f)}${G.newSpec === t.clip ? '<br><span class="atlas-new">New in your Atlas</span>' : ""}`; }
   $("nextBtn").innerHTML = (v.final ? (zsAvailable() ? "Next: capture a z-stack" : "See results") : v.crash ? `New slide, swing in ${OBJ[G.k + 1].mag}x` : `Swing in ${OBJ[G.k + 1].mag}x`) + " <kbd>⏎</kbd>";
   $("vScore").parentElement.classList.toggle("win", v.score >= WIN);
   await wait(v.crash ? 700 : 160);
@@ -8235,6 +8603,7 @@ function lock(timeout) {
   if (G.tut && acc > 0.8 && G.k === 1 && !G.coarseHigh[1] && !G.fresh) notes.push("Parfocal lenses: the 10x focus carried over, so a small turn of fine was enough.");
   score = Math.max(0, Math.round(score));
   G.results[G.stage] = { mag: o.mag, score, acc, err: er };
+  G.newSpec = G.sp.live && score >= 700 && atlasUnlock(tgt().clip, "focus") ? tgt().clip : null;
   const curve = focusCurve(d());
   G.lessons.push(...notes.slice(1).filter(n => !n.startsWith("Parfocal")));
   const T = tierFor(score / 1000, TIERS);
@@ -8651,6 +9020,7 @@ document.addEventListener("keydown", (e) => {
   if (GUIDE_UI.isOpen()) { GUIDE_UI.key(e); return; }
   if (busy) { if (e.key === "Enter" && slamSkip) slamSkip(); return; }
   if (openPanelId) { if (e.key === "Escape" || e.key === "Backspace") { e.preventDefault(); closePanel(); } return; }
+  if (current === "ident") { IDF.key(e); return; }
   if (pauseOpen) { if (e.key === "Escape") { e.preventDefault(); closePause(); return; } pauseMenu.key(e); return; }
   if (current === "game" && LESSON.isOpen()) { LESSON.key(e); return; }
   if (current === "title") {
@@ -8697,6 +9067,7 @@ $("brand").addEventListener("click", (e) => {
   if (busy || current === "title") return;
   if (openPanelId) { closePanel(); return; }
   if (current === "game") { if (pauseOpen) closePause(); else openPause(); return; }
+  if (current === "ident") { IDF.key({ key: "Escape", preventDefault() {} }); return; }
   sfx("back"); quitToTitle();
 });
 
@@ -9627,6 +9998,7 @@ try { document.fonts.ready.then(() => syncModeTabs(false)); } catch (e) {}
 window.addEventListener("resize", () => syncModeTabs(false));
 renderNotes(); renderCredits();
 loadPlates(renderCredits);
+menuBadges();
 requestAnimationFrame(loop);
 // ?fps shows a small frame counter, to compare views on a real machine
 if (URLQ.has("fps")) {
