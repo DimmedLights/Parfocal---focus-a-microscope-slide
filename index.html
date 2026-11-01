@@ -1419,6 +1419,29 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 #eyepieceBox.panning { cursor: grabbing; }
 #eyepieceBox.can-pan { cursor: grab; }
 </style>
+<style>
+#panelSettings { z-index: 60; }
+.settings { display: grid; gap: 26px; padding-bottom: 40px; }
+.set-group h3 { margin: 0 0 10px; font: 700 12px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--acc); }
+.set-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 18px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line, var(--glass-edge)); }
+.set-row:first-of-type { border-top: 0; }
+.set-row b { display: block; font-size: 15px; }
+.set-row small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.4; margin-top: 2px; }
+.set-seg { display: inline-flex; padding: 3px; gap: 3px; border-radius: 11px; background: var(--glass-strong); border: 1px solid var(--glass-edge); }
+.set-seg button { border: 0; background: none; color: var(--ink); font: 600 13px var(--f-mono); padding: 6px 11px; border-radius: 8px; cursor: pointer; }
+.set-seg button[aria-pressed="true"] { background: var(--acc); color: var(--acc-ink); }
+.set-range { display: flex; align-items: center; gap: 10px; }
+.set-range input { width: 150px; accent-color: var(--acc); }
+.set-range output { font: 600 13px var(--f-mono); min-width: 44px; text-align: right; }
+.set-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.set-btn { font: 600 13px var(--f-mono); padding: 7px 12px; border-radius: 10px; border: 1px solid var(--glass-edge); background: var(--glass-strong); color: var(--ink); cursor: pointer; }
+.set-btn.danger { border-color: color-mix(in srgb, #ff5a4a 60%, transparent); color: #ff7a6a; }
+.set-btn.danger.armed { background: #ff5a4a; color: #fff; }
+.set-note { font-size: 12.5px; color: var(--muted); margin: 6px 0 0; }
+:root.no-hints #hintText { visibility: hidden; }
+:root.no-hints.tut-on #hintText { visibility: visible; }
+:root.rm *, :root.rm *::before, :root.rm *::after { animation-duration: .001s !important; animation-delay: 0s !important; transition-duration: .001s !important; }
+</style>
 </head>
 <body>
 <header class="topbar gutter" id="topbar">
@@ -1428,6 +1451,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
     </a>
     <div class="top-actions">
       <div class="icon-group" role="group" aria-label="Settings and links">
+        <button class="ibtn shine" id="gearBtn" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></button>
         <button class="ibtn shine" id="musicBtn" aria-pressed="false" aria-label="Music" title="Music (B)">
           <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
           <svg class="note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>
@@ -1483,6 +1507,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
           <button class="m-item" role="menuitem" data-act="guide" data-pose="2" style="--i:3"><span class="m-idx">04</span><span class="m-name">Guide</span></button>
           <button class="m-item" role="menuitem" data-act="notes" data-pose="1" style="--i:4"><span class="m-idx">05</span><span class="m-name">Lab notes</span></button>
           <button class="m-item" role="menuitem" data-act="credits" data-pose="0" style="--i:5"><span class="m-idx">06</span><span class="m-name">Credits</span></button>
+          <button class="m-item" role="menuitem" data-act="settings" data-pose="1" style="--i:6"><span class="m-idx">07</span><span class="m-name">Settings</span></button>
         </nav>
         <p class="m-caption" id="titleCaption" aria-live="polite"></p>
         <div class="t-streak" id="tStreak" hidden></div>
@@ -1676,7 +1701,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <div class="stage-read">
               <span class="sr-k">Stage</span>
               <span class="sr-v" id="stageRead">X 40.000 · Y 20.000 mm</span>
-              <small>Drag the circle or click the map. You can also drag the eyepiece: the image moves the opposite way, as in a real microscope.</small>
+              <small id="stageHelp">Drag the circle or click the map. You can also drag the eyepiece: the image moves the opposite way, as in a real microscope.</small>
               <button class="sr-c" id="stageCentre" type="button">Recentre</button>
             </div>
           </div>
@@ -1900,6 +1925,12 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
   </div>
 </section>
 
+<section class="panel" id="panelSettings" hidden role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="panel-sheet">
+    <header class="panel-head"><button class="back shine" data-close>← Back <kbd>Esc</kbd></button><h2 id="settingsTitle">Settings</h2></header>
+    <div class="panel-body settings" id="settingsBody"></div>
+  </div>
+</section>
 <section class="panel" id="panelCredits" hidden role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
   <div class="panel-sheet">
     <header class="panel-head"><button class="back shine" data-close>← Back <kbd>Esc</kbd></button><h2 id="creditsTitle">Credits</h2></header>
@@ -1939,7 +1970,8 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         <button class="m-item" role="menuitem" data-act="guide" style="--i:3"><span class="m-idx">04</span><span class="m-name">Guide</span></button>
         <button class="m-item" role="menuitem" data-act="sound" style="--i:4"><span class="m-idx">05</span><span class="m-name" id="pauseSound">Sound on</span></button>
         <button class="m-item" role="menuitem" data-act="music" style="--i:5"><span class="m-idx">06</span><span class="m-name" id="pauseMusic">Music on</span></button>
-        <button class="m-item" role="menuitem" data-act="quit" style="--i:6"><span class="m-idx">07</span><span class="m-name">Quit to title</span></button>
+        <button class="m-item" role="menuitem" data-act="settings" style="--i:6"><span class="m-idx">07</span><span class="m-name">Settings</span></button>
+        <button class="m-item" role="menuitem" data-act="quit" style="--i:7"><span class="m-idx">08</span><span class="m-name">Quit to title</span></button>
       </nav>
       <div class="pause-ctx" id="pauseCtx" aria-live="polite"></div>
     </div>
@@ -2023,7 +2055,13 @@ function saveStore(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s))
 function patchStore(p) { const s = loadStore(); Object.assign(s, p); saveStore(s); }
 
 const $ = (id) => document.getElementById(id);
-const prefersReduced = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+/* Settings that have no chip of their own. Clock, sound, music, footage and theme keep their own stored keys. */
+const SET_DEF = { sfxVol: 0.8, musicVol: 0.7, coarseSens: 1, fineSens: 1, stageDir: "inverted", hints: true, motion: "system" };
+const SET = Object.assign({}, SET_DEF, (() => { try { return JSON.parse(localStorage.getItem("parfocal:v1") || "{}").settings || {}; } catch (e) { return {}; } })());
+function saveSet() { try { const st = JSON.parse(localStorage.getItem("parfocal:v1") || "{}"); st.settings = SET; localStorage.setItem("parfocal:v1", JSON.stringify(st)); } catch (e) {} }
+const prefersReduced = () => SET.motion === "reduce" || (SET.motion !== "full" && !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches));
+document.documentElement.classList.toggle("rm", SET.motion === "reduce");
+document.documentElement.classList.toggle("no-hints", !SET.hints);
 const isPhone = (() => { // cached: this runs several times a frame
   let mq = null, v = false;
   try { mq = window.matchMedia("(max-width: 760px)"); v = mq.matches; const on = (e) => { v = e.matches; }; mq.addEventListener ? mq.addEventListener("change", on) : mq.addListener(on); } catch (e) {}
@@ -4938,7 +4976,7 @@ const MUSIC = (() => {
     out = A.createGain(); out.gain.value = 0;
     const room = A.createBiquadFilter(); room.type = "lowpass"; room.frequency.value = 16000; room.Q.value = 0.5;
     const comp = A.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.25;
-    out.connect(room).connect(comp).connect(A.destination);
+    out.connect(room).connect(comp).connect(bus(A, "music"));
     bus.room = room;
     // a small synthetic hall
     const ir = A.createBuffer(2, Math.floor(A.sampleRate * 2.4), A.sampleRate);
@@ -5164,11 +5202,19 @@ function burst(A, dest, { t = 0, dur = 0.05, type = "bandpass", f = 1500, f2 = n
   v.gain.setValueAtTime(g, s); v.gain.exponentialRampToValueAtTime(0.0008, s + dur);
   n.connect(fl).connect(v).connect(dest); n.start(s); n.stop(s + dur + 0.02);
 }
+/* Volume buses: every sound effect and the music each pass through one gain, set from Settings. */
+const BUSES = new WeakMap();
+function bus(A, kind) {
+  let b = BUSES.get(A);
+  if (!b) { b = {}; for (const k of ["sfx", "music"]) { const g = A.createGain(); g.gain.value = k === "sfx" ? SET.sfxVol : SET.musicVol; g.connect(A.destination); b[k] = g; } BUSES.set(A, b); }
+  return b[kind];
+}
+function setBusVol() { if (!audioCtx) return; const b = BUSES.get(audioCtx); if (!b) return; const t = audioCtx.currentTime; b.sfx.gain.setTargetAtTime(SET.sfxVol, t, 0.03); b.music.gain.setTargetAtTime(SET.musicVol, t, 0.03); }
 function sfx(name, opt = {}) {
   if (window.__pf && window.__pf.log) window.__pf.log.push(name);
   if (!soundOn) return;
   try {
-    const A = ac(), out = A.destination;
+    const A = ac(), out = bus(A, "sfx");
     switch (name) {
       case "coarse": burst(A, out, { dur: 0.014, f: 1700, q: 2, g: 0.45 }); break;
       case "fine": burst(A, out, { dur: 0.012, f: 3600, q: 2, g: 0.26 }); break;
@@ -5442,6 +5488,7 @@ function captionFor(act) {
     notes: sem ? "The physics behind the SEM: the beam cone, depth of field, charging." : "The optics behind the game: light cones, depth of field, immersion oil.",
     guide: "How each microscope works, its parts, and the dyes and tricks behind every image. Interactive.",
     credits: "Where the specimens come from, and who built this.",
+    settings: "Clock, footage, sound and music volume, knob sensitivity, the stage, hints, theme and your saved progress.",
     identify: "Name the organism from the slide. Coming soon.",
   }[act] || "";
 }
@@ -5460,6 +5507,7 @@ const titleMenu = makeMenu($("titleMenu"), {
     else if (act === "guide") GUIDE_UI.open(null);
     else if (act === "notes") openPanel("notes");
     else if (act === "credits") openPanel("credits");
+    else if (act === "settings") openPanel("settings");
   },
 });
 function syncModeTabs(animate) {
@@ -5706,23 +5754,120 @@ function heroCone() {
 /* ---------- Panels: lab notes and credits ---------- */
 let openPanelId = null, naK = 2, naAnim = null;
 function openPanel(which) {
-  const p = which === "notes" ? $("panelNotes") : $("panelCredits");
-  if (which === "notes") renderNotes(); else renderCredits();
+  if (openPanelId) return;
+  const p = which === "notes" ? $("panelNotes") : which === "settings" ? $("panelSettings") : $("panelCredits");
+  if (which === "notes") renderNotes(); else if (which === "settings") renderSettings(); else renderCredits();
   p.hidden = false; p.classList.remove("closing"); p.classList.add("open");
   openPanelId = p.id; sfx("whoosh");
-  titleMenu.leave();
+  if (current === "title") titleMenu.leave();
   setTimeout(() => p.querySelector("[data-close]").focus({ preventScroll: true }), 60);
 }
 async function closePanel() {
   if (!openPanelId) return;
   const p = $(openPanelId); openPanelId = null;
   sfx("back"); p.classList.remove("open"); p.classList.add("closing");
-  titleMenu.enter();
+  const onTitle = current === "title";
+  if (onTitle) titleMenu.enter();
   await wait(380); p.hidden = true; p.classList.remove("closing");
-  titleMenu.items[titleMenu.sel].focus({ preventScroll: true });
+  if (onTitle) titleMenu.items[titleMenu.sel].focus({ preventScroll: true });
+  else if (pauseOpen) pauseMenu.items[pauseMenu.sel].focus({ preventScroll: true });
 }
 document.querySelectorAll(".panel [data-close]").forEach(b => b.addEventListener("click", closePanel));
 document.querySelectorAll(".panel").forEach(p => p.addEventListener("click", (e) => { if (e.target === p) closePanel(); }));
+
+/* ---------- Settings ---------- */
+function setThemePref(v) {
+  if (v === "system") { root.removeAttribute("data-theme"); patchStore({ theme: null }); }
+  else { root.setAttribute("data-theme", v); patchStore({ theme: v }); }
+  syncThemeBtn();
+}
+function settingsHTML() {
+  const seg = (key, opts, cur) => `<div class="set-seg" role="group">${opts.map(([v, l]) => `<button data-set="${key}" data-v="${v}" aria-pressed="${String(v) === String(cur)}">${l}</button>`).join("")}</div>`;
+  const rng = (key, min, max, step, val, fmt) => `<div class="set-range"><input type="range" data-range="${key}" min="${min}" max="${max}" step="${step}" value="${val}"><output id="out-${key}">${fmt(val)}</output></div>`;
+  const pct = (v) => Math.round(v * 100) + "%", mul = (v) => (+v).toFixed(2) + "×";
+  const themeNow = root.getAttribute("data-theme") || "system";
+  const row = (t, d, ctl) => `<div class="set-row"><div><b>${t}</b>${d ? `<small>${d}</small>` : ""}</div>${ctl}</div>`;
+  return `
+  <section class="set-group"><h3>Game</h3>
+    ${row("Clock", "Timed rounds count down; timeless rounds let you take as long as you like.", seg("timed", [["true", "Timed"], ["false", "Timeless"]], timedMode))}
+    ${row("Footage", "Still freezes each clip on one frame and runs much lighter. Focus, blur and colour stay live.", seg("still", [["false", "Live"], ["true", "Still"]], stillMode))}
+  </section>
+  <section class="set-group"><h3>Display</h3>
+    ${row("Theme", "System follows your computer's light or dark setting.", seg("theme", [["light", "Light"], ["dark", "Dark"], ["system", "System"]], themeNow))}
+    ${row("Motion", "Reduced turns off screen animations and the drifting title circle.", seg("motion", [["system", "System"], ["reduce", "Reduced"], ["full", "Full"]], SET.motion))}
+  </section>
+  <section class="set-group"><h3>Audio</h3>
+    ${row("Sound", "", seg("sound", [["true", "On"], ["false", "Off"]], soundOn))}
+    ${row("Effects volume", "Knob clicks, the turret, lens contact.", rng("sfxVol", 0, 1, 0.05, SET.sfxVol, pct))}
+    ${row("Music", "", seg("music", [["true", "On"], ["false", "Off"]], musicOn && soundOn))}
+    ${row("Music volume", "", rng("musicVol", 0, 1, 0.05, SET.musicVol, pct))}
+  </section>
+  <section class="set-group"><h3>Controls</h3>
+    ${row("Coarse focus speed", "How far the coarse knob moves the lens per degree.", rng("coarseSens", 0.5, 2, 0.05, SET.coarseSens, mul))}
+    ${row("Fine focus speed", "How far the fine knob moves the lens per degree.", rng("fineSens", 0.5, 2, 0.05, SET.fineSens, mul))}
+    ${row("Stage image", "Inverted is how a real compound microscope behaves: drag right, and the specimen drifts left.", seg("stageDir", [["inverted", "Inverted"], ["direct", "Direct"]], SET.stageDir))}
+    ${row("Hints", "The tip line beside the eyepiece. Tutorials always show their guidance.", seg("hints", [["true", "On"], ["false", "Off"]], SET.hints))}
+  </section>
+  <section class="set-group"><h3>Data</h3>
+    ${row("Your progress", "Scores, streaks and settings live in this browser only. Export them to keep a copy or move to another computer.", `<div class="set-btns"><button class="set-btn" id="setExport">Export</button><button class="set-btn" id="setImport">Import</button><button class="set-btn danger" id="setReset">Reset progress</button></div>`)}
+    <input type="file" id="setFile" accept="application/json,.json" hidden>
+    <p class="set-note" id="setNote" aria-live="polite"></p>
+  </section>`;
+}
+function renderSettings() {
+  const b = $("settingsBody"); b.innerHTML = settingsHTML();
+  b.querySelectorAll("[data-set]").forEach(btn => btn.addEventListener("click", () => {
+    const k = btn.dataset.set, v = btn.dataset.v;
+    if (k === "timed") { if (String(timedMode) !== v) toggleClock(); }
+    else if (k === "still") { if (String(stillMode) !== v) toggleStill(); }
+    else if (k === "sound") { if (String(soundOn) !== v) toggleSound(); }
+    else if (k === "music") { if (String(musicOn && soundOn) !== v) toggleMusic(); }
+    else if (k === "theme") setThemePref(v);
+    else if (k === "motion") { SET.motion = v; saveSet(); root.classList.toggle("rm", v === "reduce"); }
+    else if (k === "stageDir") { SET.stageDir = v; saveSet(); $("stageHelp").textContent = v === "direct" ? "Drag the circle or click the map. You can also drag the eyepiece: the image follows your drag." : "Drag the circle or click the map. You can also drag the eyepiece: the image moves the opposite way, as in a real microscope."; }
+    else if (k === "hints") { SET.hints = v === "true"; saveSet(); root.classList.toggle("no-hints", !SET.hints); }
+    sfx("move", { i: 2 });
+    const y = b.parentElement.scrollTop; renderSettings(); b.parentElement.scrollTop = y;
+  }));
+  b.querySelectorAll("[data-range]").forEach(inp => inp.addEventListener("input", () => {
+    const k = inp.dataset.range, v = +inp.value; SET[k] = v; saveSet();
+    $("out-" + k).textContent = k.endsWith("Vol") ? Math.round(v * 100) + "%" : v.toFixed(2) + "×";
+    if (k.endsWith("Vol")) setBusVol();
+  }));
+  b.querySelectorAll("[data-range]").forEach(inp => inp.addEventListener("change", () => { if (inp.dataset.range === "sfxVol") sfx("confirm"); }));
+  $("setExport").addEventListener("click", () => {
+    try {
+      const data = localStorage.getItem("parfocal:v1") || "{}", url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+      const a = document.createElement("a"); a.href = url; a.download = `parfocal-progress-${todayKey()}.json`; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000); $("setNote").textContent = "Saved a copy of your progress.";
+    } catch (e) { $("setNote").textContent = "Couldn't export in this browser."; }
+  });
+  $("setImport").addEventListener("click", () => $("setFile").click());
+  $("setFile").addEventListener("change", async () => {
+    const f = $("setFile").files[0]; if (!f) return;
+    try {
+      const obj = JSON.parse(await f.text());
+      if (!obj || typeof obj !== "object" || Array.isArray(obj)) throw new Error("not a progress file");
+      localStorage.setItem("parfocal:v1", JSON.stringify(obj)); $("setNote").textContent = "Progress imported. Reloading…"; setTimeout(() => location.reload(), 700);
+    } catch (e) { $("setNote").textContent = "That file isn't a Parfocal progress file."; }
+  });
+  let armed = 0;
+  $("setReset").addEventListener("click", () => {
+    const r = $("setReset");
+    if (!armed) { armed = setTimeout(() => { armed = 0; r.classList.remove("armed"); r.textContent = "Reset progress"; }, 3500); r.classList.add("armed"); r.textContent = "Click again to erase"; return; }
+    clearTimeout(armed);
+    try { const st = loadStore(); delete st.daily; delete st.best; delete st.streak; delete st.history; saveStore(st); } catch (e) {}
+    $("setNote").textContent = "Scores and streaks erased. Your settings are kept."; r.classList.remove("armed"); r.textContent = "Reset progress"; armed = 0;
+    if (current === "title") { const it = titleMenu.items[titleMenu.sel]; if (it) { $("titleCaption").textContent = captionFor(it.dataset.act); renderStreak(it.dataset.act); } }
+  });
+}
+$("gearBtn").addEventListener("click", () => {
+  if (openPanelId === "panelSettings") { closePanel(); return; }
+  if (openPanelId) return;
+  if (current === "game" && G && !pauseOpen) openPause();
+  openPanel("settings");
+});
+
 function fmtWD(um) { return um >= 1000 ? `${+(um / 1000).toFixed(1)} mm` : `${(um / 1000).toFixed(2)} mm`; }
 const LIGHT_NOTES = { title: "The cone of light", text: "An objective collects a cone of light from each point of the specimen. Its half-angle θ is set by the numerical aperture, NA = n sin θ. A wider cone resolves finer detail but squeezes the depth of field, which is why 100x is so twitchy.", optics: "Objectives on this microscope", rules: null };
 function renderScopes() {
@@ -5919,7 +6064,8 @@ function smapFrame(now) {
   });
   ep.addEventListener("pointermove", (e) => {
     if (!pd) return; const f = fovMM() / pd.w;
-    moveStage((e.clientX - pd.x) * f, (e.clientY - pd.y) * f);
+    const dir = SET.stageDir === "direct" ? -1 : 1;   // inverted: the image drifts against your drag, as in a real microscope
+    moveStage((e.clientX - pd.x) * f * dir, (e.clientY - pd.y) * f * dir);
     pd.x = e.clientX; pd.y = e.clientY;
   });
   const pend = () => { pd = null; ep.classList.remove("panning"); };
@@ -6048,6 +6194,7 @@ function setStageUI() {
   if (G.zs && !G.zs.done) hint = zsHint();
   if (G.mode === "fluor" && G.cube !== t.ch) hint = `Switch to the ${CH[t.ch].name} cube`;
   $("hintText").textContent = hint;
+  root.classList.toggle("tut-on", !!G.tut);   // tutorials keep their hints even with hints switched off
   if (!G.timed) $("timerText").textContent = "∞";
   const dot = $("targetDot");
   if (G.mode === "bright") { dot.style.background = "var(--acc)"; dot.style.setProperty("--c", "var(--acc)"); dot.textContent = ""; $("targetText").textContent = `Target: ${t.label}`; }
@@ -6124,7 +6271,7 @@ function turn(kind, dA, now = performance.now()) {
   s.w = s.w * 0.55 + (Math.abs(dA) / dt) * 0.45;                    // smoothed hand speed, deg/s
   const x = clamp((s.w - k.w0) / (k.w1 - k.w0), 0, 1);
   const gain = 1 + (k.maxGain - 1) * x * x * (3 - 2 * x);
-  const dz = dA * k.umPerDeg * gain;
+  const dz = dA * k.umPerDeg * gain * (kind === "coarse" ? SET.coarseSens : SET.fineSens);
   s.pendZ += dz; s.pendA += dA;
   if (kind === "coarse" && G.k > 0) { G.coarseUm[G.k] += Math.abs(dz); if (G.coarseUm[G.k] > 2) G.coarseHigh[G.k] = true; }
 }
@@ -6195,13 +6342,13 @@ function knobAudio(A) {
   const cLfo = A.createOscillator(); cLfo.type = "triangle"; cLfo.frequency.value = 10;
   const cDepth = A.createGain(); cDepth.gain.value = 0.28; cLfo.connect(cDepth).connect(cAm.gain);
   const cOut = A.createGain(); cOut.gain.value = 0;
-  src.connect(cBp).connect(cLp).connect(cAm).connect(cOut).connect(A.destination);
+  src.connect(cBp).connect(cLp).connect(cAm).connect(cOut).connect(bus(A, "sfx"));
   const hum = A.createOscillator(); hum.type = "sine"; hum.frequency.value = 60;
-  const humG = A.createGain(); humG.gain.value = 0; hum.connect(humG).connect(A.destination);
+  const humG = A.createGain(); humG.gain.value = 0; hum.connect(humG).connect(bus(A, "sfx"));
   const fBp = A.createBiquadFilter(); fBp.type = "bandpass"; fBp.frequency.value = 2000; fBp.Q.value = 1.1;
   const fLp = A.createBiquadFilter(); fLp.type = "lowpass"; fLp.frequency.value = 5200;
   const fOut = A.createGain(); fOut.gain.value = 0;
-  src.connect(fBp).connect(fLp).connect(fOut).connect(A.destination);
+  src.connect(fBp).connect(fLp).connect(fOut).connect(bus(A, "sfx"));
   src.start(); cLfo.start(); hum.start();
   return { A, cBp, cOut, cLfo, hum, humG, fBp, fOut, lc: 0, lf: 0 };
 }
@@ -7802,8 +7949,8 @@ function popSound() {
       const n = A.createBufferSource(); n.buffer = buf;
       const hp = A.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 900;
       const g = A.createGain(); g.gain.value = 0.55;
-      const pn = A.createStereoPanner ? A.createStereoPanner() : null, out = pn || A.destination;
-      if (pn) { pn.pan.value = pan; pn.connect(A.destination); }
+      const pn = A.createStereoPanner ? A.createStereoPanner() : null, out = pn || bus(A, "sfx");
+      if (pn) { pn.pan.value = pan; pn.connect(bus(A, "sfx")); }
       n.connect(hp).connect(g).connect(out); n.start(t);
       const o = A.createOscillator(), og = A.createGain();
       o.frequency.setValueAtTime(170, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
@@ -7824,7 +7971,7 @@ function victoryTune() {
   if (!soundOn) return;
   try {
     const A = ac(), t0 = A.currentTime + 0.02;
-    const master = A.createGain(); master.gain.value = 0.16; master.connect(A.destination);
+    const master = A.createGain(); master.gain.value = 0.16; master.connect(bus(A, "sfx"));
     const note = (f, t, dur, type = "square", vol = 1) => {
       const o = A.createOscillator(), g = A.createGain(), lp = A.createBiquadFilter();
       lp.type = "lowpass"; lp.frequency.value = 2600; o.type = type; o.frequency.value = f;
@@ -8103,6 +8250,7 @@ function pauseCtx(act) {
       : `<h3>Controls</h3><dl><dt>Coarse</dt><dd>Turn the outer ring, or hold Shift + ↑ ↓. Fast turns travel further.</dd><dt>Fine</dt><dd>Turn the centre of the knob, or hold ↑ ↓. It speeds up the longer you hold.</dd><dt>Lock</dt><dd>Enter</dd><dt>Oil</dt><dd>O, at 100x</dd>${G.mode === "fluor" ? "<dt>Cube</dt><dd>C · shutter S</dd>" : ""}${G.mode === "confocal" ? "<dt>Pinhole</dt><dd>P</dd>" : ""}<dt>Menu</dt><dd>Esc</dd></dl>`,
     sound: `<h3>Sound</h3><p>Knob clicks, menu sounds and the victory tune. Turning sound off also silences the music. Currently ${soundOn ? "on" : "off"}.</p>`,
     music: `<h3>Music</h3><p>An original lounge-jazz loop played live by your browser. It turns down while you focus and opens up in the menus. Currently ${musicOn && soundOn ? "on" : "off"}. Shortcut: B.</p>`,
+    settings: `<h3>Settings</h3><p>Volume, knob sensitivity, the stage, hints, theme and your saved progress. The round stays paused.</p>`,
     quit: `<h3>Quit to title</h3><p>You'll leave this slide. ${G.daily ? "Daily slides can be replayed any time today." : "Practice slides are random, so this one won't come back."}</p>`,
   }[act] || "";
   c.innerHTML = html; c.classList.remove("swap"); void c.offsetWidth; c.classList.add("swap");
@@ -8117,6 +8265,7 @@ const pauseMenu = makeMenu($("pauseMenu"), {
     else if (act === "guide") GUIDE_UI.open(SCOPE_PAGE[G.mode] || null, () => pauseMenu.items[pauseMenu.sel].focus({ preventScroll: true }));
     else if (act === "sound") { toggleSound(); pauseCtx("sound"); }
     else if (act === "music") { toggleMusic(); pauseCtx("music"); }
+    else if (act === "settings") openPanel("settings");
     else if (act === "quit") { closePause(true); quitToTitle(); }
   },
 });
@@ -9308,7 +9457,7 @@ function semPumpSound(on) {
   if (!on) { if (pumpSnd) { const p = pumpSnd; pumpSnd = null; try { const t = p.A.currentTime; p.g.gain.cancelScheduledValues(t); p.g.gain.setTargetAtTime(0, t, 0.5); setTimeout(() => { try { p.o.stop(); p.n.stop(); p.o2.stop(); } catch (e) {} }, 2500); } catch (e) {} } return; }
   if (!soundOn) return;
   try {
-    const A = ac(), t = A.currentTime, g = A.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + 0.4); g.gain.setTargetAtTime(0.018, t + 3.6, 0.8); g.connect(A.destination);
+    const A = ac(), t = A.currentTime, g = A.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + 0.4); g.gain.setTargetAtTime(0.018, t + 3.6, 0.8); g.connect(bus(A, "sfx"));
     const o = A.createOscillator(); o.type = "sine"; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(980, t + 4.8); o.connect(g);
     const o2 = A.createOscillator(); o2.type = "triangle"; o2.frequency.setValueAtTime(45, t); o2.frequency.exponentialRampToValueAtTime(490, t + 4.8);
     const g2 = A.createGain(); g2.gain.value = 0.35; o2.connect(g2).connect(g);
