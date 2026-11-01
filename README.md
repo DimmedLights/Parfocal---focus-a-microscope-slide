@@ -71,8 +71,8 @@ The one-slide-a-day format comes from [dialed.gg](https://dialed.gg). The menus 
 
 ## Live footage
 
-Most fluorescence and confocal slides, and half of the brightfield ones, are real recordings of living samples: chromatin, mitochondria, ER, growing microtubules (EB1 comets), swimming bacteria, virus particles entering cells, zebrafish and fruit fly embryos, Paramecium and cytoplasmic streaming. Clips live in `videos/` (credits in `videos/CREDITS.md`).
+Every fluorescence and confocal slide, and most brightfield ones, are real recordings of living samples: chromatin, mitochondria, ER, growing microtubules (EB1 comets), swimming bacteria, virus particles entering cells, zebrafish and fruit fly embryos, Paramecium and cytoplasmic streaming. Clips live in `videos/` (credits in `videos/CREDITS.md`).
 
 - Each slide plays one clip per objective. Defocus blur, confocal dimming, photobleaching and the filter cube are applied live: a cube shows only the colour channel it passes, so a label goes dark under the wrong cube.
 - Only the clip in view decodes; playback stops when the tab is hidden or you quit.
-- Fixed, stained slides (Gram smears, HT29, drawn HeLa cells and organoids) remain as the minority, and the tutorials still use them.
+- Fixed slides remain only as Gram smears in brightfield, in the tutorials, and as a fallback if a clip fails to load.

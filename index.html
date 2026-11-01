@@ -2318,7 +2318,7 @@ function genHT29(seed) {
 function clamp01(v, hi) { return Math.max(0, Math.min(hi, Math.round(v))); }
 
 function genSpecimen(seed, mode, orgId, live) {
-  if (live && LIVE[mode] && makeRng(seed, "live?")() < (mode === "bright" ? 0.5 : 0.75)) return genLive(seed, mode);
+  if (live && LIVE[mode] && (mode !== "bright" || makeRng(seed, "live?")() < 0.7)) return genLive(seed, mode);
   if (mode === "fluor") return (orgId !== "hela" && makeRng(seed, "kind")() < 0.5 && plateImgs.ht29) ? genHT29(seed) : genHela(seed);
   if (mode === "confocal") return genOrganoid(seed);
   return genBright(seed, orgId);
@@ -2352,8 +2352,18 @@ function clipVideo(key) {
   v.muted = true; v.loop = true; v.playsInline = true; v.preload = "auto";
   v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.crossOrigin = "anonymous";
   v.src = CLIPS[key].file;
+  v.addEventListener("error", () => liveFailed(key), { once: true });
   VIDS[key] = v;
   return v;
+}
+function liveFailed(key) {
+  if (!G || !G.sp.live || !G.sp.video.includes(key)) return;
+  const org = G.mode === "bright" ? ORGS[G.seed % ORGS.length] : null;
+  G.sp = genSpecimen(G.seed, G.mode, org && org.id, false);
+  G.info = org ? { name: org.name, stain: org.stain, facts: [["Reaction", org.gram], ["Shape", org.shape], ["Arrangement", org.arr], ["Size", org.size]], why: org.why, plateId: org.id }
+    : SPEC_INFO[G.sp.info || (G.mode === "fluor" ? "hela" : "organoid")];
+  G.layers = buildLayers(G.sp, OBJ[G.k], G.k === 2); G.best = null; G.dirty = true;
+  $("slideStain").textContent = G.info.stain; stopClips();
 }
 function playClips(keys) { for (const [k, v] of Object.entries(VIDS)) if (!keys.includes(k)) v.pause(); for (const k of keys) { const p = clipVideo(k).play(); if (p && p.catch) p.catch(() => {}); } }
 function stopClips() { for (const v of Object.values(VIDS)) v.pause(); }
@@ -4585,7 +4595,7 @@ function renderCredits() {
   const withPhoto = ORGS.filter(o => plateImgs[o.id]).length;
   let html = `<h3>Slides</h3>
     <p>Brightfield slides show one of ${ORGS.length} organisms, drawn in code from published cell size, shape, arrangement and stain colour: ${ORGS.map(o => `<i>${o.name}</i>`).join(", ")}.${withPhoto ? ` For ${withPhoto} of them, the 100x view is a real micrograph.` : ""}</p>
-    <p>Most fluorescence and confocal slides, and half of the brightfield ones, are real footage of living samples: cells, organelles, bacteria, embryos and virus particles, recorded in labs and shared openly. Blur, confocal sectioning, bleaching and the filter cubes are applied to the footage as you play. The rest are fixed and stained, as real slides often are: Gram smears, a three-channel field of HT29 cells, and drawn HeLa cells and organoids.</p>
+    <p>Every fluorescence and confocal slide, and most brightfield ones, are real footage of living samples: cells, organelles, bacteria, embryos and virus particles, recorded in labs and shared openly. Blur, confocal sectioning, bleaching and the filter cubes are applied to the footage as you play. The remaining brightfield slides are fixed Gram smears, as real ones are. The tutorials use fixed, stained slides (drawn HeLa cells and organoids) so each step can point at a known label.</p>
     <p>Live footage:</p><ul>${Object.values(CLIPS).map(c => `<li>${escapeHtml(c.credit)} <a href="${c.url}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
     <p>Footage under CC BY-SA is shared under the same licence.</p>`;
   if (photos.length) {
@@ -5824,7 +5834,7 @@ const GUIDE_PAGES = {
         <p>"Epi" means from above: the objective is both the condenser and the imaging lens. Because the emitted light is thousands of times weaker than the excitation, the filters must block the excitation almost perfectly. That's why the background is black.</p>`],
       ["In a real lab", `<ol><li><b>Grow cells</b> on coverslips, then <b>fix</b> them (often 4% paraformaldehyde).</li><li><b>Permeabilise</b> with a detergent such as Triton X-100, so antibodies can get inside.</li><li><b>Block</b> with serum or BSA to stop antibodies sticking everywhere.</li><li><b>Primary antibody</b> against your protein, wash, then a <b>fluorescent secondary</b>, wash.</li><li><b>Phalloidin</b> for actin and <b>DAPI</b> for nuclei, then mount in <b>antifade</b>.</li><li><b>Image</b>: focus on DAPI, then capture each channel with its own cube and exposure, and merge them in software.</li></ol>`],
       ["Strengths and limits", `<p><b>Specific and sensitive</b>: you can see one protein among thousands, and several at once in different colours. But light from above and below the focal plane also reaches the camera, so thick samples look hazy, and dyes <b>photobleach</b> under the lamp.</p>`],
-      ["In Parfocal", `<p>Most fluorescence slides are real footage of living cells: chromatin, mitochondria, ER, growing microtubules, swimming bacteria and single virus particles, each lit by a fluorescent protein the cell makes itself. Under the wrong cube a label goes dark, exactly as on a real scope. Some slides are fixed and stained instead (DAPI, antibodies, phalloidin), because that is still how most lab images are made. Pick the matching cube, close the shutter to save signal, and add oil at 100x.</p>`],
+      ["In Parfocal", `<p>Most fluorescence slides are real footage of living cells: chromatin, mitochondria, ER, growing microtubules, swimming bacteria and single virus particles, each lit by a fluorescent protein the cell makes itself. Under the wrong cube a label goes dark, exactly as on a real scope. The tutorial uses a fixed, stained slide instead (DAPI, antibodies, phalloidin), because that is still how most lab images are made. Pick the matching cube, close the shutter to save signal, and add oil at 100x.</p>`],
     ], related: ["fluorescence", "filter-cube", "bleach", "dapi", "immuno", "phalloidin"] },
 
   confocal: { kind: "scope", mode: "confocal", title: "Confocal microscope", kicker: "Microscope · optical sections",
@@ -5834,7 +5844,7 @@ const GUIDE_PAGES = {
         <p>The emitted light travels back the same way, passes the dichroic and is focused onto a <b>pinhole</b>. Light from the focal plane converges exactly at the pinhole and passes. Light from above or below is out of focus there, spread into a wide disc, and mostly blocked. A <b>photomultiplier</b> measures what gets through, one pixel at a time, and the computer builds the image.</p>`],
       ["In a real lab", `<ol><li><b>Choose laser lines</b> that match your dyes, and the detector ranges for each emission.</li><li><b>Set the pinhole</b> to about 1 Airy unit.</li><li><b>Balance laser power and detector gain</b>: enough signal, no saturated pixels, as little light as possible.</li><li><b>Scan channels sequentially</b> if dyes overlap, so one doesn't bleed into another's channel.</li><li><b>Set the top and bottom</b> of the sample and record a <b>z-stack</b>, stepping about half the section thickness each time.</li><li><b>Reconstruct</b> in 3D, or make maximum-intensity projections.</li></ol>`],
       ["Strengths and limits", `<p><b>Sharp optical sections</b> of thick samples like tissues, organoids and embryos, with no physical slicing. But point scanning is slow, the lasers can bleach and damage live cells, and the instruments are expensive. Spinning-disk and light-sheet microscopes address speed and damage.</p>`],
-      ["In Parfocal", `<p>Most confocal slides are real recordings of living embryos and cells: a zebrafish notochord, a fruit fly embryo folding, organelles and growing microtubules. Others are a fixed, thick organoid with three labelled layers at different depths. Out-of-focus layers go dark instead of blurring, so you hunt each layer by depth. The pinhole setting trades brightness against slice thickness.</p>`],
+      ["In Parfocal", `<p>Most confocal slides are real recordings of living embryos and cells: a zebrafish notochord, a fruit fly embryo folding, organelles and growing microtubules. The tutorial uses a fixed, thick organoid with three labelled layers at different depths. Out-of-focus layers go dark instead of blurring, so you hunt each layer by depth. The pinhole setting trades brightness against slice thickness.</p>`],
     ], related: ["pinhole", "zstack", "organoid", "gfp", "lysotracker", "fluorescence"] },
 
   /* ---------------- optics ---------------- */
