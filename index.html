@@ -1405,13 +1405,11 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 </style>
 <style>
 .stage-ctl { display: flex; align-items: center; gap: 14px; justify-content: center; margin-top: 4px; }
-.stage-knob { width: 92px; height: 92px; flex: none; touch-action: none; user-select: none; cursor: grab; }
-.stage-knob:active { cursor: grabbing; }
-.sk-outer { fill: #2a2123; stroke: #4a3e3f; stroke-width: 1.5; }
-.sk-gap { fill: #120c0e; }
-.sk-inner { fill: #3b3032; stroke: #5a4c4d; stroke-width: 1.2; }
-.sk-hub { fill: var(--acc); }
-#skOuter line, #skInner line { stroke: #8d7d78; stroke-width: 2; stroke-linecap: round; }
+.smap { position: relative; width: 132px; height: 132px; flex: none; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-edge); background: #0d0a0b; touch-action: none; user-select: none; cursor: pointer; }
+.smap canvas { width: 100%; height: 100%; display: block; }
+.smap-view { position: absolute; left: 0; top: 0; border-radius: 50%; border: 2px solid var(--acc); box-shadow: 0 0 0 999px rgba(8, 6, 7, .5), 0 0 14px color-mix(in srgb, var(--acc) 70%, transparent); cursor: grab; pointer-events: none; }
+.smap.drag .smap-view { cursor: grabbing; }
+.stage-ctl.off .smap-view { display: none; }
 .stage-read { display: grid; gap: 3px; min-width: 0; max-width: 230px; }
 .sr-k { font: 700 11px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--acc); }
 .sr-v { font: 600 13px var(--f-mono); color: var(--ink); white-space: nowrap; }
@@ -1671,18 +1669,14 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <path class="k-index" d="M100 0.5 L104.5 6 L95.5 6 Z"/>
           </svg>
           <div class="stage-ctl" id="stageCtl">
-            <svg class="stage-knob" id="stageKnob" viewBox="0 0 120 120" aria-label="Mechanical stage. Turn the outer ring to move the slide forward and back, the inner knob to move it left and right. You can also drag the eyepiece.">
-              <circle cx="60" cy="60" r="58" class="sk-outer"/>
-              <g id="skOuter"></g>
-              <circle cx="60" cy="60" r="34" class="sk-gap"/>
-              <circle cx="60" cy="60" r="31" class="sk-inner"/>
-              <g id="skInner"></g>
-              <circle cx="60" cy="60" r="7" class="sk-hub"/>
-            </svg>
+            <div class="smap" id="smap" aria-label="Slide map. Drag the circle or click to move the slide; you can also drag the eyepiece.">
+              <canvas id="smapCv" width="180" height="180"></canvas>
+              <i class="smap-view" id="smapView"></i>
+            </div>
             <div class="stage-read">
               <span class="sr-k">Stage</span>
               <span class="sr-v" id="stageRead">X 40.000 · Y 20.000 mm</span>
-              <small>Outer ring Y · inner knob X · or drag the eyepiece. The image moves the opposite way.</small>
+              <small>Drag the circle or click the map. You can also drag the eyepiece: the image moves the opposite way, as in a real microscope.</small>
               <button class="sr-c" id="stageCentre" type="button">Recentre</button>
             </div>
           </div>
@@ -5874,37 +5868,49 @@ function moveStage(dx, dy) {
   if (nx === G.sx && ny === G.sy) return;
   G.sx = nx; G.sy = ny; G.dirty = true; stageArt();
 }
-let skOuterAng = 0, skInnerAng = 0;
+function setStage(sx, sy) {
+  const L = stageLive(), lim = stageLimit(L); if (!lim) return;
+  const nx = Math.max(-lim, Math.min(lim, sx)), ny = Math.max(-lim, Math.min(lim, sy));
+  if (nx === G.sx && ny === G.sy) return;
+  G.sx = nx; G.sy = ny; G.dirty = true; stageArt();
+}
 function stageArt() {
   if (!G) return;
-  const L = stageLive();
-  $("stageCtl").classList.toggle("off", !stageLimit(L));
-  $("stageRead").textContent = stageLimit(L) ? `X ${(40 + G.sx).toFixed(3)} · Y ${(20 + G.sy).toFixed(3)} mm` : "Fixed slide";
-  $("skOuter").setAttribute("transform", `rotate(${skOuterAng.toFixed(1)} 60 60)`);
-  $("skInner").setAttribute("transform", `rotate(${skInnerAng.toFixed(1)} 60 60)`);
-  $("eyepieceBox").classList.toggle("can-pan", !!stageLimit(L));
+  const L = stageLive(), lim = stageLimit(L), mp = $("smap"), W = mp.clientWidth || 132;
+  $("stageCtl").classList.toggle("off", !lim);
+  $("stageRead").textContent = lim ? `X ${(40 + G.sx).toFixed(3)} · Y ${(20 + G.sy).toFixed(3)} mm` : "Fixed slide";
+  $("eyepieceBox").classList.toggle("can-pan", !!lim);
+  if (lim) {
+    const f = stageFrac(L), dpx = L.crop * W, cx = W / 2 + f[0] * W, cy = W / 2 + f[1] * W, v = $("smapView");
+    v.style.width = v.style.height = dpx + "px"; v.style.transform = `translate(${(cx - dpx / 2).toFixed(1)}px, ${(cy - dpx / 2).toFixed(1)}px)`;
+  }
+}
+// the map shows the whole filmed frame, refreshed a few times a second
+let smapAt = 0;
+function smapFrame(now) {
+  if (!G || current !== "game" || !G.sp || !G.sp.live || now - smapAt < 250) return;
+  const L = stageLive(); if (!L || !stageLimit(L)) return;
+  const v = VIDS[L.clip]; if (!v || v.readyState < 2) return;
+  smapAt = now;
+  const cv = $("smapCv"), x = cv.getContext("2d"), c = CLIPS[L.clip], n = cv.width, vw = v.videoWidth, vh = v.videoHeight, s0 = Math.min(vw, vh);
+  x.globalCompositeOperation = "source-over"; x.drawImage(v, (vw - s0) / 2, (vh - s0) / 2, s0, s0, 0, 0, n, n);
+  if (G.mode !== "bright" && c.gray) {
+    x.globalCompositeOperation = "saturation"; x.fillStyle = "#808080"; x.fillRect(0, 0, n, n);
+    x.globalCompositeOperation = "multiply"; x.fillStyle = rgba(CH[c.ch || "fitc"].rgb, 1); x.fillRect(0, 0, n, n);
+  }
+  x.globalCompositeOperation = "source-over";
 }
 (function stageControls() {
-  const so = $("skOuter"), si = $("skInner");
-  so.innerHTML = Array.from({ length: 24 }, (_, i) => { const a = i * 15 * Math.PI / 180; return `<line x1="${60 + 41 * Math.sin(a)}" y1="${60 - 41 * Math.cos(a)}" x2="${60 + 54 * Math.sin(a)}" y2="${60 - 54 * Math.cos(a)}"/>`; }).join("");
-  si.innerHTML = Array.from({ length: 12 }, (_, i) => { const a = i * 30 * Math.PI / 180; return `<line x1="${60 + 14 * Math.sin(a)}" y1="${60 - 14 * Math.cos(a)}" x2="${60 + 27 * Math.sin(a)}" y2="${60 - 27 * Math.cos(a)}"/>`; }).join("");
-  // the knob: turn around its centre; the inner knob moves X, the outer ring moves Y. One turn moves two fields of view.
-  const kn = $("stageKnob"); let drag = null;
-  const ang = (e) => { const r = kn.getBoundingClientRect(); return Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))) * 180 / Math.PI; };
-  kn.addEventListener("pointerdown", (e) => {
-    if (!G) return; const r = kn.getBoundingClientRect(), dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)) / (r.width / 2);
-    drag = { inner: dist < 0.56, a: ang(e) }; kn.setPointerCapture(e.pointerId); e.preventDefault();
-  });
-  kn.addEventListener("pointermove", (e) => {
-    if (!drag) return; let da = ang(e) - drag.a; if (da > 180) da -= 360; if (da < -180) da += 360; drag.a += da;
-    const mm = da / 360 * 2 * fovMM();
-    if (drag.inner) { skInnerAng += da; moveStage(mm, 0); } else { skOuterAng += da; moveStage(0, mm); }
-    stageArt();
-  });
-  const end = () => { drag = null; };
-  kn.addEventListener("pointerup", end); kn.addEventListener("pointercancel", end);
-  kn.addEventListener("wheel", (e) => { if (!G) return; e.preventDefault(); const da = -Math.sign(e.deltaY) * 6, mm = da / 360 * 2 * fovMM();
-    if (e.shiftKey) { skInnerAng += da; moveStage(mm, 0); } else { skOuterAng += da; moveStage(0, mm); } stageArt(); }, { passive: false });
+  // the map: click to jump, drag the circle to move
+  const mp = $("smap"); let md = false;
+  const toMap = (e) => {
+    const L = stageLive(); if (!L || !G) return; const r = mp.getBoundingClientRect(), frame = fovMM() / L.crop;
+    setStage(((e.clientX - r.left) / r.width - 0.5) * frame, ((e.clientY - r.top) / r.height - 0.5) * frame);
+  };
+  mp.addEventListener("pointerdown", (e) => { if (!G || !stageLimit(stageLive())) return; md = true; mp.setPointerCapture(e.pointerId); mp.classList.add("drag"); toMap(e); e.preventDefault(); });
+  mp.addEventListener("pointermove", (e) => { if (md) toMap(e); });
+  const mend = () => { md = false; mp.classList.remove("drag"); };
+  mp.addEventListener("pointerup", mend); mp.addEventListener("pointercancel", mend);
   // drag the eyepiece: you push the stage, and the inverted image drifts the other way
   const ep = $("eyepieceBox"); let pd = null;
   ep.addEventListener("pointerdown", (e) => {
@@ -5913,8 +5919,8 @@ function stageArt() {
   });
   ep.addEventListener("pointermove", (e) => {
     if (!pd) return; const f = fovMM() / pd.w;
-    moveStage((e.clientX - pd.x) * f, (e.clientY - pd.y) * f); skInnerAng += (e.clientX - pd.x) * 0.6; skOuterAng += (e.clientY - pd.y) * 0.6;
-    pd.x = e.clientX; pd.y = e.clientY; stageArt();
+    moveStage((e.clientX - pd.x) * f, (e.clientY - pd.y) * f);
+    pd.x = e.clientX; pd.y = e.clientY;
   });
   const pend = () => { pd = null; ep.classList.remove("panning"); };
   ep.addEventListener("pointerup", pend); ep.addEventListener("pointercancel", pend);
@@ -8595,6 +8601,7 @@ function loop(now) {
     } else if (G.lpMoving) updateLoupe(Math.max(0, gapUm(true)) / 1000);
   }
   heroFrame(now);
+  smapFrame(now);
   requestAnimationFrame(loop);
 }
 
