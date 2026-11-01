@@ -2328,21 +2328,38 @@ function genSpecimen(seed, mode, orgId, live) {
    Each clip is a square loop. Blur, confocal dimming, bleaching and the filter cube are applied live:
    under a cube you see only the channel that cube passes, so a red label goes dark under FITC. */
 const CLIPS = {
-  h2b_hela: {"file": "videos/h2b-hela.mp4", "credit": "HeLa cells expressing H2B-GFP, live time-lapse. Alawi F et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Dyskerin-Localizes-to-the-Mitotic-Apparatus-and-Is-Required-for-Orderly-Mitosis-in-Human-Cells-pone.0080805.s003.ogv", "gray": false, "ch": "fitc"},
-  mito_mef: {"file": "videos/mito-mef.mp4", "credit": "Mitochondria fusing and dividing in a mouse embryonic fibroblast, matrix-targeted DsRed. Böhler P et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Mitochondrial_dynamics_in_a_MEF_cell.webm", "gray": false, "ch": "tritc"},
-  eb1_u2os: {"file": "videos/eb1-u2os.mp4", "credit": "EB1-GFP comets in a U2OS cell. O'Rourke B et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cep192-Controls-the-Balance-of-Centrosome-and-Non-Centrosomal-Microtubules-during-Interphase-pone.0101001.s008.ogv", "gray": true, "ch": "fitc", "boost": 1.25},
-  h2b_field: {"file": "videos/h2b-field.mp4", "credit": "Field of H2B-GFP cells entering mitosis. Díaz-Martínez L et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cohesin-Is-Dispensable-for-Centromere-Cohesion-in-Human-Cells-pone.0000318.s006.ogv", "gray": true, "ch": "fitc", "boost": 1.9},
-  er_mito: {"file": "videos/er-mito.mp4", "credit": "Mitochondria and ER in a live COS-7 cell. Bottanelli F et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Two-colour-live-cell-nanoscale-imaging-of-intracellular-targets-ncomms10778-s2.ogv", "gray": false, "ch": "tritc", "chs": ["fitc", "tritc"]},
-  virus: {"file": "videos/virus.mp4", "credit": "Prototype foamy virus particles (Env-mCherry channel) entering HeLa cells. Stirnnagel K et al., via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Differential-pH-dependent-cellular-uptake-pathways-among-foamy-viruses-elucidated-using-dual-1742-4690-9-71-S3.ogv", "gray": true, "ch": "tritc", "boost": 1.2},
-  eb1_3t3b: {"file": "videos/eb1-3t3b.mp4", "credit": "EB1-GFP in NIH 3T3 fibroblasts, confocal time-lapse. Bozonhiggsa, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:MAX_3T3_23Mar2015_EB1-GFP-06.ogv", "gray": true, "ch": "fitc", "boost": 2.2},
-  ecoli: {"file": "videos/ecoli.mp4", "credit": "GFP-expressing Escherichia coli swimming. Cuenca M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:D-Alanine-Controlled-Transient-Intestinal-Mono-Colonization-with-Non-Laboratory-Adapted-Commensal-pone.0151872.s006.ogv", "gray": false, "ch": "fitc", "boost": 1.3},
-  zf_notochord: {"file": "videos/zf-notochord.mp4", "credit": "Zebrafish notochord cells intercalating, membrane RFP, confocal time-lapse. Edeling M et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Structural-Requirements-for-PACSINSyndapin-Operation-during-Zebrafish-Embryonic-Notochord-pone.0008150.s008.ogv", "gray": true, "ch": "red", "boost": 1.5},
-  fly_furrow: {"file": "videos/fly-furrow.mp4", "credit": "Ventral furrow forming in a Drosophila embryo, Spider-GFP membranes, confocal. Spahn P et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, inverted, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-Vertex-Model-of-Drosophila-Ventral-Furrow-Formation-pone.0075051.s002.ogv", "gray": true, "ch": "gfp"},
-  paramecium: {"file": "videos/paramecium.mp4", "credit": "Paramecium swimming. Jon Houseman, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Para1004.webm", "gray": false},
-  egeria: {"file": "videos/egeria.mp4", "zoom": 1, "credit": "Cytoplasmic streaming in Egeria leaf cells. Berkshire Community College Bioscience Image Library, via Wikimedia Commons, CC0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Video-_cytoplasmic_streaming_in_Egeria_densa.webm", "gray": false},
-  tradescantia: {"file": "videos/tradescantia.mp4", "zoom": 1, "credit": "Cytoplasmic streaming in Tradescantia stamen hair cells. Heiti Paves, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Movement_of_organelles_in_Tradescantia_stamen_hair_cells.webm", "gray": false},
-  bsubtilis: {"file": "videos/bsubtilis.mp4", "zoom": 0.95, "credit": "Bacillus subtilis cells swimming in water. Kobayashi K et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Genetic-Analysis-of-Collective-Motility-of-Paenibacillus-sp.-NAIST15-1-pgen.1006387.s017.ogv", "gray": false},
-  organoid: {"file": "videos/organoid.mp4", "credit": "Fallopian tube organoids forming from single cells in Matrigel, time-lapse. Kessler M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Notch-and-Wnt-pathways-regulate-stemness-and-differentiation-in-human-fallopian-tube-organoids-ncomms9989-s3.ogv", "gray": false}
+  h2b_hela: {"file": "videos/h2b-hela.mp4", "credit": "HeLa cells expressing H2B-GFP, live time-lapse. Alawi F et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Dyskerin-Localizes-to-the-Mitotic-Apparatus-and-Is-Required-for-Orderly-Mitosis-in-Human-Cells-pone.0080805.s003.ogv", "gray": false, "ch": "fitc"},
+  h2b_wide: {"file": "videos/h2b-wide.mp4", "credit": "Wide field of HeLa H2B-GFP cells entering mitosis, 20 h time-lapse. Díaz-Martínez L et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:PIAS%CE%B3-Is-Required-for-Faithful-Chromosome-Segregation-in-Human-Cells-pone.0000053.s006.ogv", "gray": true, "ch": "fitc", "boost": 1.5},
+  mito_mef: {"file": "videos/mito-mef.mp4", "credit": "Mitochondria fusing and dividing in a mouse embryonic fibroblast, matrix-targeted DsRed. Böhler P et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Mitochondrial_dynamics_in_a_MEF_cell.webm", "gray": false, "ch": "tritc"},
+  eb1_u2os: {"file": "videos/eb1-u2os.mp4", "credit": "EB1-GFP comets in a U2OS cell. O'Rourke B et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cep192-Controls-the-Balance-of-Centrosome-and-Non-Centrosomal-Microtubules-during-Interphase-pone.0101001.s008.ogv", "gray": true, "ch": "fitc", "boost": 1.25},
+  er_mito: {"file": "videos/er-mito.mp4", "credit": "Mitochondria and ER in a live COS-7 cell. Bottanelli F et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Two-colour-live-cell-nanoscale-imaging-of-intracellular-targets-ncomms10778-s2.ogv", "gray": false, "ch": "tritc", "chs": ["fitc", "tritc"]},
+  virus: {"file": "videos/virus.mp4", "credit": "Prototype foamy virus particles (Env-mCherry channel) entering HeLa cells. Stirnnagel K et al., via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Differential-pH-dependent-cellular-uptake-pathways-among-foamy-viruses-elucidated-using-dual-1742-4690-9-71-S3.ogv", "gray": true, "ch": "tritc", "boost": 1.2},
+  eb1_3t3b: {"file": "videos/eb1-3t3b.mp4", "credit": "EB1-GFP in NIH 3T3 fibroblasts, confocal time-lapse. Bozonhiggsa, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:MAX_3T3_23Mar2015_EB1-GFP-06.ogv", "gray": true, "ch": "fitc", "boost": 2.2},
+  ecoli: {"file": "videos/ecoli.mp4", "credit": "GFP-expressing Escherichia coli swimming. Cuenca M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:D-Alanine-Controlled-Transient-Intestinal-Mono-Colonization-with-Non-Laboratory-Adapted-Commensal-pone.0151872.s006.ogv", "gray": false, "ch": "fitc", "boost": 1.3},
+  hela_tub: {"file": "videos/hela-tubulin-h2b.mp4", "credit": "HeLa cells expressing GFP-α-tubulin and mCherry-H2B, live time-lapse. Pillai S et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Tank-binding-kinase-1-is-a-centrosome-associated-kinase-necessary-for-microtubule-dynamics-and-ncomms10072-s5.ogv", "gray": false, "ch": "tritc", "chs": ["fitc", "tritc"]},
+  ricin: {"file": "videos/ricin-endosomes.mp4", "credit": "Ricin-FITC entering A549 cells, late endosomes in red. Herrera C et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-Bispecific-Antibody-Promotes-Aggregation-of-Ricin-Toxin-on-Cell-Surfaces-and-Alters-Dynamics-of-pone.0156893.s011.ogv", "gray": false, "ch": "fitc", "chs": ["fitc", "tritc"], "boost": 1.4},
+  zf_notochord: {"file": "videos/zf-notochord.mp4", "credit": "Zebrafish notochord cells intercalating, membrane RFP, confocal time-lapse. Edeling M et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Structural-Requirements-for-PACSINSyndapin-Operation-during-Zebrafish-Embryonic-Notochord-pone.0008150.s008.ogv", "gray": true, "ch": "red", "boost": 1.5},
+  fly_furrow: {"file": "videos/fly-furrow.mp4", "credit": "Ventral furrow forming in a Drosophila embryo, Spider-GFP membranes, confocal. Spahn P et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, inverted, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-Vertex-Model-of-Drosophila-Ventral-Furrow-Formation-pone.0075051.s002.ogv", "gray": true, "ch": "gfp"},
+  borrelia: {"file": "videos/borrelia-joint.mp4", "credit": "Fluorescent Borrelia burgdorferi in joint tissue of a living mouse, spinning-disk confocal. Kumar D et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Intravital-Imaging-of-Vascular-Transmigration-by-the-Lyme-Spirochete-Requirement-for-the-Integrin-ppat.1005333.s003.ogv", "gray": false, "ch": "gfp", "boost": 1.3},
+  neutrophils: {"file": "videos/neutrophils-pseudomonas.mp4", "credit": "Neutrophils (blue) engulfing Pseudomonas aeruginosa (red) in living skin, spinning-disk confocal. Halverson T et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:DNA-Is-an-Antimicrobial-Component-of-Neutrophil-Extracellular-Traps-ppat.1004593.s001.ogv", "gray": false, "ch": "red", "boost": 1.2},
+  platelets: {"file": "videos/brain-platelets.mp4", "credit": "Platelets and leukocytes in brain arterioles and venules of a living mouse, intravital confocal. Jenne C et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Use-of-Spinning-Disk-Confocal-Microscopy-for-the-Intravital-Analysis-of-Platelet-Dynamics-in-pone.0025109.s021.ogv", "gray": false, "ch": "gfp"},
+  centrosomes: {"file": "videos/centrosomes.mp4", "credit": "Centrosomes moving in a live MDA-231 breast cancer cell, confocal. Castiel A et al., via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-phenanthrene-derived-PARP-inhibitor-is-an-extra-centrosomes-de-clustering-agent-exclusively-1471-2407-11-412-S2.ogv", "gray": false, "ch": "red"},
+  cystinosin: {"file": "videos/cystinosin.mp4", "credit": "Cystinosin-EGFP vesicles trafficking in a kidney HK-2 cell, confocal. Bellomo F et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Carboxyl-Terminal-SSLKG-Motif-of-the-Human-Cystinosin-LKG-Plays-an-Important-Role-in-Plasma-pone.0154805.s003.ogv", "gray": false, "ch": "gfp"},
+  organoid_wnt: {"file": "videos/organoid-wnt.mp4", "credit": "Fallopian tube organoid with a TCF/GFP Wnt reporter, 72 h confocal time-lapse. Kessler M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Notch-and-Wnt-pathways-regulate-stemness-and-differentiation-in-human-fallopian-tube-organoids-ncomms9989-s4.ogv", "gray": false, "ch": "gfp"},
+  paramecium: {"file": "videos/paramecium.mp4", "credit": "Paramecium caudatum swimming, DIC, 20x objective. Alexander Klepnev, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:%D0%98%D0%BD%D1%84%D1%83%D0%B7%D0%BE%D1%80%D0%B8%D1%8F_%D1%82%D1%83%D1%84%D0%B5%D0%BB%D1%8C%D0%BA%D0%B0_7.webm", "gray": false},
+  vorticella: {"file": "videos/vorticella.mp4", "credit": "Vorticella feeding, brightfield. smaller.pathological.ca, via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Vorticella_sp._feeding.webm", "gray": false},
+  rotifer: {"file": "videos/rotifer.mp4", "credit": "Rotifer moving, brightfield with closed condenser. Brandon Seah, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Rotifer_closeup_moving_DSC_6861.webm", "gray": false},
+  euglena: {"file": "videos/euglena.mp4", "credit": "Euglena swimming. Berkshire Community College Bioscience Image Library, via Wikimedia Commons, CC0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Video-_Euglena.webm", "gray": false},
+  difflugia: {"file": "videos/difflugia.mp4", "credit": "Testate amoeba (Difflugia) moving on lobose pseudopodia. Brandon Seah, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cf_Difflugia_DSC_1306.webm", "gray": false},
+  bacillaria: {"file": "videos/bacillaria.mp4", "credit": "Bacillaria diatom colonies gliding. Jeremias Brand, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Bacillaria_sp_movement.webm", "gray": false},
+  cyanobacteria: {"file": "videos/cyanobacteria.mp4", "credit": "Cyanobacterial filament gliding, brightfield. Brandon Seah, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cyanobacterial_filament_gliding_DSC_6877.webm", "gray": false},
+  onion: {"file": "videos/onion.mp4", "credit": "Cytoplasmic streaming in onion bulb epidermis cells. Heiti Paves, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Cytoplasmic_streaming.webm", "gray": false},
+  egeria: {"file": "videos/egeria.mp4", "credit": "Cytoplasmic streaming in Egeria densa leaf cells. Berkshire Community College Bioscience Image Library, via Wikimedia Commons, CC0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Video-_Cytoplasmic_Streaming_in_Egeria_densa.webm", "gray": false},
+  tradescantia: {"file": "videos/tradescantia.mp4", "credit": "Cytoplasmic streaming in Tradescantia stamen hair cells. Heiti Paves, via Wikimedia Commons, CC BY-SA 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Movement_of_organelles_in_Tradescantia_stamen_hair_cells.webm", "gray": false, "zoom": 1},
+  stentor: {"file": "videos/stentor.mp4", "credit": "Stentor, a trumpet-shaped ciliate, brightfield. smaller.pathological.ca, via Wikimedia Commons, CC BY 2.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Stentor_sp.,_600x.webm", "gray": false},
+  celegans: {"file": "videos/c-elegans-embryo.mp4", "credit": "C. elegans embryo dividing from one cell to eight, DIC time-lapse. von Tobel L et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:SAS-1-Is-a-C2-Domain-Protein-Critical-for-Centriole-Integrity-in-C.-elegans-pgen.1004777.s010.ogv", "gray": false, "zoom": 1},
+  nematode: {"file": "videos/nematode.mp4", "credit": "Free-living nematode moving, DIC. Alexander Klepnev, via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:%D0%9D%D0%B5%D0%BC%D0%B0%D1%82%D0%BE%D0%B4%D0%B0_Nematode.webm", "gray": false},
+  organoid: {"file": "videos/organoid.mp4", "credit": "Fallopian tube organoids forming from single cells in Matrigel, time-lapse. Kessler M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:The-Notch-and-Wnt-pathways-regulate-stemness-and-differentiation-in-human-fallopian-tube-organoids-ncomms9989-s3.ogv", "gray": false}
 };
 const MASK = { dapi: "#0000ff", fitc: "#00ff00", tritc: "#ff0000" };
 const VIDS = {};
@@ -2373,40 +2390,554 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const LIVE = {
-  fluor: [
-    { id: "live-cells", name: "Live human and mouse cells", stain: "Live-cell fluorescence · fluorescent proteins",
-      stages: [{ clip: "h2b_hela", label: "nuclei", tag: "H2B-GFP", ch: "fitc" }, { clip: "mito_mef", label: "mitochondria", tag: "matrix-targeted DsRed", ch: "tritc" }, { clip: "eb1_u2os", label: "growing microtubule ends", tag: "EB1-GFP", ch: "fitc" }],
-      facts: [["10x", "HeLa · H2B-GFP chromatin"], ["40x", "MEF · mitochondria, DsRed"], ["100x", "U2OS · EB1-GFP comets"], ["Labels", "Genetically encoded, no fixation"]],
-      why: "Nothing here is stained after death. The cells make their own fluorescent proteins: GFP fused to histone H2B marks chromatin, a red protein sent to the mitochondrial matrix shows mitochondria dividing and fusing, and EB1-GFP rides only the growing tips of microtubules, so each comet is one microtubule getting longer." },
-    { id: "live-division", name: "Dividing cells, ER and virus entry", stain: "Live-cell fluorescence · fluorescent proteins and tags",
-      stages: [{ clip: "h2b_field", label: "chromosomes", tag: "H2B-GFP", ch: "fitc" }, { clip: "er_mito", label: "ER network", tag: "red channel", ch: "tritc" }, { clip: "virus", label: "virus particles", tag: "Env-mCherry", ch: "tritc" }],
-      facts: [["10x", "H2B-GFP cells entering mitosis"], ["40x", "COS-7 · mitochondria (green), ER (magenta)"], ["100x", "Foamy virus particles entering HeLa cells"], ["Virions", "~100 nm: seen as diffraction-limited dots"]],
-      why: "A virus particle is far smaller than the ~200 nm resolution limit of light, so you never see its shape, only a bright diffraction-limited spot where a labelled particle sits. Tagging a viral envelope protein with mCherry lets you follow single particles as the cell takes them up and carries them inward." },
-    { id: "live-motion", name: "Microtubules and swimming bacteria", stain: "Live-cell fluorescence · GFP",
-      stages: [{ clip: "h2b_field", label: "chromosomes", tag: "H2B-GFP", ch: "fitc" }, { clip: "eb1_3t3b", label: "growing microtubule ends", tag: "EB1-GFP", ch: "fitc" }, { clip: "ecoli", label: "swimming bacteria", tag: "cytoplasmic GFP", ch: "fitc" }],
-      facts: [["10x", "H2B-GFP cells"], ["40x", "NIH 3T3 · EB1-GFP, false-colour LUT"], ["100x", "E. coli expressing GFP, swimming"], ["Speed", "Microtubules grow at roughly 10–20 µm per minute"]],
-      why: "Microtubules are dynamic: they grow, then suddenly shrink back (catastrophe) and regrow, a behaviour called dynamic instability. EB1 binds only the newly built tip, so the moving comets trace growth directly. The bacteria at 100x are alive too; GFP fills their cytoplasm, so each swimmer is a bright rod." },
-  ],
-  confocal: [
-    { id: "live-embryos", name: "Live embryos and a dividing cell", stain: "Live confocal · membrane and tip labels",
-      stages: [{ clip: "zf_notochord", label: "notochord membranes", tag: "mcRFP · 561 nm", ch: "red" }, { clip: "fly_furrow", label: "epithelial membranes", tag: "Spider-GFP · 488 nm", ch: "gfp" }, { clip: "eb1_3t3b", label: "growing microtubule ends", tag: "EB1-GFP · 488 nm", ch: "gfp" }],
-      facts: [["10x", "Zebrafish notochord, membrane RFP"], ["20x", "Fruit fly embryo, Spider-GFP"], ["63x", "NIH 3T3 · EB1-GFP"], ["Why confocal", "Clean sections deep inside living embryos"]],
-      why: "A whole embryo is thick, so widefield images would drown in out-of-focus glow. The confocal pinhole rejects that light, which is how you can watch cells inside a living zebrafish squeeze between each other to lengthen the notochord, or a fly embryo fold its ventral furrow during gastrulation." },
-    { id: "live-organelles", name: "Living tissue and organelles", stain: "Live confocal · fluorescent proteins and tags",
-      stages: [{ clip: "fly_furrow", label: "epithelial membranes", tag: "Spider-GFP · 488 nm", ch: "gfp" }, { clip: "er_mito", label: "mitochondria and ER", tag: "488 + 561 nm", ch: "gfp" }, { clip: "eb1_3t3b", label: "growing microtubule ends", tag: "EB1-GFP · 488 nm", ch: "gfp" }],
-      facts: [["10x", "Fruit fly embryo, Spider-GFP"], ["20x", "COS-7 · mitochondria and ER"], ["63x", "NIH 3T3 · EB1-GFP"], ["Two lasers", "Each label is excited and detected on its own line"]],
-      why: "Mitochondria and the endoplasmic reticulum touch constantly, and ER tubules mark where mitochondria will divide. Imaging both in one living cell needs two labels on separate laser lines, with the pinhole keeping each a thin optical section." },
-  ],
-  bright: [
-    { id: "wet-pond", name: "Wet mount: pond life and plant cells", stain: "Unstained wet mount · living",
-      stages: [{ clip: "paramecium", label: "Paramecium" }, { clip: "egeria", label: "streaming chloroplasts" }, { clip: "bsubtilis", label: "swimming bacteria" }],
-      facts: [["10x", "Paramecium in pond water"], ["40x", "Egeria leaf · cytoplasmic streaming"], ["100x", "Bacillus subtilis swimming"], ["Prep", "A drop under a coverslip, no stain"]],
-      why: "A wet mount keeps cells alive, so you see behaviour, not just shape. Paramecium beats thousands of cilia to swim and reverse; in Egeria leaf cells, myosin motors drag the chloroplasts around the cell in a loop (cyclosis); and Bacillus subtilis swims with flagella too thin to resolve, so only the bodies show." },
-    { id: "wet-plant", name: "Wet mount: organoids and stamen hairs", stain: "Unstained live culture and wet mount",
-      stages: [{ clip: "organoid", label: "organoids forming" }, { clip: "tradescantia", label: "cytoplasmic streaming" }, { clip: "bsubtilis", label: "swimming bacteria" }],
-      facts: [["10x", "Fallopian tube organoids in Matrigel, time-lapse"], ["40x", "Tradescantia stamen hair cells"], ["100x", "Bacillus subtilis swimming"], ["Contrast", "Unstained cells: close the condenser a little"]],
-      why: "Living cells are nearly transparent, so brightfield shows them mostly through small differences in refractive index. Single epithelial cells in a gel grow into hollow organoids over days, and in Tradescantia hair cells the cytoplasm streams along strands that cross the vacuole." },
-  ],
+ "fluor": [
+  {
+   "id": "live-cells",
+   "name": "Live human and mouse cells",
+   "stain": "Live-cell fluorescence · fluorescent proteins",
+   "stages": [
+    {
+     "clip": "h2b_wide",
+     "label": "chromosomes",
+     "tag": "H2B-GFP",
+     "ch": "fitc"
+    },
+    {
+     "clip": "mito_mef",
+     "label": "mitochondria",
+     "tag": "matrix-targeted DsRed",
+     "ch": "tritc"
+    },
+    {
+     "clip": "eb1_u2os",
+     "label": "growing microtubule ends",
+     "tag": "EB1-GFP",
+     "ch": "fitc"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "HeLa · H2B-GFP chromatin, 20 h"
+    ],
+    [
+     "40x",
+     "MEF · mitochondria, DsRed"
+    ],
+    [
+     "100x",
+     "U2OS · EB1-GFP comets"
+    ],
+    [
+     "Labels",
+     "Genetically encoded, no fixation"
+    ]
+   ],
+   "why": "Nothing here is stained after death. The cells make their own fluorescent proteins: GFP fused to histone H2B marks chromatin, so you can watch chromosomes condense and line up; a red protein sent to the mitochondrial matrix shows mitochondria dividing and fusing; and EB1-GFP rides only the growing tips of microtubules, so each comet is one microtubule getting longer."
+  },
+  {
+   "id": "live-division",
+   "name": "Dividing cells, ER and virus entry",
+   "stain": "Live-cell fluorescence · fluorescent proteins and tags",
+   "stages": [
+    {
+     "clip": "h2b_hela",
+     "label": "nuclei",
+     "tag": "H2B-GFP",
+     "ch": "fitc"
+    },
+    {
+     "clip": "er_mito",
+     "label": "ER network",
+     "tag": "red channel",
+     "ch": "tritc"
+    },
+    {
+     "clip": "virus",
+     "label": "virus particles",
+     "tag": "Env-mCherry",
+     "ch": "tritc"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "HeLa · H2B-GFP"
+    ],
+    [
+     "40x",
+     "COS-7 · mitochondria (green), ER (magenta)"
+    ],
+    [
+     "100x",
+     "Foamy virus particles entering HeLa cells"
+    ],
+    [
+     "Virions",
+     "~100 nm: seen as diffraction-limited dots"
+    ]
+   ],
+   "why": "A virus particle is far smaller than the ~200 nm resolution limit of light, so you never see its shape, only a bright diffraction-limited spot where a labelled particle sits. Tagging a viral envelope protein with mCherry lets you follow single particles as the cell takes them up and carries them inward."
+  },
+  {
+   "id": "live-motion",
+   "name": "Microtubules and swimming bacteria",
+   "stain": "Live-cell fluorescence · GFP",
+   "stages": [
+    {
+     "clip": "h2b_wide",
+     "label": "chromosomes",
+     "tag": "H2B-GFP",
+     "ch": "fitc"
+    },
+    {
+     "clip": "eb1_3t3b",
+     "label": "growing microtubule ends",
+     "tag": "EB1-GFP",
+     "ch": "fitc"
+    },
+    {
+     "clip": "ecoli",
+     "label": "swimming bacteria",
+     "tag": "cytoplasmic GFP",
+     "ch": "fitc"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "HeLa · H2B-GFP"
+    ],
+    [
+     "40x",
+     "NIH 3T3 · EB1-GFP, false-colour LUT"
+    ],
+    [
+     "100x",
+     "E. coli expressing GFP, swimming"
+    ],
+    [
+     "Speed",
+     "Microtubules grow at roughly 10–20 µm per minute"
+    ]
+   ],
+   "why": "Microtubules are dynamic: they grow, then suddenly shrink back (catastrophe) and regrow, a behaviour called dynamic instability. EB1 binds only the newly built tip, so the moving comets trace growth directly. The bacteria at 100x are alive too; GFP fills their cytoplasm, so each swimmer is a bright rod."
+  },
+  {
+   "id": "live-uptake",
+   "name": "Two-colour cells and toxin uptake",
+   "stain": "Live-cell fluorescence · two labels",
+   "stages": [
+    {
+     "clip": "hela_tub",
+     "label": "chromosomes",
+     "tag": "mCherry-H2B",
+     "ch": "tritc"
+    },
+    {
+     "clip": "ricin",
+     "label": "ricin entering cells",
+     "tag": "ricin-FITC",
+     "ch": "fitc"
+    },
+    {
+     "clip": "mito_mef",
+     "label": "mitochondria",
+     "tag": "matrix-targeted DsRed",
+     "ch": "tritc"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "HeLa · GFP-α-tubulin (green), mCherry-H2B (red)"
+    ],
+    [
+     "40x",
+     "A549 · ricin-FITC (green), late endosomes (red)"
+    ],
+    [
+     "100x",
+     "MEF · mitochondria, DsRed"
+    ],
+    [
+     "Two cubes",
+     "Each colour needs its own filter cube"
+    ]
+   ],
+   "why": "With two labels in one cell, each filter cube shows only its own colour: FITC shows the green tubulin or toxin, TRITC the red chromatin or endosomes. Ricin binds sugars on the cell surface and is taken in by endocytosis; following it into late endosomes shows the route a toxin takes on its way to the inside of the cell."
+  }
+ ],
+ "confocal": [
+  {
+   "id": "live-embryos",
+   "name": "Live embryos and a dividing cell",
+   "stain": "Live confocal · membrane and tip labels",
+   "stages": [
+    {
+     "clip": "zf_notochord",
+     "label": "notochord membranes",
+     "tag": "mcRFP · 561 nm",
+     "ch": "red"
+    },
+    {
+     "clip": "fly_furrow",
+     "label": "epithelial membranes",
+     "tag": "Spider-GFP · 488 nm",
+     "ch": "gfp"
+    },
+    {
+     "clip": "eb1_3t3b",
+     "label": "growing microtubule ends",
+     "tag": "EB1-GFP · 488 nm",
+     "ch": "gfp"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Zebrafish notochord, membrane RFP"
+    ],
+    [
+     "20x",
+     "Fruit fly embryo, Spider-GFP"
+    ],
+    [
+     "63x",
+     "NIH 3T3 · EB1-GFP"
+    ],
+    [
+     "Why confocal",
+     "Clean sections deep inside living embryos"
+    ]
+   ],
+   "why": "A whole embryo is thick, so widefield images would drown in out-of-focus glow. The confocal pinhole rejects that light, which is how you can watch cells inside a living zebrafish squeeze between each other to lengthen the notochord, or a fly embryo fold its ventral furrow during gastrulation."
+  },
+  {
+   "id": "live-organelles",
+   "name": "Living tissue and organelles",
+   "stain": "Live confocal · fluorescent proteins and tags",
+   "stages": [
+    {
+     "clip": "fly_furrow",
+     "label": "epithelial membranes",
+     "tag": "Spider-GFP · 488 nm",
+     "ch": "gfp"
+    },
+    {
+     "clip": "er_mito",
+     "label": "mitochondria and ER",
+     "tag": "488 + 561 nm",
+     "ch": "gfp"
+    },
+    {
+     "clip": "eb1_3t3b",
+     "label": "growing microtubule ends",
+     "tag": "EB1-GFP · 488 nm",
+     "ch": "gfp"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Fruit fly embryo, Spider-GFP"
+    ],
+    [
+     "20x",
+     "COS-7 · mitochondria and ER"
+    ],
+    [
+     "63x",
+     "NIH 3T3 · EB1-GFP"
+    ],
+    [
+     "Two lasers",
+     "Each label is excited and detected on its own line"
+    ]
+   ],
+   "why": "Mitochondria and the endoplasmic reticulum touch constantly, and ER tubules mark where mitochondria will divide. Imaging both in one living cell needs two labels on separate laser lines, with the pinhole keeping each a thin optical section."
+  },
+  {
+   "id": "live-infection",
+   "name": "Infection inside a living mouse",
+   "stain": "Intravital spinning-disk confocal",
+   "stages": [
+    {
+     "clip": "platelets",
+     "label": "brain vessels and platelets",
+     "tag": "three lasers",
+     "ch": "gfp"
+    },
+    {
+     "clip": "borrelia",
+     "label": "Lyme spirochetes",
+     "tag": "fluorescent B. burgdorferi · 488 nm",
+     "ch": "gfp"
+    },
+    {
+     "clip": "neutrophils",
+     "label": "neutrophils eating bacteria",
+     "tag": "anti-GR1 + mCherry bacteria",
+     "ch": "red"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Brain arterioles and venules, platelets"
+    ],
+    [
+     "20x",
+     "Borrelia burgdorferi in joint tissue"
+    ],
+    [
+     "63x",
+     "Neutrophils engulfing Pseudomonas in skin"
+    ],
+    [
+     "Intravital",
+     "Imaging inside a living, anaesthetised animal"
+    ]
+   ],
+   "why": "Spinning-disk confocals scan thousands of pinholes at once, fast enough to follow cells moving in blood and tissue of a living animal. The Lyme bacterium swims through tissue with internal flagella, and neutrophils, the first responders of innate immunity, crawl to bacteria and engulf them by phagocytosis."
+  },
+  {
+   "id": "live-cancer",
+   "name": "Organoid and cancer cells",
+   "stain": "Live confocal · reporters and GFP fusions",
+   "stages": [
+    {
+     "clip": "organoid_wnt",
+     "label": "Wnt-active cells",
+     "tag": "TCF/GFP reporter · 488 nm",
+     "ch": "gfp"
+    },
+    {
+     "clip": "cystinosin",
+     "label": "lysosomal transporter",
+     "tag": "cystinosin-EGFP · 488 nm",
+     "ch": "gfp"
+    },
+    {
+     "clip": "centrosomes",
+     "label": "centrosomes",
+     "tag": "centrosome label · two lasers",
+     "ch": "red"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Fallopian tube organoid, Wnt reporter, 72 h"
+    ],
+    [
+     "20x",
+     "HK-2 kidney cell, cystinosin-EGFP"
+    ],
+    [
+     "63x",
+     "MDA-231 cancer cell, centrosomes"
+    ],
+    [
+     "Reporters",
+     "GFP made only when a pathway is on"
+    ]
+   ],
+   "why": "A reporter puts GFP under the control of a signalling pathway, so a cell glows only while that pathway is active: here, the Wnt cells that keep an organoid growing. Cancer cells often carry extra centrosomes; drugs that stop them clustering push those cells into faulty, lethal divisions."
+  }
+ ],
+ "bright": [
+  {
+   "id": "wet-pond",
+   "name": "Wet mount: pond life",
+   "stain": "Unstained wet mount · living",
+   "stages": [
+    {
+     "clip": "paramecium",
+     "label": "Paramecium"
+    },
+    {
+     "clip": "vorticella",
+     "label": "Vorticella feeding"
+    },
+    {
+     "clip": "cyanobacteria",
+     "label": "gliding cyanobacteria"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Paramecium caudatum, DIC"
+    ],
+    [
+     "40x",
+     "Vorticella feeding"
+    ],
+    [
+     "100x",
+     "Cyanobacterial filament gliding"
+    ],
+    [
+     "Prep",
+     "A drop under a coverslip, no stain"
+    ]
+   ],
+   "why": "A wet mount keeps cells alive, so you see behaviour, not just shape. Paramecium beats thousands of cilia to swim and reverse; Vorticella stays on a stalk and its ring of cilia pulls a current of food into its mouth; and cyanobacterial filaments glide without flagella, by secreting slime and moving their surface."
+  },
+  {
+   "id": "wet-plant",
+   "name": "Wet mount: streaming plant cells",
+   "stain": "Unstained plant tissue · living",
+   "stages": [
+    {
+     "clip": "egeria",
+     "label": "chloroplasts in streaming cells"
+    },
+    {
+     "clip": "tradescantia",
+     "label": "stamen hair cytoplasm"
+    },
+    {
+     "clip": "onion",
+     "label": "streaming organelles"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Egeria densa leaf"
+    ],
+    [
+     "40x",
+     "Tradescantia stamen hair cells"
+    ],
+    [
+     "100x",
+     "Onion bulb epidermis"
+    ],
+    [
+     "Motor",
+     "Myosin XI walking on actin cables"
+    ]
+   ],
+   "why": "Plant cells are large, so diffusion alone is too slow to move material across them. Myosin motors drag organelles along actin cables, and the whole cytoplasm streams in loops (cyclosis), carrying chloroplasts in Egeria and small organelles in onion and Tradescantia cells."
+  },
+  {
+   "id": "wet-protists",
+   "name": "Wet mount: protists and diatoms",
+   "stain": "Unstained wet mount · living",
+   "stages": [
+    {
+     "clip": "bacillaria",
+     "label": "gliding diatoms"
+    },
+    {
+     "clip": "difflugia",
+     "label": "testate amoeba"
+    },
+    {
+     "clip": "euglena",
+     "label": "Euglena"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Bacillaria diatom colonies"
+    ],
+    [
+     "40x",
+     "Difflugia, an amoeba in a shell"
+    ],
+    [
+     "100x",
+     "Euglena swimming"
+    ],
+    [
+     "Contrast",
+     "Unstained: close the condenser a little"
+    ]
+   ],
+   "why": "Bacillaria cells slide past each other along a slit in their silica walls, so the colony stretches and folds. Difflugia builds a shell from sand grains and reaches out with lobed pseudopodia, and Euglena swims with one flagellum while its chloroplasts make it green."
+  },
+  {
+   "id": "wet-animals",
+   "name": "Wet mount: tiny animals and an embryo",
+   "stain": "Unstained wet mount · living",
+   "stages": [
+    {
+     "clip": "nematode",
+     "label": "nematode"
+    },
+    {
+     "clip": "rotifer",
+     "label": "rotifer"
+    },
+    {
+     "clip": "celegans",
+     "label": "dividing embryo"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Free-living nematode, DIC"
+    ],
+    [
+     "40x",
+     "Rotifer"
+    ],
+    [
+     "100x",
+     "C. elegans embryo, 1 to 8 cells, DIC"
+    ],
+    [
+     "DIC",
+     "Turns refractive index edges into shading"
+    ]
+   ],
+   "why": "These are whole animals under a coverslip. Rotifers sweep food in with a crown of cilia, and C. elegans is a nematode whose embryo divides in the same pattern every time, which is why biologists could map the origin of every one of its cells."
+  },
+  {
+   "id": "wet-culture",
+   "name": "Wet mount: organoids and ciliates",
+   "stain": "Unstained live culture and wet mount",
+   "stages": [
+    {
+     "clip": "organoid",
+     "label": "organoids forming"
+    },
+    {
+     "clip": "stentor",
+     "label": "Stentor"
+    },
+    {
+     "clip": "cyanobacteria",
+     "label": "gliding cyanobacteria"
+    }
+   ],
+   "facts": [
+    [
+     "10x",
+     "Fallopian tube organoids in Matrigel, time-lapse"
+    ],
+    [
+     "40x",
+     "Stentor, a trumpet ciliate"
+    ],
+    [
+     "100x",
+     "Cyanobacterial filament gliding"
+    ],
+    [
+     "Live",
+     "Every frame is a living sample"
+    ]
+   ],
+   "why": "Living cells are nearly transparent, so brightfield shows them mostly through small differences in refractive index. Single epithelial cells in a gel grow into hollow organoids over days, and Stentor, one of the largest single cells, can regenerate a whole organism from a fragment."
+  }
+ ]
 };
 const LIVE_CROP = [1, 0.78, 0.6]; // each objective sees a smaller part of its clip, but never below its pixels
 
