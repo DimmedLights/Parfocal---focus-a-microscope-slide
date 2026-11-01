@@ -3224,9 +3224,10 @@ function paintLive(L, cube, mode) {
   const shows = cube === "all" || (c.chs ? c.chs.includes(cube) : cube === c.ch);
   if (!shows) return true;
   const gain = (c.boost || 1) * (mode === "confocal" ? 1.6 : 1); // a thin optical section collects less light
-  if (FILTER_OK && (c.gray || gain !== 1)) x.filter = `${c.gray ? "grayscale(1) " : ""}brightness(${gain})`;
   x.drawImage(v, so, so, sw, sw, 0, 0, SIZE, SIZE);
-  x.filter = "none";
+  if (c.gray) { x.globalCompositeOperation = "saturation"; x.fillStyle = "#808080"; x.fillRect(0, 0, SIZE, SIZE); }
+  for (let g = gain - 1; g > 0.01; g -= 1) { x.globalCompositeOperation = "lighter"; x.globalAlpha = Math.min(1, g); x.drawImage(L.canvas, 0, 0); }
+  x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
   const tint = c.gray ? rgba(CH[cube === "all" || mode !== "fluor" ? c.ch : cube].rgb, 1) : cube === "all" ? null : MASK[cube];
   if (tint) { x.globalCompositeOperation = "multiply"; x.fillStyle = tint; x.fillRect(0, 0, SIZE, SIZE); x.globalCompositeOperation = "source-over"; }
   return true;
@@ -3240,7 +3241,12 @@ function paintLive(L, cube, mode) {
    only when focus or settings change. Equivalent to renderField for a live
    slide: one image, blurred evenly, so a CSS blur is the same picture.
    ===================================================================== */
-const LV_OK = (() => { try { return CSS.supports("filter", "blur(1px)") && CSS.supports("mix-blend-mode", "multiply"); } catch (e) { return false; } })();
+/* The eyepiece is drawn in a fixed 640 px canvas (as in the first versions) and CSS only scales it,
+   so the cost does not grow with the screen. The CSS-filter view below is kept but off: it blurred at
+   screen resolution, over an area enlarged for cropping, and cost more on big screens. */
+const URLQ = (() => { try { return new URLSearchParams(location.search); } catch (e) { return { get: () => null, has: () => false }; } })();
+const USE_CSS_VIEW = URLQ.get("view") === "css";   // ?view=css brings the CSS-filter view back for comparison
+const LV_OK = USE_CSS_VIEW && (() => { try { return CSS.supports("filter", "blur(1px)") && CSS.supports("mix-blend-mode", "multiply"); } catch (e) { return false; } })();
 let NOISE_URL = null;
 function makeLiveView(host, before, { pump: autoPump = true } = {}) {
   if (NOISE_URL === null) { try { NOISE_URL = noiseCv.toDataURL("image/png"); } catch (e) { NOISE_URL = ""; } }
@@ -3641,24 +3647,23 @@ let FILTER_OK = false;
 })();
 const tmp = document.createElement("canvas");
 let FAST_BLUR = false; // set while the focus is moving on a phone: a half-resolution blur, sharpened when it stops
+/* Blur at reduced size: a field 20 px out of focus has no detail finer than a few pixels, so it is
+   blurred at a fraction of the size and scaled back up, which looks the same and costs a fraction.
+   The heavier the blur, the smaller the working canvas. */
 function drawBlurred(ctx, src, sigma, alpha, extra) {
   ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-  if (FAST_BLUR && sigma >= 0.35) {
-    const f = Math.max(2, sigma / 1.2), w = Math.max(2, Math.round(SIZE / f));
-    tmp.width = w; tmp.height = w;
-    const t = tmp.getContext("2d"); t.imageSmoothingEnabled = true; t.clearRect(0, 0, w, w); t.drawImage(src, 0, 0, w, w);
-    if (extra && FILTER_OK) ctx.filter = extra;
-    ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, SIZE, SIZE); ctx.filter = "none"; ctx.globalAlpha = 1;
-    return;
+  if (sigma < 0.35) { if (extra && FILTER_OK) ctx.filter = extra; ctx.drawImage(src, 0, 0); ctx.filter = "none"; ctx.globalAlpha = 1; return; }
+  const f = FILTER_OK ? Math.min(10, Math.max(1, sigma / (FAST_BLUR ? 1.6 : 2.4))) : Math.max(1, sigma / 1.5);
+  if (f < 1.15 && FILTER_OK) {
+    ctx.filter = `${extra || ""} blur(${sigma.toFixed(2)}px)`; ctx.drawImage(src, 0, 0); ctx.filter = "none"; ctx.globalAlpha = 1; return;
   }
-  if (sigma < 0.35) { if (extra && FILTER_OK) ctx.filter = extra; ctx.drawImage(src, 0, 0); ctx.filter = "none"; }
-  else if (FILTER_OK) { ctx.filter = `${extra || ""} blur(${sigma.toFixed(2)}px)`; ctx.drawImage(src, 0, 0); ctx.filter = "none"; }
-  else {
-    const f = Math.max(1, sigma / 1.5), w = Math.max(2, Math.round(SIZE / f));
-    tmp.width = w; tmp.height = w;
-    const t = tmp.getContext("2d"); t.imageSmoothingEnabled = true; t.clearRect(0, 0, w, w); t.drawImage(src, 0, 0, w, w);
-    ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, SIZE, SIZE);
-  }
+  const w = Math.max(2, Math.round(SIZE / f));
+  if (tmp.width !== w) { tmp.width = w; tmp.height = w; }
+  const t = tmp.getContext("2d"); t.globalAlpha = 1; t.globalCompositeOperation = "source-over"; t.clearRect(0, 0, w, w); t.imageSmoothingEnabled = true;
+  if (FILTER_OK) t.filter = `blur(${(sigma * w / SIZE).toFixed(2)}px)`;
+  t.drawImage(src, 0, 0, w, w); t.filter = "none";
+  if (extra && FILTER_OK) ctx.filter = extra;
+  ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, SIZE, SIZE); ctx.filter = "none";
   ctx.globalAlpha = 1;
 }
 const noiseCv = (() => {
@@ -3714,12 +3719,17 @@ function renderField(ctx, sp, layers, v) {
     ctx.fillStyle = "#020203"; ctx.fillRect(0, 0, SIZE, SIZE);
     ctx.globalCompositeOperation = "lighter";
     const diff = 0.26 * e.lam / e.NA * o.s;
+    const groups = new Map();
     for (const L of layers) {
       const dz = d + L.z;
       const w = sectionVis(dz, e.dof) * Math.min(1.25, e.bright) * (L.w == null ? 1 : Math.min(1, L.w));
       if (w < 0.02) continue;
       const lateral = Math.min(6, Math.sqrt(diff * diff + (0.12 * sigmaPx(o, e, dz)) ** 2) + e.extra * 0.5);
-      drawBlurred(ctx, L.canvas, lateral, w * (v.signal == null ? 1 : v.signal), flX);
+      const g = groups.get(L.canvas) || { W: 0, lat: 0 }; g.W += w; g.lat += w * lateral; groups.set(L.canvas, g);
+    }
+    for (const [cv, g] of groups) {
+      const a = g.W * (v.signal == null ? 1 : v.signal), gn = gain * Math.max(1, a);
+      drawBlurred(ctx, cv, g.lat / g.W, Math.min(1, a), gn !== 1 ? `brightness(${gn.toFixed(3)})` : "");
     }
     const nAmt = 0.32 / Math.sqrt(Math.max(0.3, e.bright * gain * (v.signal == null ? 1 : v.signal)));
     ctx.globalAlpha = nAmt;
@@ -9246,6 +9256,16 @@ window.addEventListener("resize", () => syncModeTabs(false));
 renderNotes(); renderCredits();
 loadPlates(renderCredits);
 requestAnimationFrame(loop);
+// ?fps shows a small frame counter, to compare views on a real machine
+if (URLQ.has("fps")) {
+  const el = document.createElement("div");
+  el.style.cssText = "position:fixed;left:10px;bottom:10px;z-index:99999;font:600 13px ui-monospace,monospace;padding:6px 9px;border-radius:8px;background:rgba(0,0,0,.72);color:#9f9;pointer-events:none";
+  document.body.appendChild(el);
+  let n = 0, t0 = performance.now(), worst = 0, last = t0;
+  (function fpsTick(now) { n++; worst = Math.max(worst, now - last); last = now;
+    if (now - t0 >= 1000) { el.textContent = `${Math.round(n * 1000 / (now - t0))} fps · worst ${Math.round(worst)} ms · ${USE_CSS_VIEW ? "css" : "canvas"} view · ${stillMode ? "still" : "live"}`; n = 0; t0 = now; worst = 0; }
+    requestAnimationFrame(fpsTick); })(t0);
+}
 /* test hook for local checks only: inert unless the page is opened with #pftest */
 if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, VIDS, MODES, snapshotField, gameLV, LV_OK, swapDrawn() { G.sp = genSpecimen(G.seed, G.mode, G.mode === "fluor" ? "hela" : G.mode === "bright" ? ORGS[G.seed % ORGS.length].id : null, false); G.layers = buildLayers(G.sp, OBJ[G.k], G.k === 2); G.best = null; G.dirty = true; }, lockNow: (t) => lock(t), eff: () => eff(), fitHeadline, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
   renderSpec(mode, seed, k) { const m = MODES[mode], sp = genSpecimen(seed, mode, mode === "bright" ? ORGS[seed % ORGS.length].id : null), o = m.objs[k], cv = newCanvas(); renderField(cv.getContext("2d"), sp, buildLayers(sp, o, k === 2), { o, e: effective(mode, k, true, 1), d: -sp.targets[k].z, cube: "all", shutter: true, signal: 1 }); return { url: cv.toDataURL("image/jpeg", 0.85), kind: sp.plate || sp.orgId || sp.kind }; },
