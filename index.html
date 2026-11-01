@@ -3195,7 +3195,7 @@ function genLive(seed, mode, id) {
 function liveStage(sp, o) { const objs = MODES[sp.kind].objs, k = objs.indexOf(o); return k >= 0 ? k : o.mag <= 10 ? 0 : o.mag <= 40 ? 1 : 2; }
 function buildLiveLayers(sp, o) {
   const k = liveStage(sp, o), t = sp.targets[k], cv = newCanvas();
-  const L = { live: true, n: 1, clip: t.clip, crop: CLIPS[t.clip].zoom || LIVE_CROP[k], ch: t.ch || "all", z: t.z, w: CLIPS[t.clip].gain || 1, canvas: cv, ctx: cv.getContext("2d"), drawnAt: -1, cube: null };
+  const L = { live: true, n: 1, clip: t.clip, crop: t.crop || CLIPS[t.clip].zoom || LIVE_CROP[k], ch: t.ch || "all", z: t.z, w: CLIPS[t.clip].gain || 1, canvas: cv, ctx: cv.getContext("2d"), drawnAt: -1, cube: null };
   if (G && G.sp === sp) playClips([t.clip]);
   if (!LV_OK) paintLive(L, "all", sp.kind);
   const layers = [L];
@@ -5505,7 +5505,32 @@ function buildHero() {
   if (mode === "sem") { hero = { mode, sem: true, k: hero ? hero.k : 2, theta: hero ? hero.theta : 55, thetaT: SEMK.alpha() * 180 / Math.PI, ring: hero ? hero.ring : 0 }; $("heroEp").classList.add("sem"); semHeroInit(); return; }
   $("heroEp").classList.remove("sem");
   const sp = genLive(hashString("hero-" + mode), mode, { bright: "wet-pond", fluor: "live-cells", confocal: "live-infection" }[mode]);
-  hero = { mode, sp, layers: [], k: hero && hero.mode === mode ? hero.k : 2, pull: null, last: 0, theta: hero ? hero.theta : 55, thetaT: 55, ring: hero ? hero.ring : 0 };
+  hero = { mode, sp, layers: [], k: hero && hero.mode === mode ? hero.k : 2, pull: null, last: 0, theta: hero ? hero.theta : 55, thetaT: 55, ring: hero ? hero.ring : 0, reel: HERO_REEL[mode] || null, ri: -1 };
+  if (hero.reel) heroReel(0);
+}
+/* Title reels: a mode with a reel cycles its title circle through these clips, about 8 s each,
+   pulling out of focus and back between them. Each plays at the crop it has in the game. */
+const HERO_REEL = {
+  bright: [
+    { clip: "vorticella", label: "Vorticella feeding", crop: 0.78 },
+    { clip: "egeria", label: "Streaming plant cells", crop: 1 },
+    { clip: "organoid", label: "Organoids forming", crop: 1 },
+    { clip: "tardigrade", label: "Tardigrade", crop: 1 },
+    { clip: "para2", label: "Paramecium", crop: 0.78 },
+  ],
+};
+const REEL_MS = 8000;
+function heroReel(i) {
+  const r = hero.reel[i];
+  hero.ri = i; hero.reelT = performance.now(); hero.layers = [];
+  hero.sp = { ...hero.sp, targets: [0, 1, 2].map(() => ({ z: 0, ch: null, label: r.label, tag: null, clip: r.clip, crop: r.crop })) };
+  clipVideo(hero.reel[(i + 1) % hero.reel.length].clip);   // start loading the next one
+  heroChipText();
+}
+function heroChipText() {
+  if (!hero || hero.sem) return;
+  const o = MODES[hero.mode].objs[hero.k];
+  $("heroChip").textContent = (hero.reel ? hero.reel[hero.ri].label + " · " : "") + `${o.mag}x · NA ${o.NA.toFixed(2)} · ${o.n > 1 ? "oil" : "air"}`;
 }
 function heroLayers(k) { if (!hero.layers[k]) hero.layers[k] = buildLayers(hero.sp, MODES[hero.mode].objs[k], false); return hero.layers[k]; }
 function heroPose(k, force) {
@@ -5519,10 +5544,10 @@ function heroPose(k, force) {
   }
   const o = MODES[hero.mode].objs[k];
   hero.thetaT = thetaOf(o);
-  $("heroChip").textContent = `${o.mag}x · NA ${o.NA.toFixed(2)} · ${o.n > 1 ? "oil" : "air"}`;
-  if (k === hero.k && !force) return;
+  if (k === hero.k && !force) { heroChipText(); return; }
   hero.pull = { t0: performance.now(), from: hero.k, to: k, dur: 560, swapped: false };
   if (k !== hero.k) setTimeout(() => sfx("turret"), 60);
+  { const kk = hero.k; hero.k = k; heroChipText(); hero.k = kk; }
   const ep = $("heroEp"); ep.classList.remove("pose"); void ep.offsetWidth; ep.classList.add("pose");
 }
 function heroDrift(t, mode, k) {
@@ -5535,15 +5560,16 @@ function heroDrift(t, mode, k) {
 function heroFrame(now) {
   if (current !== "title" || !hero || document.hidden) return;
   if (hero.sem) { semHeroFrame(now); heroCone(now); $("heroRing").style.transform = `rotate(${(prefersReduced() ? 0 : now / 1000) * 4}deg)`; return; }
+  if (hero.reel && !hero.pull && now - hero.reelT > REEL_MS && !prefersReduced()) hero.pull = { t0: now, from: hero.k, to: hero.k, dur: 1100, swapped: false, reel: true };
   const pulling = hero.pull && now - hero.pull.t0 < hero.pull.dur;
   if (!pulling && now - hero.last < (stillMode ? 100 : 66)) { heroCone(now); return; }
   hero.last = now;
   let extra = 0;
   if (hero.pull) {
     const p = clamp((now - hero.pull.t0) / hero.pull.dur, 0, 1);
-    if (p >= 0.45 && !hero.pull.swapped) { hero.k = hero.pull.to; hero.pull.swapped = true; }
+    if (p >= 0.45 && !hero.pull.swapped) { hero.k = hero.pull.to; hero.pull.swapped = true; if (hero.pull.reel) heroReel((hero.ri + 1) % hero.reel.length); }
     const o = MODES[hero.mode].objs[hero.k];
-    extra = Math.sin(Math.PI * p) * o.dof * 9 * (p < 0.45 ? 1 : -0.6);
+    extra = Math.sin(Math.PI * p) * o.dof * (hero.pull.reel ? 22 : 9) * (p < 0.45 ? 1 : -0.6);
     hero.ring += (p < 1 ? 2.2 : 0);
     if (p >= 1) hero.pull = null;
   }
