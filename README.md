@@ -91,6 +91,9 @@ Every fluorescence and confocal slide, and most brightfield ones, are real recor
 
 ## Rendering and performance
 
+- **Footage: Live / Still** (title screen, key F). Live plays the clips; Still freezes each on one frame while focus, blur and colour stay live. Still is much lighter, because a playing clip makes the browser redo the eyepiece blur on every new frame.
+- Clips are copied frame by frame into a canvas, with grey, gain and channel tints done there by blend modes, so the eyepiece composites the same in every browser. Clips are H.264 High profile, 4:2:0, so Firefox-based browsers and Windows decoders play them.
+
 - **GPU live view.** Live footage is not drawn into a canvas. The `<video>` sits in the eyepiece and its blur, colour channel (a multiply tint), brightness and opacity are CSS filters the browser composites on the GPU. Each frame the game only changes a few style values, and only when focus or settings change. Confocal sections and their fainter neighbouring planes are merged into one blur and one brightness.
 - **Drawn slides** (Gram smears, tutorials) use the same path: each pre-drawn layer is its own element with its own CSS blur, stacked with normal or additive blending. The dust plane, far from focus, is pre-blurred and only redrawn when its blur changes by about 12%.
 - The canvas renderer (`renderField`) remains for the share card, z-stack thumbnails, tests and browsers without CSS filters.

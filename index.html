@@ -236,7 +236,10 @@ body[data-screen="title"] .brand { pointer-events: none; }
 .m-item:focus-visible { outline: none; }
 .m-idx { font: 500 11.5px var(--f-mono); letter-spacing: .08em; color: var(--muted); transform: translateY(-.35em); transition: color .14s; }
 .m-name { display: inline-block; font: italic 800 clamp(24px, min(3.3vw, 4.7svh), 46px)/1 var(--f-display); font-stretch: 86%; letter-spacing: -0.02em; text-transform: uppercase; transform-origin: 0 60%; white-space: nowrap; }
-.m-item.is-sel { opacity: 1; color: var(--acc-ink); transform: translateX(var(--sel-shift)); }
+.m-item.is-sel { opacity: 1; color: var(--acc-ink); }
+/* only the contents slide: the button (its hit area) stays put, so hover cannot bounce between neighbours */
+.m-item > * { transition: translate .2s var(--e-snap); }
+.m-item.is-sel > * { translate: var(--sel-shift) 0; }
 .m-item.is-sel .m-idx { color: var(--acc-ink); }
 .m-item.is-sel .m-name { font-stretch: 120%; font-weight: 900; animation: nameStretch .3s var(--e-pop); }
 @keyframes nameStretch { from { transform: scaleX(.78); } }
@@ -1471,6 +1474,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         <div class="t-chips">
           <button class="chip-toggle shine" id="clockChip" aria-pressed="true"><span class="ct-k">Clock</span><span class="ct-v" id="clockVal">Timed</span><kbd>T</kbd></button>
           <button class="chip-toggle shine" id="soundChip" aria-pressed="true"><span class="ct-k">Sound</span><span class="ct-v" id="soundVal">On</span><kbd>M</kbd></button>
+          <button class="chip-toggle shine" id="stillChip" aria-pressed="true" title="Still freezes the footage on one frame and runs much lighter"><span class="ct-k">Footage</span><span class="ct-v" id="stillVal">Live</span><kbd>F</kbd></button>
           <button class="mode-learn" id="modeLearn"><span>What is a brightfield microscope?</span><span class="ml-short">How it works</span><i aria-hidden="true">→</i></button>
         </div>
         <p class="t-keys"><kbd>↑</kbd><kbd>↓</kbd> choose · <kbd>Enter</kbd> open · <kbd>Q</kbd><kbd>E</kbd> microscope · <kbd>Esc</kbd> back</p>
@@ -2613,7 +2617,7 @@ function liveFailed(key) {
   G.layers = buildLayers(G.sp, OBJ[G.k], G.k === 2); G.best = null; G.dirty = true;
   $("slideStain").textContent = G.info.stain; stopClips();
 }
-function playClips(keys) { for (const [k, v] of Object.entries(VIDS)) if (!keys.includes(k)) v.pause(); for (const k of keys) { const p = clipVideo(k).play(); if (p && p.catch) p.catch(() => {}); } }
+function playClips(keys) { for (const [k, v] of Object.entries(VIDS)) if (!keys.includes(k)) v.pause(); for (const k of keys) { const v = clipVideo(k); if (stillMode) { if (!v.paused) v.pause(); continue; } const p = v.play(); if (p && p.catch) p.catch(() => {}); } }
 function stopClips() { for (const v of Object.values(VIDS)) v.pause(); }
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) stopClips();
@@ -3238,7 +3242,7 @@ function paintLive(L, cube, mode) {
    ===================================================================== */
 const LV_OK = (() => { try { return CSS.supports("filter", "blur(1px)") && CSS.supports("mix-blend-mode", "multiply"); } catch (e) { return false; } })();
 let NOISE_URL = null;
-function makeLiveView(host, before) {
+function makeLiveView(host, before, { pump: autoPump = true } = {}) {
   if (NOISE_URL === null) { try { NOISE_URL = noiseCv.toDataURL("image/png"); } catch (e) { NOISE_URL = ""; } }
   const el = document.createElement("div");
   el.className = "lv"; el.hidden = true; el.setAttribute("aria-hidden", "true");
@@ -3269,7 +3273,7 @@ function makeLiveView(host, before) {
      GPUs (Chromium on Windows) hand a <video> to a hardware overlay that skips the CSS blur and
      blending, leaving an empty eyepiece. A canvas always composites normally, and it also lets the
      title and the game share one decoder per clip. */
-  let drawnT = -1, drawnV = null, frameFilter = "none", frameTint = null;
+  let drawnT = -1, drawnV = null, frameGray = false, frameGain = 1, frameTint = null;
   function drawFrame() {
     if (!vid || vid.readyState < 2) return;
     const t = vid.currentTime;
@@ -3277,19 +3281,24 @@ function makeLiveView(host, before) {
     drawnV = vid; drawnT = t;
     const vw = vid.videoWidth || 480, vh = vid.videoHeight || 480, s0 = Math.min(vw, vh);
     if (frame.width !== s0) { frame.width = frame.height = Math.min(480, s0); }
-    fctx.filter = frameFilter;
-    fctx.drawImage(vid, (vw - s0) / 2, (vh - s0) / 2, s0, s0, 0, 0, frame.width, frame.height);
-    fctx.filter = "none";
+    const W = frame.width;
+    fctx.globalCompositeOperation = "source-over"; fctx.globalAlpha = 1;
+    fctx.drawImage(vid, (vw - s0) / 2, (vh - s0) / 2, s0, s0, 0, 0, W, W);
+    // grey and gain with blend modes (a canvas filter is slow in some browsers)
+    if (frameGray) { fctx.globalCompositeOperation = "saturation"; fctx.fillStyle = "#808080"; fctx.fillRect(0, 0, W, W); }
+    for (let g = frameGain - 1; g > 0.01; g -= 1) { fctx.globalCompositeOperation = "lighter"; fctx.globalAlpha = Math.min(1, g); fctx.drawImage(frame, 0, 0); }
+    fctx.globalAlpha = 1; fctx.globalCompositeOperation = "source-over";
     if (frameTint) { fctx.globalCompositeOperation = "multiply"; fctx.fillStyle = frameTint; fctx.fillRect(0, 0, frame.width, frame.height); fctx.globalCompositeOperation = "source-over"; }
   }
   function attach(L) {
     clip = L.clip; vid = clipVideo(clip); drawnT = -1;
-    if (vid.paused) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+    if (vid.paused && !stillMode) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
     S(vbox, "transform", `translate(-50%, -50%) scale(${(1.12 / L.crop).toFixed(4)})`);
     drawFrame();
   }
   // keep copying new frames while this view is showing a clip (about 15 a second)
-  (function pump() { if (!el.hidden && vid && el.isConnected && !document.hidden) drawFrame(); requestAnimationFrame(pump); })();
+  // (the title view instead copies frames on its own, slower updates, so the blur is redone once per update)
+  if (autoPump) (function pump() { if (!el.hidden && vid && el.isConnected && !document.hidden) drawFrame(); requestAnimationFrame(pump); })();
   return {
     el,
     hide() { if (!el.hidden) el.hidden = true; },
@@ -3315,10 +3324,11 @@ function makeLiveView(host, before) {
       // what the clip shows under this cube, and its own colour processing (as paintLive did)
       const shows = mode === "bright" || cube === "all" || (c.chs ? c.chs.includes(cube) : cube === c.ch);
       const clipGain = mode === "bright" ? 1 : (c.boost || 1) * (mode === "confocal" ? 1.6 : 1);
-      { const ff = mode !== "bright" && (c.gray || clipGain !== 1) ? `${c.gray ? "grayscale(1) " : ""}brightness(${clipGain})` : "none";
-        if (ff !== frameFilter) { frameFilter = ff; drawnT = -1; drawFrame(); } }
+      { const g = mode !== "bright" && !!c.gray, gn = mode !== "bright" ? clipGain : 1;
+        if (g !== frameGray || gn !== frameGain) { frameGray = g; frameGain = gn; drawnT = -1; } }
       const tc = mode === "bright" ? null : c.gray ? rgba(CH[cube === "all" || mode !== "fluor" ? c.ch : cube].rgb, 1) : cube === "all" ? null : MASK[cube];
-      if ((tc || null) !== frameTint) { frameTint = tc || null; drawnT = -1; drawFrame(); }
+      if ((tc || null) !== frameTint) { frameTint = tc || null; drawnT = -1; }
+      drawFrame();
       // focus: blur, brightness and opacity of the field
       let blur = 0, op = 1, bri = 1, extra = "";
       if (mode === "bright") {
@@ -5159,7 +5169,7 @@ let current = "title", busy = false;
 function show(v) {
   for (const k in screens) { screens[k].hidden = k !== v; screens[k].classList.remove("enter"); }
   if (v === "title" && window.resetCone) { window.resetCone(); setTimeout(window.resetCone, 900); }
-  document.querySelectorAll("#rRecap video").forEach(x => { try { v === "result" ? x.play().catch(() => {}) : x.pause(); } catch (e) {} });
+  document.querySelectorAll("#rRecap video").forEach(x => { try { v === "result" && !stillMode ? x.play().catch(() => {}) : x.pause(); } catch (e) {} });
   void screens[v].offsetWidth; screens[v].classList.add("enter");
   current = v;
   document.body.dataset.screen = v;
@@ -5248,7 +5258,7 @@ function makeMenu(nav, { onSelect = () => {}, onActivate = () => {} } = {}) {
     const it = items[m.sel]; if (!it) return;
     const shift = parseFloat(getComputedStyle(nav).getPropertyValue("--sel-shift")) || 0;
     cursor.style.transform = `translate(${it.offsetLeft + shift - 12}px, ${it.offsetTop}px)`;
-    cursor.style.width = `${it.offsetWidth + 22}px`;
+    cursor.style.width = `${it.offsetWidth + 22}px`;  // the cursor sits under the slid contents
     cursor.style.height = `${it.offsetHeight}px`;
   };
   m.select = (i, { focus = false, silent = false } = {}) => {
@@ -5303,6 +5313,9 @@ function makeMenu(nav, { onSelect = () => {}, onActivate = () => {} } = {}) {
 
 /* ---------- Title screen ---------- */
 let timedMode = loadStore().timed !== false;
+/* Footage: "live" plays the clips; "still" freezes each on one frame (focus, blur and colour stay live).
+   A playing clip makes the browser re-blur the whole eyepiece on every new frame, so still is far lighter. */
+let stillMode = loadStore().still === true;
 let homeMode = ["bright", "fluor", "confocal"].includes(loadStore().mode) ? loadStore().mode : "bright";
 const MODE_ORDER = ["bright", "fluor", "confocal"]; // "sem" is built but switched off for now
 const MODE_WORD = { bright: "BRIGHTFIELD", fluor: "FLUORESCENCE", confocal: "CONFOCAL", sem: "ELECTRON" };
@@ -5332,9 +5345,12 @@ function calHTML(mode, days, st) {
 }
 function renderStreak(act) {
   const el = $("tStreak"); if (!el) return;
-  if (act !== "daily" || homeMode === "sem") { el.hidden = true; return; }
+  // the row keeps its space on every menu item: if it collapsed, the vertically centred column would
+  // jump, moving the menu under a still cursor and flipping the hover between items
+  if (homeMode === "sem") { el.hidden = true; return; }
+  const off = act !== "daily";
   const st = loadStore(), n = streakDays(st);
-  el.hidden = false;
+  el.hidden = false; el.style.visibility = off ? "hidden" : ""; el.setAttribute("aria-hidden", String(off));
   el.innerHTML = `<p>${n ? `<b>${n}</b>-day streak` : "Play today to start a streak"} <span>· last 2 weeks of ${MODES[homeMode].name.toLowerCase()} dailies</span></p>${calHTML(homeMode, 14, st)}`;
 }
 function renderResultCal() {
@@ -5352,7 +5368,7 @@ function captionFor(act) {
   }
   return {
     practice: `A fresh random ${m} ${thing}, as many times as you like.`,
-    tutorial: { bright: "A guided brightfield round: coarse, fine, parfocal lenses and immersion oil. About four minutes.", fluor: "A guided fluorescence round: filter cubes, the shutter and photobleaching, antibodies and phalloidin, one label per objective. About six minutes.", confocal: "A guided confocal round: the pinhole, optical sections and lasers, GFP and hunting labelled layers by depth. About six minutes.", sem: "One guided SEM session." }[homeMode],
+    tutorial: { bright: "A guided brightfield round: coarse, fine, parfocal lenses and immersion oil. About four minutes.", fluor: "A guided fluorescence round: filter cubes, the shutter, photobleaching and how labels are made. About six minutes.", confocal: "A guided confocal round: the pinhole, optical sections and lasers, GFP and hunting labelled layers by depth. About six minutes.", sem: "One guided SEM session." }[homeMode],
     notes: sem ? "The physics behind the SEM: the beam cone, depth of field, charging." : "The optics behind the game: light cones, depth of field, immersion oil.",
     guide: "How each microscope works, its parts, and the dyes and tricks behind every image. Interactive.",
     credits: "Where the specimens come from, and who built this.",
@@ -5411,6 +5427,7 @@ function cycleMode(dir) { const n = MODE_ORDER.length, i = MODE_ORDER.indexOf(ho
 function syncChips() {
   $("clockChip").setAttribute("aria-pressed", String(timedMode)); $("clockVal").textContent = timedMode ? "Timed" : "Timeless";
   $("soundChip").setAttribute("aria-pressed", String(soundOn)); $("soundVal").textContent = soundOn ? "On" : "Off";
+  $("stillChip").setAttribute("aria-pressed", String(!stillMode)); $("stillVal").textContent = stillMode ? "Still" : "Live";
   $("pauseSound").textContent = soundOn ? "Sound on" : "Sound off";
   const mOn = musicOn && soundOn;
   $("musicBtn").setAttribute("aria-pressed", String(mOn)); $("musicBtn").classList.toggle("live", MUSIC.playing);
@@ -5419,6 +5436,11 @@ function syncChips() {
 }
 function flipChip(id) { const c = $(id); c.classList.remove("flip"); void c.offsetWidth; c.classList.add("flip"); }
 function toggleClock() { timedMode = !timedMode; patchStore({ timed: timedMode }); syncChips(); flipChip("clockChip"); sfx("move", { i: timedMode ? 4 : 1 }); const s = titleMenu.items[titleMenu.sel]; if (s) $("titleCaption").textContent = captionFor(s.dataset.act); }
+function toggleStill() {
+  stillMode = !stillMode; patchStore({ still: stillMode }); syncChips(); flipChip("stillChip"); sfx("move", { i: stillMode ? 1 : 4 });
+  if (stillMode) { stopClips(); document.querySelectorAll("#rRecap video").forEach(x => x.pause()); }
+  else if (G && G.sp && G.sp.live) playClips([G.sp.targets[G.k].clip]);
+}
 function toggleSound() { soundOn = !soundOn; patchStore({ sound: soundOn }); MUSIC.setEnabled(musicOn && soundOn); syncChips(); flipChip("soundChip"); if (soundOn) sfx("confirm"); }
 function toggleMusic() {
   // the first press after load only unlocks audio if music was already meant to be on
@@ -5461,10 +5483,11 @@ $("clockChip").addEventListener("click", toggleClock);
   window.addEventListener("resize", sync); setInterval(sync, 700); setTimeout(sync, 0);
 })();
 $("soundChip").addEventListener("click", toggleSound);
+$("stillChip").addEventListener("click", toggleStill);
 
 /* Hero eyepiece: every menu item is a pose. The nosepiece swings and the view hunts focus. */
 const heroCanvas = $("heroCanvas"), hctx = heroCanvas.getContext("2d");
-const heroLV = makeLiveView($("heroEp"), heroCanvas);
+const heroLV = makeLiveView($("heroEp"), heroCanvas, { pump: false });
 let heroCanvasClear = false;
 let hero = null;
 function buildHero() {
@@ -5503,7 +5526,7 @@ function heroFrame(now) {
   if (current !== "title" || !hero || document.hidden) return;
   if (hero.sem) { semHeroFrame(now); heroCone(now); $("heroRing").style.transform = `rotate(${(prefersReduced() ? 0 : now / 1000) * 4}deg)`; return; }
   const pulling = hero.pull && now - hero.pull.t0 < hero.pull.dur;
-  if (!pulling && now - hero.last < (hero.mode === "confocal" ? 70 : 42)) { heroCone(now); return; }
+  if (!pulling && now - hero.last < (stillMode ? 100 : 66)) { heroCone(now); return; }
   hero.last = now;
   let extra = 0;
   if (hero.pull) {
@@ -5518,7 +5541,7 @@ function heroFrame(now) {
   const o = MODES[hero.mode].objs[hero.k];
   if (hero.sp.live) {
     const clip = hero.sp.targets[hero.k].clip, v = clipVideo(clip);
-    if (v.paused) playClips([clip]);
+    if (v.paused && !stillMode) playClips([clip]);
     if (LV_OK) {
       heroLV.update(hero.sp, heroLayers(hero.k), { o, e: effective(hero.mode, hero.k, true, 1), d: heroDrift(t, hero.mode, hero.k) + extra, cube: "all", signal: 1 }, "all");
       if (!heroCanvasClear) { hctx.setTransform(1, 0, 0, 1, 0, 0); hctx.clearRect(0, 0, SIZE, SIZE); heroCanvas.style.visibility = "hidden"; heroCanvasClear = true; }
@@ -7636,7 +7659,7 @@ let slamSkip = null;
 $("slam").addEventListener("click", () => slamSkip && slamSkip());
 async function toVerdict(v) {
   G.ready = false; syncNoSignal();
-  if (G.sp.live && G.stage < 2) { const nv = clipVideo(G.sp.targets[G.k + 1].clip); nv.preload = "auto"; if (nv.readyState < 3) { const p = nv.play(); if (p && p.then) p.then(() => { if (G && G.sp.targets[G.k].clip !== G.sp.targets[G.k + 1]?.clip && !G.ready) nv.pause(); }).catch(() => {}); } }
+  if (G.sp.live && G.stage < 2) { const nv = clipVideo(G.sp.targets[G.k + 1].clip); nv.preload = "auto"; if (nv.readyState < 3 && !stillMode) { const p = nv.play(); if (p && p.then) p.then(() => { if (G && G.sp.targets[G.k].clip !== G.sp.targets[G.k + 1]?.clip && !G.ready) nv.pause(); }).catch(() => {}); } }
   $("lockBtn").disabled = true; $("oilBtn").disabled = true;
   const vEl = $("verdict"), scope = $("gScope"), dock = $("dock"), view = $("gView"), slam = $("slam");
   $("vTitle").textContent = v.title; $("vTier").textContent = v.tier; $("vQuip").textContent = v.quip;
@@ -8001,7 +8024,7 @@ function finishNow() {
   const plate = info.plateId && plateImgs[info.plateId] ? PLATES[info.plateId] : null;
   { const rc = $("rRecap"); rc.hidden = !(G.sp && G.sp.live);
     if (G.sp && G.sp.live) rc.innerHTML = G.sp.targets.map((t, i) => { const c = CLIPS[t.clip], tint = c.gray && t.ch ? `rgb(${CH[t.ch].rgb.join(",")})` : "";
-      return `<figure class="rc-tile"><span class="rc-ep"${c.gray ? ' style="--g:1"' : ""}><video src="${c.file}" muted loop autoplay playsinline preload="metadata"></video>${tint ? `<i style="background:${tint}"></i>` : ""}</span><figcaption><b>${OBJ[i].mag}x</b> ${escapeHtml(t.label)}${t.tag ? `<small>${escapeHtml(t.tag)}</small>` : ""}</figcaption></figure>`; }).join("");
+      return `<figure class="rc-tile"><span class="rc-ep"${c.gray ? ' style="--g:1"' : ""}><video src="${c.file}" muted loop${stillMode ? "" : " autoplay"} playsinline preload="metadata"></video>${tint ? `<i style="background:${tint}"></i>` : ""}</span><figcaption><b>${OBJ[i].mag}x</b> ${escapeHtml(t.label)}${t.tag ? `<small>${escapeHtml(t.tag)}</small>` : ""}</figcaption></figure>`; }).join("");
     else rc.innerHTML = ""; }
   $("rCredit").innerHTML = G.sp && G.sp.live ? `<details class="credits-fold"><summary>Footage credits (${new Set(G.sp.video).size} clips)</summary>${[...new Set(G.sp.video)].map(k => `<p>${escapeHtml(CLIPS[k].credit)} <a href="${CLIPS[k].url}" target="_blank" rel="noopener">Source</a></p>`).join("")}</details>` : G.mode === "sem" ? `Stub modelled in 3D from published sizes and rendered as a secondary-electron image.${G.info.lead || ""}` : plate ? `${G.mode === "bright" ? "100x plate" : "Photograph"}: ${escapeHtml(plate.credit)} <a href="${plate.url}" target="_blank" rel="noopener">Source</a>` : "Specimen drawn in code from published size, shape and labelling.";
   $("shareText").textContent = shareMessage().replace(/\n/g, " · ");
@@ -8263,6 +8286,7 @@ document.addEventListener("keydown", (e) => {
     else if (k === "e" || e.key === "ArrowRight") { e.preventDefault(); cycleMode(1); }
     else if (k === "t") toggleClock();
     else if (k === "m") toggleSound();
+    else if (k === "f") toggleStill();
     else if (k === "b") toggleMusic();
     return;
   }
