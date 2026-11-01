@@ -71,9 +71,9 @@ The one-slide-a-day format comes from [dialed.gg](https://dialed.gg). The menus 
 
 ## Live footage
 
-Every fluorescence and confocal slide, and most brightfield ones, are real recordings of living samples: chromatin, mitochondria, ER, growing microtubules (EB1 comets), swimming bacteria, virus particles entering cells, Lyme spirochetes and neutrophils eating bacteria inside living mice, zebrafish and fruit fly embryos, organoids, Paramecium, Vorticella, rotifers, Euglena, diatoms, a dividing C. elegans embryo and cytoplasmic streaming. Clips live in `videos/` (credits in `videos/CREDITS.md`).
+Every fluorescence and confocal slide, and most brightfield ones, are real recordings of living samples: chromatin, mitochondria, ER, growing microtubules (EB1 comets), swimming bacteria, virus particles entering cells, Lyme spirochetes and neutrophils eating bacteria inside living mice, zebrafish and fruit fly embryos, organoids, Paramecium, Vorticella, Stentor, rotifers, Euglena, diatoms, a tardigrade, a comb jelly embryo, Dictyostelium streaming together, zebrafish sensory axons and gut, migrating neural crest, a dengue infection reporter, a dividing C. elegans embryo and cytoplasmic streaming. Clips live in `videos/` (credits in `videos/CREDITS.md`).
 
-- 13 live slides (4 fluorescence, 4 confocal, 5 brightfield) built from 32 clips. Each clip is a 20–40 s seamless loop with a crossfaded seam, so it doesn't visibly restart while you focus.
+- 21 live slides (6 fluorescence, 6 confocal, 9 brightfield) built from 52 clips. Each clip is a 20–40 s seamless loop with a crossfaded seam, so it doesn't visibly restart while you focus.
 - Each slide plays one clip per objective. Defocus blur, confocal dimming, photobleaching and the filter cube are applied live: a cube shows only the colour channel it passes, so a label goes dark under the wrong cube.
 - Only the clip in view decodes; playback stops when the tab is hidden or you quit.
 - Fixed slides remain only as Gram smears in brightfield, in the tutorials, and as a fallback if a clip fails to load.
