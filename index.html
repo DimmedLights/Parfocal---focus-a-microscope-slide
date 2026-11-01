@@ -1403,6 +1403,24 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .gate-pc-t { margin: 0; font: 400 14px/1.5 var(--f-body); opacity: .72; text-wrap: pretty; }
 .gate-pc .gate-go { margin-top: 6px; cursor: pointer; }
 </style>
+<style>
+.stage-ctl { display: flex; align-items: center; gap: 14px; justify-content: center; margin-top: 4px; }
+.stage-knob { width: 92px; height: 92px; flex: none; touch-action: none; user-select: none; cursor: grab; }
+.stage-knob:active { cursor: grabbing; }
+.sk-outer { fill: #2a2123; stroke: #4a3e3f; stroke-width: 1.5; }
+.sk-gap { fill: #120c0e; }
+.sk-inner { fill: #3b3032; stroke: #5a4c4d; stroke-width: 1.2; }
+.sk-hub { fill: var(--acc); }
+#skOuter line, #skInner line { stroke: #8d7d78; stroke-width: 2; stroke-linecap: round; }
+.stage-read { display: grid; gap: 3px; min-width: 0; max-width: 230px; }
+.sr-k { font: 700 11px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--acc); }
+.sr-v { font: 600 13px var(--f-mono); color: var(--ink); white-space: nowrap; }
+.stage-read small { font-size: 11.5px; line-height: 1.35; color: var(--muted); }
+.sr-c { justify-self: start; font: 600 11.5px var(--f-mono); padding: 3px 9px; border-radius: 8px; border: 1px solid var(--glass-edge); background: var(--glass-strong); color: var(--ink); cursor: pointer; }
+.stage-ctl.off { opacity: .45; }
+#eyepieceBox.panning { cursor: grabbing; }
+#eyepieceBox.can-pan { cursor: grab; }
+</style>
 </head>
 <body>
 <header class="topbar gutter" id="topbar">
@@ -1652,6 +1670,22 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <circle cx="100" cy="100" r="11" fill="var(--acc)"/>
             <path class="k-index" d="M100 0.5 L104.5 6 L95.5 6 Z"/>
           </svg>
+          <div class="stage-ctl" id="stageCtl">
+            <svg class="stage-knob" id="stageKnob" viewBox="0 0 120 120" aria-label="Mechanical stage. Turn the outer ring to move the slide forward and back, the inner knob to move it left and right. You can also drag the eyepiece.">
+              <circle cx="60" cy="60" r="58" class="sk-outer"/>
+              <g id="skOuter"></g>
+              <circle cx="60" cy="60" r="34" class="sk-gap"/>
+              <circle cx="60" cy="60" r="31" class="sk-inner"/>
+              <g id="skInner"></g>
+              <circle cx="60" cy="60" r="7" class="sk-hub"/>
+            </svg>
+            <div class="stage-read">
+              <span class="sr-k">Stage</span>
+              <span class="sr-v" id="stageRead">X 40.000 · Y 20.000 mm</span>
+              <small>Outer ring Y · inner knob X · or drag the eyepiece. The image moves the opposite way.</small>
+              <button class="sr-c" id="stageCentre" type="button">Recentre</button>
+            </div>
+          </div>
           <div class="jogs" id="jogs">
             <div class="jog"><span>Coarse</span><div class="jog-strip coarse" id="jogCoarse" aria-label="Coarse focus. Drag right to bring the lens down."></div></div>
             <div class="jog"><span>Fine</span><div class="jog-strip fine" id="jogFine" aria-label="Fine focus. Drag right to bring the lens down."></div></div>
@@ -3182,7 +3216,7 @@ const LIVE = {
   {"id": "wet-culture2", "name": "Cells in culture and a shelled flagellate", "stain": "Phase contrast and brightfield", "stages": [{"clip": "psc", "label": "dividing cells"}, {"clip": "trachelo", "label": "Trachelomonas"}, {"clip": "cyanobacteria", "label": "gliding cyanobacteria"}], "facts": [["10x", "Cultured cells, phase contrast time-lapse"], ["40x", "Trachelomonas, an iron-hardened shell"], ["100x", "Cyanobacterial filament gliding"], ["Phase contrast", "Makes unstained cells visible"]], "why": "Cells in a dish are almost transparent; phase contrast converts their refractive index differences into brightness so you can watch them divide. Trachelomonas carries a shell hardened with iron and manganese, and the cyanobacteria glide without flagella."}
  ]
 };
-const LIVE_CROP = [1, 0.78, 0.6]; // each objective sees a smaller part of its clip, but never below its pixels
+const LIVE_CROP = [0.86, 0.78, 0.6]; // each objective sees a smaller part of its clip, but never below its pixels
 
 function genLive(seed, mode, id) {
   const R = makeRng(seed, "live"), set = (id && LIVE[mode].find(x => x.id === id)) || LIVE[mode][R.int(0, LIVE[mode].length - 1)];
@@ -3236,14 +3270,16 @@ function clipBg(key, v, so, sw) {
 function paintLive(L, cube, mode) {
   const c = CLIPS[L.clip], v = VIDS[L.clip];
   if (!v || v.readyState < 2) return false;
-  const t = v.currentTime;
-  if (t === L.drawnAt && cube === L.cube) return false;
-  L.drawnAt = t; L.cube = cube;
-  const x = L.ctx, vw = v.videoWidth, sw = vw * L.crop, so = (vw - sw) / 2;
+  const t = v.currentTime, pk = (L.panX || 0).toFixed(4) + "," + (L.panY || 0).toFixed(4);
+  if (t === L.drawnAt && cube === L.cube && pk === L.panKey) return false;
+  L.drawnAt = t; L.cube = cube; L.panKey = pk;
+  const x = L.ctx, vw = v.videoWidth, sw = vw * L.crop, so0 = (vw - sw) / 2;
+  // the stage slides the viewing window over the filmed frame (the image is inverted, so it moves the other way)
+  const so = so0 + (L.panX || 0) * vw, soy = so0 + (L.panY || 0) * vw;
   x.globalCompositeOperation = "source-over"; x.filter = "none";
   if (mode === "bright") {
-    x.drawImage(v, so, so, sw, sw, 0, 0, SIZE, SIZE);
-    const B = clipBg(L.clip, v, so, sw);
+    x.drawImage(v, so, soy, sw, sw, 0, 0, SIZE, SIZE);
+    const B = clipBg(L.clip, v, so0, sw);
     for (let g = B.gain - 1; g > 0.01; g -= 1) { x.globalCompositeOperation = "lighter"; x.globalAlpha = Math.min(1, g); x.drawImage(L.canvas, 0, 0); }
     x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
     return true;
@@ -3252,7 +3288,7 @@ function paintLive(L, cube, mode) {
   const shows = cube === "all" || (c.chs ? c.chs.includes(cube) : cube === c.ch);
   if (!shows) return true;
   const gain = (c.boost || 1) * (mode === "confocal" ? 1.6 : 1); // a thin optical section collects less light
-  x.drawImage(v, so, so, sw, sw, 0, 0, SIZE, SIZE);
+  x.drawImage(v, so, soy, sw, sw, 0, 0, SIZE, SIZE);
   if (c.gray) { x.globalCompositeOperation = "saturation"; x.fillStyle = "#808080"; x.fillRect(0, 0, SIZE, SIZE); }
   for (let g = gain - 1; g > 0.01; g -= 1) { x.globalCompositeOperation = "lighter"; x.globalAlpha = Math.min(1, g); x.drawImage(L.canvas, 0, 0); }
   x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
@@ -5814,6 +5850,77 @@ function startGame({ daily = false, tut = false, seed = null, mode = null } = {}
     target: () => (m === "sem" ? $("semImg") : $("eyepieceBox")),
   }).then(() => { if (G && G.mode !== "sem" && !G.ready && !G.locked) beginStage(); if (G && G.mode === "sem" && !isPhone()) $("vacPump").focus({ preventScroll: true }); else focusKnob(); });
 }
+
+/* ---------- Mechanical stage: move the slide in X and Y. Not scored; just for exploring.
+   Positions are in mm on the slide. A compound microscope inverts the image, so the specimen
+   drifts the opposite way to the stage. The view can only travel over the area that was filmed. ---------- */
+const FIELD_NUMBER = 18;                          // mm: eyepiece field number, so the field of view = 18 / magnification
+const fovMM = () => FIELD_NUMBER / OBJ[G.k].mag;
+function stageLimit(L) {                          // how far the stage can travel (mm) for this clip at this objective
+  if (!L || !L.live) return 0;
+  return fovMM() * (1 / L.crop - 1) / 2;
+}
+function stageFrac(L) {                           // stage position as a fraction of the filmed frame's width
+  const frame = fovMM() / L.crop;
+  return [G.sx / frame, G.sy / frame];
+}
+function stageLive() { return G && G.sp && G.sp.live && G.layers ? G.layers.find(x => x.live) : null; }
+function moveStage(dx, dy) {
+  if (!G || G.mode === "sem") return;
+  const L = stageLive(), lim = stageLimit(L);
+  if (!lim) return;
+  const nx = Math.max(-lim, Math.min(lim, G.sx + dx)), ny = Math.max(-lim, Math.min(lim, G.sy + dy));
+  if ((nx !== G.sx + dx && dx) || (ny !== G.sy + dy && dy)) endStop();   // the end of the stage's travel
+  if (nx === G.sx && ny === G.sy) return;
+  G.sx = nx; G.sy = ny; G.dirty = true; stageArt();
+}
+let skOuterAng = 0, skInnerAng = 0;
+function stageArt() {
+  if (!G) return;
+  const L = stageLive();
+  $("stageCtl").classList.toggle("off", !stageLimit(L));
+  $("stageRead").textContent = stageLimit(L) ? `X ${(40 + G.sx).toFixed(3)} · Y ${(20 + G.sy).toFixed(3)} mm` : "Fixed slide";
+  $("skOuter").setAttribute("transform", `rotate(${skOuterAng.toFixed(1)} 60 60)`);
+  $("skInner").setAttribute("transform", `rotate(${skInnerAng.toFixed(1)} 60 60)`);
+  $("eyepieceBox").classList.toggle("can-pan", !!stageLimit(L));
+}
+(function stageControls() {
+  const so = $("skOuter"), si = $("skInner");
+  so.innerHTML = Array.from({ length: 24 }, (_, i) => { const a = i * 15 * Math.PI / 180; return `<line x1="${60 + 41 * Math.sin(a)}" y1="${60 - 41 * Math.cos(a)}" x2="${60 + 54 * Math.sin(a)}" y2="${60 - 54 * Math.cos(a)}"/>`; }).join("");
+  si.innerHTML = Array.from({ length: 12 }, (_, i) => { const a = i * 30 * Math.PI / 180; return `<line x1="${60 + 14 * Math.sin(a)}" y1="${60 - 14 * Math.cos(a)}" x2="${60 + 27 * Math.sin(a)}" y2="${60 - 27 * Math.cos(a)}"/>`; }).join("");
+  // the knob: turn around its centre; the inner knob moves X, the outer ring moves Y. One turn moves two fields of view.
+  const kn = $("stageKnob"); let drag = null;
+  const ang = (e) => { const r = kn.getBoundingClientRect(); return Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))) * 180 / Math.PI; };
+  kn.addEventListener("pointerdown", (e) => {
+    if (!G) return; const r = kn.getBoundingClientRect(), dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)) / (r.width / 2);
+    drag = { inner: dist < 0.56, a: ang(e) }; kn.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  kn.addEventListener("pointermove", (e) => {
+    if (!drag) return; let da = ang(e) - drag.a; if (da > 180) da -= 360; if (da < -180) da += 360; drag.a += da;
+    const mm = da / 360 * 2 * fovMM();
+    if (drag.inner) { skInnerAng += da; moveStage(mm, 0); } else { skOuterAng += da; moveStage(0, mm); }
+    stageArt();
+  });
+  const end = () => { drag = null; };
+  kn.addEventListener("pointerup", end); kn.addEventListener("pointercancel", end);
+  kn.addEventListener("wheel", (e) => { if (!G) return; e.preventDefault(); const da = -Math.sign(e.deltaY) * 6, mm = da / 360 * 2 * fovMM();
+    if (e.shiftKey) { skInnerAng += da; moveStage(mm, 0); } else { skOuterAng += da; moveStage(0, mm); } stageArt(); }, { passive: false });
+  // drag the eyepiece: you push the stage, and the inverted image drifts the other way
+  const ep = $("eyepieceBox"); let pd = null;
+  ep.addEventListener("pointerdown", (e) => {
+    if (!G || e.button !== 0 || e.target.closest("button, .ep-timer") || !stageLimit(stageLive())) return;
+    pd = { x: e.clientX, y: e.clientY, w: ep.getBoundingClientRect().width }; ep.setPointerCapture(e.pointerId); ep.classList.add("panning");
+  });
+  ep.addEventListener("pointermove", (e) => {
+    if (!pd) return; const f = fovMM() / pd.w;
+    moveStage((e.clientX - pd.x) * f, (e.clientY - pd.y) * f); skInnerAng += (e.clientX - pd.x) * 0.6; skOuterAng += (e.clientY - pd.y) * 0.6;
+    pd.x = e.clientX; pd.y = e.clientY; stageArt();
+  });
+  const pend = () => { pd = null; ep.classList.remove("panning"); };
+  ep.addEventListener("pointerup", pend); ep.addEventListener("pointercancel", pend);
+  $("stageCentre").addEventListener("click", () => { if (!G) return; G.sx = 0; G.sy = 0; G.dirty = true; sfx("move", { i: 2 }); stageArt(); });
+})();
+
 function startGameNow({ daily, tut, seed: seedIn, mode }) {
   if (mode === "sem") { semHaltKnobs(); semStartNow({ daily, tut, seed: seedIn }); return; }
   semLeave();
@@ -5832,7 +5939,7 @@ function startGameNow({ daily, tut, seed: seedIn, mode }) {
   G = {
     mode, daily: daily && !tut, tut, key, seed, info, sp, timed: tut ? false : timedMode,
     p: [0, p40, p100], stageZ: startZ - sp.targets[0].z, zv: 0,
-    k: 0, stage: 0, oil: false, contact: false, oilOn40: false, crashed: false, fresh: false, busyAnim: false,
+    k: 0, stage: 0, oil: false, contact: false, oilOn40: false, crashed: false, fresh: false, busyAnim: false, sx: 0, sy: 0,
     coarseHigh: [false, false, false], results: [], lessons: [],
     layers: buildLayers(sp, OBJ[0], false),
     t0: performance.now(), locked: false, ready: false, paused: false, pausedAt: 0, dirty: true,
@@ -8465,6 +8572,11 @@ function loop(now) {
     if (G.ready) checkOil();
     TUT.tick();
     const useLV = LV_OK;
+    if (G.stageK !== G.k || G.stageLayers !== G.layers) {   // a new objective or slide: the travel range changes
+      G.stageK = G.k; G.stageLayers = G.layers;
+      const lim = stageLimit(stageLive()); G.sx = Math.max(-lim, Math.min(lim, G.sx || 0)); G.sy = Math.max(-lim, Math.min(lim, G.sy || 0)); stageArt();
+    }
+    if (G.sp.live) for (const L of G.layers) if (L.live) { const f = stageFrac(L); L.panX = f[0]; L.panY = f[1]; }
     if (G.sp.live && !useLV && !document.hidden) for (const L of G.layers) if (L.live && paintLive(L, G.mode === "fluor" ? G.cube : "all", G.mode)) G.dirty = true;
     if (G.dirty) {
       const v = { o, e: eff(), d: dv(), cube: G.cube, shutter: G.shutter, signal: G.signal, crashed: G.crashed, oilSmear: G.k === 1 && G.oilOn40, gain: G.mode === "bright" ? 1 : POWER[G.power].gain, cond: G.mode === "bright" ? G.cond : 1, live: !!G.sp.live };
