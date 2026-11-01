@@ -1543,6 +1543,22 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 }
 </style>
 <style>.idf-tier { margin: 0; font: italic 900 clamp(40px, 5vw, 76px)/1 var(--f-display); text-transform: uppercase; color: var(--acc); letter-spacing: -.02em; }</style>
+<style>
+.who-txt { display: grid; justify-items: end; line-height: 1.15; }
+.who-rank { font: 600 10.5px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--acc); }
+.who-bar { width: 72px; height: 3px; border-radius: 3px; background: var(--glass-edge); overflow: hidden; margin-top: 3px; }
+.who-bar i { display: block; height: 100%; width: 0; background: var(--acc); transition: width .6s var(--e-snap); }
+.today { display: inline-flex; align-items: center; gap: 6px; margin-left: 18px; margin-right: auto; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--glass-edge); background: var(--glass-strong); }
+.today .td-k { font: 700 10.5px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.today i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--line-strong, var(--glass-edge)); }
+.today i.on[data-g="bright"] { background: #e9e2d2; border-color: #e9e2d2; } .today i.on[data-g="fluor"] { background: #3fe07a; border-color: #3fe07a; }
+.today i.on[data-g="confocal"] { background: #4f7bff; border-color: #4f7bff; } .today i.on[data-g="identify"] { background: #ffb547; border-color: #ffb547; }
+.today .td-n { font: 700 11.5px var(--f-mono); color: var(--ink-2); margin-left: 2px; }
+.today.perfect { border-color: #ffb547; box-shadow: 0 0 0 1px #ffb547 inset, 0 0 18px -6px #ffb547; }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 90; display: grid; gap: 2px; text-align: center; padding: 12px 20px; border-radius: 16px; background: var(--acc); color: var(--acc-ink); box-shadow: 0 20px 40px -18px rgba(0,0,0,.6); animation: fadeUp .45s var(--e-snap) backwards; }
+.toast b { font: italic 900 20px var(--f-display); text-transform: uppercase; } .toast span { font-size: 13px; opacity: .85; }
+@media (max-width: 900px) { .today .td-k, .who-bar { display: none; } .today { margin-left: 8px; } }
+</style>
 </head>
 <body>
 <header class="topbar gutter" id="topbar">
@@ -1550,6 +1566,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
     <a class="brand" id="brand" href="#" aria-label="Parfocal, back to the title screen">
       <span class="brand-mark" aria-hidden="true"><i></i></span><span class="brand-name">Parfocal</span>
     </a>
+    <div class="today" id="today" title="Today's four: the three microscope dailies and Identify"><span class="td-k">Today</span><i data-g="bright" title="Brightfield daily"></i><i data-g="fluor" title="Fluorescence daily"></i><i data-g="confocal" title="Confocal daily"></i><i data-g="identify" title="Daily Identify"></i><span class="td-n" id="todayN">0/4</span></div>
     <div class="top-actions">
       <div class="icon-group" role="group" aria-label="Settings and links">
         <button class="ibtn shine" id="gearBtn" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></button>
@@ -1560,7 +1577,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
         <button class="ibtn shine" id="themeBtn" aria-label="Switch theme" title="Theme"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg><span id="themeText" class="sr-only">Light</span></button>
         <a class="ibtn shine" href="https://github.com/DimmedLights" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.27 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
       </div>
-      <span class="who"><span class="who-name">Destiny</span><img class="pfp" src="data:image/jpeg;base64,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" alt="Destiny's profile picture"></span>
+      <span class="who" id="who"><span class="who-txt"><span class="who-name">Destiny</span><span class="who-rank" id="whoRank">Lab trainee</span><span class="who-bar"><i id="whoBar"></i></span></span><img class="pfp" src="data:image/jpeg;base64,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" alt="Destiny's profile picture"></span>
     </div>
   </div>
 </header>
@@ -2075,6 +2092,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
     <div class="panel-body settings" id="settingsBody"></div>
   </div>
 </section>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><b id="toastT"></b><span id="toastS"></span></div>
 <section class="panel" id="panelAtlas" hidden role="dialog" aria-modal="true" aria-labelledby="atlasTitle">
   <div class="panel-sheet atlas-sheet">
     <header class="panel-head"><button class="back shine" data-close>← Back <kbd>Esc</kbd></button><h2 id="atlasTitle">Atlas</h2></header>
@@ -5435,7 +5453,7 @@ let current = "title", busy = false;
 function show(v) {
   for (const k in screens) { screens[k].hidden = k !== v; screens[k].classList.remove("enter"); }
   if (v === "title" && window.resetCone) { window.resetCone(); setTimeout(window.resetCone, 900); }
-  if (v === "title") { try { menuBadges(); } catch (e) {} }
+  if (v === "title") { try { menuBadges(); syncRank(); syncToday(false); } catch (e) {} }
   document.querySelectorAll("#rRecap video").forEach(x => { try { v === "result" && !stillMode ? x.play().catch(() => {}) : x.pause(); } catch (e) {} });
   void screens[v].offsetWidth; screens[v].classList.add("enter");
   current = v;
@@ -6052,13 +6070,49 @@ const ID_EXTRA = {
 };
 const ID_N = 5, ID_REVEAL = 13, ID_LIMIT = 20, ID_MAXB = 30;   // specimens per run; seconds to sharpen; seconds before time out; starting blur (px at 480)
 const ID_MODE = (() => { const m = {}; for (const mode of ["bright", "fluor", "confocal"]) for (const st of LIVE[mode]) for (const g of st.stages) if (!m[g.clip]) m[g.clip] = { mode, ch: g.ch }; return m; })();
+
+/* ---------- Lab rank: XP from everything you play, promoted up a career ladder ---------- */
+const LAB_RANKS = [[0, "Lab trainee"], [60, "Bench assistant"], [180, "Technician"], [380, "Research assistant"], [650, "PhD student"], [1000, "Postdoc"], [1500, "Lab head"], [2200, "Professor"], [3200, "Nobel laureate"]];
+function labRank(xp) { let i = 0; LAB_RANKS.forEach((x, j) => { if (xp >= x[0]) i = j; }); return { i, name: LAB_RANKS[i][1], from: LAB_RANKS[i][0], next: LAB_RANKS[i + 1] ? LAB_RANKS[i + 1][0] : null }; }
+// toasts queue, so a promotion and a perfect day each get their moment
+const toastQ = []; let toastBusy = false;
+function toast(t, sub) { toastQ.push([t, sub]); if (!toastBusy) toastNext(); }
+function toastNext() {
+  const el = $("toast"), m = toastQ.shift(); if (!m) { toastBusy = false; el.hidden = true; return; }
+  toastBusy = true; $("toastT").textContent = m[0]; $("toastS").textContent = m[1] || ""; el.hidden = false; el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
+  setTimeout(() => { el.hidden = true; setTimeout(toastNext, 250); }, 3400);
+}
+function syncRank() {
+  const xp = loadStore().xp || 0, r = labRank(xp);
+  $("whoRank").textContent = r.name;
+  $("whoBar").style.width = r.next ? `${(100 * (xp - r.from) / (r.next - r.from)).toFixed(1)}%` : "100%";
+  $("who").title = `${xp} XP · ${r.next ? `${r.next - xp} XP to ${LAB_RANKS[r.i + 1][1]}` : "top rank"}`;
+}
+function addXP(n) {
+  n = Math.round(n); if (!(n > 0)) return;
+  const st = loadStore(), before = labRank(st.xp || 0); st.xp = (st.xp || 0) + n; saveStore(st);
+  const after = labRank(st.xp); syncRank();
+  if (after.i > before.i) setTimeout(() => { toast(`Promoted: ${after.name}`, after.next ? `Next: ${LAB_RANKS[after.i + 1][1]} at ${after.next} XP` : "The top of the ladder."); sfx("confirm"); }, 900);
+}
+/* ---------- Today's four: the three microscope dailies and the daily Identify ---------- */
+function todayDone() {
+  const st = loadStore(), dk = todayKey(), D = st.daily || {};
+  const has = (m) => ["t", "u"].some(x => D[(m === "bright" ? dk : dk + ":" + m) + ":" + x] != null);
+  return { bright: has("bright"), fluor: has("fluor"), confocal: has("confocal"), identify: !!(st.idDaily && st.idDaily[dk] != null) };
+}
+function syncToday(award) {
+  const d = todayDone(), n = Object.values(d).filter(Boolean).length;
+  document.querySelectorAll("#today i").forEach(i => i.classList.toggle("on", !!d[i.dataset.g]));
+  $("todayN").textContent = n === 4 ? "Perfect day" : `${n}/4`; $("today").classList.toggle("perfect", n === 4);
+  if (award && n === 4) { const st = loadStore(), dk = todayKey(); st.perfect = st.perfect || {}; if (!st.perfect[dk]) { st.perfect[dk] = 1; saveStore(st); addXP(40); setTimeout(() => { toast("Perfect day", "All four dailies done: +40 XP. See you tomorrow."); fireConfetti(); }, 1600); } }
+}
 /* ---------- Atlas: every specimen you focus well or identify is collected ---------- */
 function atlasData() { return loadStore().atlas || {}; }
 function atlasUnlock(clip, how) {
   if (!clip || !CLIPS[clip]) return false;
   const st = loadStore(); st.atlas = st.atlas || {};
   if (st.atlas[clip]) return false;
-  st.atlas[clip] = { how, at: todayKey() }; saveStore(st); atlasCountChip(); return true;
+  st.atlas[clip] = { how, at: todayKey() }; saveStore(st); atlasCountChip(); addXP(15); return true;
 }
 function atlasCountChip() { const n = Object.keys(atlasData()).filter(k => CLIPS[k]).length; const el = $("atlasCount"); if (el) el.textContent = n ? `${n}/${Object.keys(CLIPS).length}` : ""; }
 const thumbOf = (k) => "videos/thumbs/" + CLIPS[k].file.split("/").pop().replace(".mp4", ".jpg");
@@ -6220,6 +6274,7 @@ const IDF = (() => {
     $("idfEndCards").querySelectorAll(".at-card").forEach(b => b.addEventListener("click", () => { openPanel("atlas"); }));
     $("idfMain").hidden = true; $("idfEnd").hidden = false; $("idfCopy").textContent = "Copy result";
     if (right >= 4) fireConfetti();
+    addXP(run.score / 100 + (run.daily ? 10 : 0)); syncToday(run.daily);
     sfx(right >= 3 ? "confirm" : "back");
     $("idfAgain").focus({ preventScroll: true });
     menuBadges();
@@ -8738,6 +8793,7 @@ function finish() {
 }
 function finishNow() {
   const total = G.results.reduce((a, r) => a + (r ? r.score : 0), 0);
+  if (G.mode !== "sem") setTimeout(() => { addXP(total / 100 * (G.tut ? 0.5 : 1) + (G.daily ? 10 : 0)); syncToday(G && G.daily); }, 400);
   const F = tierFor(total / 3000, FINAL);
   const rank = RANKS.find(([t]) => total >= t)[1];
   const thing = G.mode === "sem" ? "stub" : "slide";
@@ -9998,7 +10054,7 @@ try { document.fonts.ready.then(() => syncModeTabs(false)); } catch (e) {}
 window.addEventListener("resize", () => syncModeTabs(false));
 renderNotes(); renderCredits();
 loadPlates(renderCredits);
-menuBadges();
+menuBadges(); syncRank(); syncToday(false);
 requestAnimationFrame(loop);
 // ?fps shows a small frame counter, to compare views on a real machine
 if (URLQ.has("fps")) {

@@ -89,6 +89,13 @@ Every fluorescence and confocal slide, and most brightfield ones, are real recor
 - **Streaks and calendar**: a streak counter and the last two weeks of dailies on the title screen, four weeks on daily results.
 - **Phones**: the eyepiece and its controls share one screen. The next objective's clip starts decoding during each verdict.
 
+## Identify, the Atlas and your lab career
+
+- **Identify** (title menu). Five specimens come slowly into focus, from heavy blur to sharp over 13 seconds; name each from four choices. The sooner you answer, the more it scores (1000 down to 200), answers in a row add a streak bonus, and 20 seconds runs out the clock. Wrong choices come from the same group (protists, animals, organelles, tissues), so you have to read the image. The daily set of five is the same for everyone and ends with a copyable emoji result (🟩 fast, 🟨 right, 🟥 wrong, ⬛ out of time); after that, practice runs pick five at random.
+- **Atlas.** A collection of all 52 specimens. Focus one to 700 or more in a round, or name it in Identify, to collect it. Each card keeps its fact and footage credit; the title menu shows your count.
+- **Lab rank.** Rounds, Identify runs and new Atlas finds earn XP, which promotes you from Lab trainee through Technician, PhD student and Postdoc to Nobel laureate. Your rank and progress sit under your name in the top bar.
+- **Today's four.** The top bar tracks the three microscope dailies and the daily Identify. Do all four for a perfect day.
+
 ## Rendering and performance
 
 - **Footage: Live / Still** (title screen, key F). Live plays the clips; Still freezes each on one frame while focus, blur and colour stay live. Still is much lighter, because a playing clip makes the browser redo the eyepiece blur on every new frame.
