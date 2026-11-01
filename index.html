@@ -2499,7 +2499,7 @@ const CLIPS = {
   ecoli: {"file": "videos/ecoli.mp4", "credit": "GFP-expressing Escherichia coli swimming. Cuenca M et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, red annotation ring removed, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:D-Alanine-Controlled-Transient-Intestinal-Mono-Colonization-with-Non-Laboratory-Adapted-Commensal-pone.0151872.s006.ogv", "gray": false, "ch": "fitc", "boost": 1.3},
   hela_tub: {"file": "videos/hela-tubulin-h2b.mp4", "credit": "HeLa cells expressing GFP-α-tubulin and mCherry-H2B, live time-lapse. Pillai S et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Tank-binding-kinase-1-is-a-centrosome-associated-kinase-necessary-for-microtubule-dynamics-and-ncomms10072-s5.ogv", "gray": false, "ch": "tritc", "chs": ["fitc", "tritc"]},
   ricin: {"file": "videos/ricin-endosomes.mp4", "credit": "Ricin-FITC entering A549 cells, late endosomes in red. Herrera C et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-Bispecific-Antibody-Promotes-Aggregation-of-Ricin-Toxin-on-Cell-Surfaces-and-Alters-Dynamics-of-pone.0156893.s011.ogv", "gray": false, "ch": "fitc", "chs": ["fitc", "tritc"], "boost": 1.4},
-  zf_notochord: {"file": "videos/zf-notochord.mp4", "credit": "Zebrafish notochord cells intercalating, membrane RFP, confocal time-lapse. Edeling M et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Structural-Requirements-for-PACSINSyndapin-Operation-during-Zebrafish-Embryonic-Notochord-pone.0008150.s008.ogv", "gray": true, "ch": "red", "boost": 1.5},
+  zf_notochord: {"file": "videos/zf-notochord.mp4", "credit": "Zebrafish notochord cells intercalating, membrane RFP, confocal time-lapse. Edeling M et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Structural-Requirements-for-PACSINSyndapin-Operation-during-Zebrafish-Embryonic-Notochord-pone.0008150.s008.ogv", "gray": true, "ch": "red", "boost": 1.5, "zoom": 0.7},
   fly_furrow: {"file": "videos/fly-furrow.mp4", "credit": "Ventral furrow forming in a Drosophila embryo, Spider-GFP membranes, confocal. Spahn P et al., via Wikimedia Commons, CC BY 2.5. Cropped, trimmed, looped, inverted, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:A-Vertex-Model-of-Drosophila-Ventral-Furrow-Formation-pone.0075051.s002.ogv", "gray": true, "ch": "gfp"},
   borrelia: {"file": "videos/borrelia-joint.mp4", "credit": "Fluorescent Borrelia burgdorferi in joint tissue of a living mouse, spinning-disk confocal. Kumar D et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:Intravital-Imaging-of-Vascular-Transmigration-by-the-Lyme-Spirochete-Requirement-for-the-Integrin-ppat.1005333.s003.ogv", "gray": false, "ch": "gfp", "boost": 1.3},
   neutrophils: {"file": "videos/neutrophils-pseudomonas.mp4", "credit": "Neutrophils (blue) engulfing Pseudomonas aeruginosa (red) in living skin, spinning-disk confocal. Halverson T et al., via Wikimedia Commons, CC BY 4.0. Cropped, trimmed, looped, blurred and filtered in play.", "url": "https://commons.wikimedia.org/wiki/File:DNA-Is-an-Antimicrobial-Component-of-Neutrophil-Extracellular-Traps-ppat.1004593.s001.ogv", "gray": false, "ch": "red", "boost": 1.2},
@@ -5525,6 +5525,14 @@ const HERO_REEL = {
     { clip: "ricin", label: "Ricin entering cells", crop: 0.78 },
     { clip: "pdlim5", label: "Stress fibres", crop: 0.78 },
     { clip: "eb1_dendrite", label: "Microtubules in a dendrite", crop: 0.6 },
+  ],
+  confocal: [
+    { clip: "zf_notochord", label: "Notochord membranes", crop: 0.7 },
+    { clip: "fly_furrow", label: "Epithelial membranes", crop: 0.78 },
+    { clip: "platelets", label: "Brain vessels and platelets", crop: 1 },
+    { clip: "borrelia", label: "Lyme spirochetes", crop: 0.78 },
+    { clip: "neutrophils", label: "Neutrophils eating bacteria", crop: 0.6 },
+    { clip: "axon_deg", label: "Cut sensory axon", crop: 0.78 },
   ],
 };
 const REEL_MS = 8000;
