@@ -5506,7 +5506,7 @@ function buildHero() {
   $("heroEp").classList.remove("sem");
   const sp = genLive(hashString("hero-" + mode), mode, { bright: "wet-pond", fluor: "live-cells", confocal: "live-infection" }[mode]);
   hero = { mode, sp, layers: [], k: hero && hero.mode === mode ? hero.k : 2, pull: null, last: 0, theta: hero ? hero.theta : 55, thetaT: 55, ring: hero ? hero.ring : 0, reel: HERO_REEL[mode] || null, ri: -1 };
-  if (hero.reel) heroReel(0);
+  if (hero.reel) heroReel(reelNext());
 }
 /* Title reels: a mode with a reel cycles its title circle through these clips, about 8 s each,
    pulling out of focus and back between them. Each plays at the crop it has in the game. */
@@ -5535,12 +5535,22 @@ const HERO_REEL = {
     { clip: "axon_deg", label: "Cut sensory axon", crop: 0.78 },
   ],
 };
-const REEL_MS = 8000;
+const REEL_MS = 5000;
+/* Random order every time: a shuffled bag, so every clip shows before any repeats,
+   and never the same clip twice in a row across a reshuffle. */
+function reelFill() {
+  if (hero.bag && hero.bag.length) return;
+  const n = hero.reel.length, b = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+  if (n > 1 && b[n - 1] === hero.ri) [b[0], b[n - 1]] = [b[n - 1], b[0]];   // the next pick is the last item
+  hero.bag = b;
+}
+function reelNext() { reelFill(); return hero.bag.pop(); }
 function heroReel(i) {
   const r = hero.reel[i];
   hero.ri = i; hero.reelT = performance.now(); hero.layers = [];
   hero.sp = { ...hero.sp, targets: [0, 1, 2].map(() => ({ z: 0, ch: null, label: r.label, tag: null, clip: r.clip, crop: r.crop })) };
-  clipVideo(hero.reel[(i + 1) % hero.reel.length].clip);   // start loading the next one
+  reelFill(); clipVideo(hero.reel[hero.bag[hero.bag.length - 1]].clip);   // start loading the next one
   heroChipText();
 }
 function heroChipText() {
@@ -5583,7 +5593,7 @@ function heroFrame(now) {
   let extra = 0;
   if (hero.pull) {
     const p = clamp((now - hero.pull.t0) / hero.pull.dur, 0, 1);
-    if (p >= 0.45 && !hero.pull.swapped) { hero.k = hero.pull.to; hero.pull.swapped = true; if (hero.pull.reel) heroReel((hero.ri + 1) % hero.reel.length); }
+    if (p >= 0.45 && !hero.pull.swapped) { hero.k = hero.pull.to; hero.pull.swapped = true; if (hero.pull.reel) heroReel(reelNext()); }
     const o = MODES[hero.mode].objs[hero.k];
     extra = Math.sin(Math.PI * p) * o.dof * (hero.pull.reel ? 22 : 9) * (p < 0.45 ? 1 : -0.6);
     hero.ring += (p < 1 ? 2.2 : 0);
