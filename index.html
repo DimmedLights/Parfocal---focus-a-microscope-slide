@@ -304,7 +304,7 @@ body[data-screen="title"] .brand { pointer-events: none; }
 @media (min-width: 981px) and (max-height: 780px) { .t-left { padding-bottom: 4px; } .wordmark { font-size: clamp(54px, min(8.2vw, 14svh), 124px); } .menu { gap: 1px; } .m-item { padding-block: 4px 5px; } .modes { margin-top: 18px; } }
 /* Desktop game: the side view scales with the window height so the loupe never drops below the fold */
 @media (min-width: 981px) {
-  .g-scope .scope-art { height: clamp(180px, calc(100svh - 468px), 340px); width: auto; max-width: 100%; aspect-ratio: 3 / 4; margin-inline: auto; }
+  .g-scope .scope-art { height: clamp(150px, calc(100svh - 600px), 320px); width: auto; max-width: 100%; aspect-ratio: 3 / 4; margin-inline: auto; }
 }
 @media (min-width: 981px) and (max-height: 820px) {
   .hud { padding-block: 6px 10px; }
@@ -1404,15 +1404,15 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .gate-pc .gate-go { margin-top: 6px; cursor: pointer; }
 </style>
 <style>
-.stage-ctl { display: flex; align-items: center; gap: 14px; justify-content: center; margin-top: 4px; }
-.smap { position: relative; width: 132px; height: 132px; flex: none; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-edge); background: #0d0a0b; touch-action: none; user-select: none; cursor: pointer; }
+.stage-ctl { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; gap: 12px; margin: 4px 0 0; padding-top: 10px; border-top: 1px solid var(--line); }
+.smap { position: relative; width: 104px; height: 104px; flex: none; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-edge); background: #0d0a0b; touch-action: none; user-select: none; cursor: pointer; }
 .smap canvas { width: 100%; height: 100%; display: block; }
 .smap-view { position: absolute; left: 0; top: 0; border-radius: 50%; border: 2px solid var(--acc); box-shadow: 0 0 0 999px rgba(8, 6, 7, .5), 0 0 14px color-mix(in srgb, var(--acc) 70%, transparent); cursor: grab; pointer-events: none; }
 .smap.drag .smap-view { cursor: grabbing; }
 .stage-ctl.off .smap-view { display: none; }
 .stage-read { display: grid; gap: 3px; min-width: 0; max-width: 230px; }
 .sr-k { font: 700 11px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--acc); }
-.sr-v { font: 600 13px var(--f-mono); color: var(--ink); white-space: nowrap; }
+.sr-v { font: 600 12.5px/1.35 var(--f-mono); color: var(--ink); }
 .stage-read small { font-size: 11.5px; line-height: 1.35; color: var(--muted); }
 .sr-c { justify-self: start; font: 600 11.5px var(--f-mono); padding: 3px 9px; border-radius: 8px; border: 1px solid var(--glass-edge); background: var(--glass-strong); color: var(--ink); cursor: pointer; }
 .stage-ctl.off { opacity: .45; }
@@ -1627,6 +1627,18 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             </svg>
             <figcaption><span id="lpState">air gap</span><span id="lpWd">WD 10 mm</span></figcaption>
           </figure>
+          <div class="stage-ctl" id="stageCtl">
+            <div class="smap" id="smap" aria-label="Slide map. Drag the circle or click to move the slide; you can also drag the eyepiece.">
+              <canvas id="smapCv" width="180" height="180"></canvas>
+              <i class="smap-view" id="smapView"></i>
+            </div>
+            <div class="stage-read">
+              <span class="sr-k">Stage</span>
+              <span class="sr-v" id="stageRead">X 40.000<br>Y 20.000 mm</span>
+              <small id="stageHelp">Drag the map or the eyepiece</small>
+              <button class="sr-c" id="stageCentre" type="button">Recentre</button>
+            </div>
+          </div>
           <p class="scope-cap" id="scopeCap">side view</p>
         </aside>
 
@@ -1693,18 +1705,6 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
             <circle cx="100" cy="100" r="11" fill="var(--acc)"/>
             <path class="k-index" d="M100 0.5 L104.5 6 L95.5 6 Z"/>
           </svg>
-          <div class="stage-ctl" id="stageCtl">
-            <div class="smap" id="smap" aria-label="Slide map. Drag the circle or click to move the slide; you can also drag the eyepiece.">
-              <canvas id="smapCv" width="180" height="180"></canvas>
-              <i class="smap-view" id="smapView"></i>
-            </div>
-            <div class="stage-read">
-              <span class="sr-k">Stage</span>
-              <span class="sr-v" id="stageRead">X 40.000 · Y 20.000 mm</span>
-              <small id="stageHelp">Drag the circle or click the map. You can also drag the eyepiece: the image moves the opposite way, as in a real microscope.</small>
-              <button class="sr-c" id="stageCentre" type="button">Recentre</button>
-            </div>
-          </div>
           <div class="jogs" id="jogs">
             <div class="jog"><span>Coarse</span><div class="jog-strip coarse" id="jogCoarse" aria-label="Coarse focus. Drag right to bring the lens down."></div></div>
             <div class="jog"><span>Fine</span><div class="jog-strip fine" id="jogFine" aria-label="Fine focus. Drag right to bring the lens down."></div></div>
@@ -5824,7 +5824,7 @@ function renderSettings() {
     else if (k === "music") { if (String(musicOn && soundOn) !== v) toggleMusic(); }
     else if (k === "theme") setThemePref(v);
     else if (k === "motion") { SET.motion = v; saveSet(); root.classList.toggle("rm", v === "reduce"); }
-    else if (k === "stageDir") { SET.stageDir = v; saveSet(); $("stageHelp").textContent = v === "direct" ? "Drag the circle or click the map. You can also drag the eyepiece: the image follows your drag." : "Drag the circle or click the map. You can also drag the eyepiece: the image moves the opposite way, as in a real microscope."; }
+    else if (k === "stageDir") { SET.stageDir = v; saveSet(); $("stageHelp").textContent = "Drag the map or the eyepiece"; }
     else if (k === "hints") { SET.hints = v === "true"; saveSet(); root.classList.toggle("no-hints", !SET.hints); }
     sfx("move", { i: 2 });
     const y = b.parentElement.scrollTop; renderSettings(); b.parentElement.scrollTop = y;
@@ -6023,7 +6023,7 @@ function stageArt() {
   if (!G) return;
   const L = stageLive(), lim = stageLimit(L), mp = $("smap"), W = mp.clientWidth || 132;
   $("stageCtl").classList.toggle("off", !lim);
-  $("stageRead").textContent = lim ? `X ${(40 + G.sx).toFixed(3)} · Y ${(20 + G.sy).toFixed(3)} mm` : "Fixed slide";
+  $("stageRead").innerHTML = lim ? `X ${(40 + G.sx).toFixed(3)}<br>Y ${(20 + G.sy).toFixed(3)} mm` : "Fixed slide";
   $("eyepieceBox").classList.toggle("can-pan", !!lim);
   if (lim) {
     const f = stageFrac(L), dpx = L.crop * W, cx = W / 2 + f[0] * W, cy = W / 2 + f[1] * W, v = $("smapView");
@@ -6033,15 +6033,31 @@ function stageArt() {
 // the map shows the whole filmed frame, refreshed a few times a second
 let smapAt = 0;
 function smapFrame(now) {
-  if (!G || current !== "game" || !G.sp || !G.sp.live || now - smapAt < 250) return;
+  if (!G || current !== "game" || !G.sp || !G.sp.live || now - smapAt < 110) return;
   const L = stageLive(); if (!L || !stageLimit(L)) return;
   const v = VIDS[L.clip]; if (!v || v.readyState < 2) return;
   smapAt = now;
   const cv = $("smapCv"), x = cv.getContext("2d"), c = CLIPS[L.clip], n = cv.width, vw = v.videoWidth, vh = v.videoHeight, s0 = Math.min(vw, vh);
-  x.globalCompositeOperation = "source-over"; x.drawImage(v, (vw - s0) / 2, (vh - s0) / 2, s0, s0, 0, 0, n, n);
-  if (G.mode !== "bright" && c.gray) {
-    x.globalCompositeOperation = "saturation"; x.fillStyle = "#808080"; x.fillRect(0, 0, n, n);
-    x.globalCompositeOperation = "multiply"; x.fillStyle = rgba(CH[c.ch || "fitc"].rgb, 1); x.fillRect(0, 0, n, n);
+  const o = OBJ[G.k], e = eff(), d = dv(), scale = n * L.crop / SIZE;   // eyepiece px -> map px
+  let sig = 0, a = 1, bg = "#020203";
+  if (G.mode === "bright") {
+    const sg = sigmaPx(o, e, d + L.z); sig = Math.min(sg, 36); a = sg > 36 ? 36 / sg : 1;
+    const cb = CLIP_BG[L.clip] && CLIP_BG[L.clip].rgb; bg = rgba(cb || G.sp.bg.c, 1);
+  } else if (G.mode === "fluor") {
+    const sg = sigmaPx(o, e, d + L.z); sig = Math.min(sg, 36); a = (sg > 36 ? 36 / sg : 1) * (G.signal == null ? 1 : G.signal); bg = "#030305";
+    const shows = G.cube === "all" || (c.chs ? c.chs.includes(G.cube) : G.cube === c.ch); if (!shows || G.shutter === false) a = 0;
+  } else {
+    const diff = 0.26 * e.lam / e.NA * o.s, dz = d + L.z; a = Math.min(1, sectionVis(dz, e.dof) * 1.6); sig = Math.min(6, Math.sqrt(diff * diff + (0.12 * sigmaPx(o, e, dz)) ** 2) + e.extra * 0.5);
+  }
+  x.globalCompositeOperation = "source-over"; x.globalAlpha = 1; x.filter = "none"; x.fillStyle = bg; x.fillRect(0, 0, n, n);
+  if (a > 0.02) {
+    x.globalAlpha = Math.min(1, a);
+    if (FILTER_OK && sig * scale > 0.3) x.filter = `blur(${(sig * scale).toFixed(2)}px)`;
+    x.drawImage(v, (vw - s0) / 2, (vh - s0) / 2, s0, s0, 0, 0, n, n); x.filter = "none"; x.globalAlpha = 1;
+    if (G.mode !== "bright" && c.gray) {
+      x.globalCompositeOperation = "saturation"; x.fillStyle = "#808080"; x.fillRect(0, 0, n, n);
+      x.globalCompositeOperation = "multiply"; x.fillStyle = rgba(CH[c.ch || "fitc"].rgb, 1); x.fillRect(0, 0, n, n);
+    }
   }
   x.globalCompositeOperation = "source-over";
 }
