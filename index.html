@@ -1365,7 +1365,7 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 <style>
 /* Performance: phones and touch screens. Frosted glass (backdrop blur) re-blurs whatever changes behind it every frame,
    which is the single biggest cost while a live clip plays, so touch devices get solid panels instead. */
-.ibtn .eq i { animation-timing-function: steps(5, jump-none); }
+
 /* No frosted glass on the screens or the top bar on any device: live footage changes behind them every frame, and
    re-blurring it costs more than anything else on the page. The panels sit on a smooth gradient, so the blur showed
    almost nothing. Overlays (pause, dialogs) keep theirs; they are only up for a moment. */
@@ -1441,6 +1441,10 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 :root.no-hints #hintText { visibility: hidden; }
 :root.no-hints.tut-on #hintText { visibility: visible; }
 :root.rm *, :root.rm *::before, :root.rm *::after { animation-duration: .001s !important; animation-delay: 0s !important; transition-duration: .001s !important; }
+/* the music bars loop forever, so under reduced motion they stop as a still equaliser instead of flickering */
+:root.rm .ibtn .eq i { animation: none !important; }
+:root.rm .ibtn .eq i:nth-child(1) { transform: scaleY(.55); } :root.rm .ibtn .eq i:nth-child(2) { transform: scaleY(.95); }
+:root.rm .ibtn .eq i:nth-child(3) { transform: scaleY(.7); } :root.rm .ibtn .eq i:nth-child(4) { transform: scaleY(.4); }
 </style>
 </head>
 <body>
