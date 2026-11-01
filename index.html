@@ -3211,6 +3211,28 @@ function buildLiveLayers(sp, o) {
   return layers;
 }
 /* Paint the newest video frame into the live layer. cube: the filter cube in use, or "all". Returns true if it changed. */
+/* Brightfield clips were filmed with very different lamp settings; some have a grey background.
+   Out of focus the clip fades into the eyepiece background, so a mismatch made the field darken as you
+   focused in. Each clip's background (the median colour of its first frame) is measured once: dim clips
+   are brightened toward a well-lit field, and the eyepiece background takes the clip's own colour. */
+const CLIP_BG = {};
+const BF_TARGET = 214;
+function clipBg(key, v, so, sw) {
+  if (CLIP_BG[key]) return CLIP_BG[key];
+  let out = { gain: 1, rgb: null };
+  try {
+    const n = 24, c = document.createElement("canvas"); c.width = c.height = n;
+    const x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(v, so, so, sw, sw, 0, 0, n, n);
+    const d = x.getImageData(0, 0, n, n).data, px = [];
+    for (let i = 0; i < d.length; i += 4) px.push([d[i], d[i + 1], d[i + 2], d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11]);
+    px.sort((a, b) => a[3] - b[3]);
+    // the background is the bright majority: take the median of the brighter half
+    const top = px.slice(px.length >> 1), m = top[top.length >> 1];
+    const gain = Math.min(1.7, Math.max(1, BF_TARGET / Math.max(40, m[3])));
+    out = { gain, rgb: m.slice(0, 3).map(u => Math.min(255, Math.round(u * gain))) };
+  } catch (e) {}
+  return (CLIP_BG[key] = out);
+}
 function paintLive(L, cube, mode) {
   const c = CLIPS[L.clip], v = VIDS[L.clip];
   if (!v || v.readyState < 2) return false;
@@ -3219,7 +3241,13 @@ function paintLive(L, cube, mode) {
   L.drawnAt = t; L.cube = cube;
   const x = L.ctx, vw = v.videoWidth, sw = vw * L.crop, so = (vw - sw) / 2;
   x.globalCompositeOperation = "source-over"; x.filter = "none";
-  if (mode === "bright") { x.drawImage(v, so, so, sw, sw, 0, 0, SIZE, SIZE); return true; }
+  if (mode === "bright") {
+    x.drawImage(v, so, so, sw, sw, 0, 0, SIZE, SIZE);
+    const B = clipBg(L.clip, v, so, sw);
+    for (let g = B.gain - 1; g > 0.01; g -= 1) { x.globalCompositeOperation = "lighter"; x.globalAlpha = Math.min(1, g); x.drawImage(L.canvas, 0, 0); }
+    x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
+    return true;
+  }
   x.fillStyle = "#000"; x.fillRect(0, 0, SIZE, SIZE);
   const shows = cube === "all" || (c.chs ? c.chs.includes(cube) : cube === c.ch);
   if (!shows) return true;
@@ -3684,8 +3712,10 @@ function renderField(ctx, sp, layers, v) {
   const bfX = cond < 1 ? `contrast(${(1 + (1 - cond) * (v.live ? 1.3 : 0.5)).toFixed(3)}) brightness(${(0.7 + 0.3 * cond).toFixed(3)})` : "";
   const flX = gain !== 1 ? `brightness(${gain.toFixed(2)})` : "";
   if (sp.kind === "bright") {
+    const LL = layers.find(x => x.live), cb = LL && CLIP_BG[LL.clip] && CLIP_BG[LL.clip].rgb;
+    const bc = cb || sp.bg.c, be = cb ? cb.map(u => Math.round(u * 0.88)) : sp.bg.e;
     const g = ctx.createRadialGradient(SIZE * 0.47, SIZE * 0.45, 0, SIZE / 2, SIZE / 2, SIZE / 2);
-    g.addColorStop(0, rgba(sp.bg.c, 1)); g.addColorStop(1, rgba(sp.bg.e, 1));
+    g.addColorStop(0, rgba(bc, 1)); g.addColorStop(1, rgba(be, 1));
     ctx.fillStyle = g; ctx.fillRect(0, 0, SIZE, SIZE);
     for (const L of layers) {
       const sig = sigmaPx(o, e, d + L.z);
