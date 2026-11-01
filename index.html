@@ -2956,6 +2956,10 @@ function buildLiveLayers(sp, o) {
   if (G && G.sp === sp) playClips([t.clip]);
   paintLive(L, "all", sp.kind);
   const layers = [L];
+  if (sp.kind === "confocal") {
+    // a real cell is a few microns thick: fainter planes above and below glow as you approach focus
+    for (const [dz, w] of [[-0.8, 0.5], [0.8, 0.5], [-1.6, 0.25], [1.6, 0.25], [-2.6, 0.1], [2.6, 0.1]]) layers.push({ ch: L.ch, z: L.z + dz, w, n: w, canvas: L.canvas, ghost: true });
+  }
   if (sp.kind === "bright") {
     const dust = { z: DUST_Z, canvas: newCanvas(), dust: true, n: 0 }, dctx = prepCtx(dust.canvas, o.s);
     for (const d of sp.dust) drawDust(dctx, d);
@@ -3273,7 +3277,7 @@ function renderField(ctx, sp, layers, v) {
     const diff = 0.26 * e.lam / e.NA * o.s;
     for (const L of layers) {
       const dz = d + L.z;
-      const w = sectionVis(dz, e.dof) * Math.min(1.25, e.bright);
+      const w = sectionVis(dz, e.dof) * Math.min(1.25, e.bright) * (L.w == null ? 1 : Math.min(1, L.w));
       if (w < 0.02) continue;
       const lateral = Math.min(6, Math.sqrt(diff * diff + (0.12 * sigmaPx(o, e, dz)) ** 2) + e.extra * 0.5);
       drawBlurred(ctx, L.canvas, lateral, w);
@@ -5279,6 +5283,7 @@ function setStageUI() {
   if (G.k === 0) hint = "Spin coarse to find the specimen";
   else if (G.k === 2 && !G.oil) hint = "Add oil, then fine focus";
   else hint = "Fine knob only";
+  if (G.clearNote && !(G.k === 2 && !G.oil)) hint = G.clearNote;
   if (G.mode === "fluor" && G.cube !== t.ch) hint = `Switch to the ${CH[t.ch].name} cube`;
   $("hintText").textContent = hint;
   if (!G.timed) $("timerText").textContent = "∞";
@@ -7106,6 +7111,14 @@ async function toNextStage() {
   G.stage++; G.k++;
   G.crashed = false; G.fresh = wasBroken;
   if (wasBroken) { const o = OBJ[G.k]; G.stageZ = G.p[G.k] - tgt().z - G.setupRng.range(3, 6) * o.dof; G.zv = G.stageZ; G.oil = false; G.contact = false; }
+  G.clearNote = null;
+  if (!wasBroken && d() > OBJ[G.k].wd - 2) {
+    // The higher-power lens would hit the slide, so the stage drops first, the way you would on a real scope.
+    const o = OBJ[G.k], prev = OBJ[G.k - 1];
+    G.stageZ = G.p[G.k] - tgt().z - G.setupRng.range(3, 6) * o.dof; G.zv = G.stageZ;
+    G.clearNote = "Stage lowered so the lens clears the slide. Fine focus back in.";
+    G.lessons.push(`The ${prev.mag}x was focused too close to the slide for the ${o.mag}x to swing in (its working distance is only ${fmtWD(o.wd)}), so the stage was lowered first. Lock the ${prev.mag}x at its sharpest plane and the next lens lands near focus.`);
+  }
   G.layers = buildLayers(G.sp, OBJ[G.k], G.k === 2);
   G.locked = false; haltFocus();
   flip(view, () => { gameGrid.classList.remove("judged"); play(vEl, null); });
@@ -7149,7 +7162,7 @@ function crash(how) {
 const BLUR_OK = 0.7, BLUR_HALF = 1.5; // extra blur in screen px: invisible below 0.7, half credit at 2.2
 function gradedLayers() {
   const t = tgt();
-  return G.layers.filter(L => !L.dust && (G.mode === "bright" || L.ch === t.ch))
+  return G.layers.filter(L => !L.dust && !L.ghost && (G.mode === "bright" || L.ch === t.ch))
     .map(L => ({ z: L.z, wt: G.mode === "fluor" ? L.w : (L.n || 0) })).filter(L => L.wt > 0);
 }
 function planeSharpness(o, e, dz) {
@@ -8541,7 +8554,7 @@ renderNotes(); renderCredits();
 loadPlates(renderCredits);
 requestAnimationFrame(loop);
 /* test hook for local checks only: inert unless the page is opened with #pftest */
-if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, VIDS, lockNow: (t) => lock(t), eff: () => eff(), fitHeadline, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
+if (location.hash === "#pftest") window.__pf = { LESSON, GUIDE_UI, ART, DIAG, VIDS, MODES, lockNow: (t) => lock(t), eff: () => eff(), fitHeadline, get tut() { return TUT; }, get G() { return G; }, get music() { return { playing: MUSIC.playing, enabled: MUSIC.enabled, ctx: audioCtx ? audioCtx.state : "none" }; }, plates() { return Object.keys(plateImgs); },
   renderSpec(mode, seed, k) { const m = MODES[mode], sp = genSpecimen(seed, mode, mode === "bright" ? ORGS[seed % ORGS.length].id : null), o = m.objs[k], cv = newCanvas(); renderField(cv.getContext("2d"), sp, buildLayers(sp, o, k === 2), { o, e: effective(mode, k, true, 1), d: -sp.targets[k].z, cube: "all", shutter: true, signal: 1 }); return { url: cv.toDataURL("image/jpeg", 0.85), kind: sp.plate || sp.orgId || sp.kind }; },
   start(mode, seed) { startGame({ seed, mode }); },
   drive, log: [], grade(off) { const b = bestPlane(), e = eff(); return { acc: focusAccuracy(b.d + off), old: Math.exp(-Math.LN2 * (2 * (b.d + off + tgt().z) / e.dof) ** 2), best: b.d, q: b.q, dof: e.dof }; },
