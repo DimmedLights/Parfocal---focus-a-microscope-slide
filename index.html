@@ -1391,6 +1391,15 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
 .lv-layer.add { mix-blend-mode: screen; }
 @supports (mix-blend-mode: plus-lighter) { .lv-layer.add { mix-blend-mode: plus-lighter; } }
 </style>
+<style>
+.gate.pc { cursor: default; }
+.gate-pc { display: grid; justify-items: center; gap: 12px; margin-top: 8px; max-width: 360px; }
+.gate-pc[hidden] { display: none; }
+.gate-pc-ic { width: 46px; height: 36px; opacity: .8; }
+.gate-pc-h { margin: 0; font: 800 21px/1.25 var(--f-display); letter-spacing: -0.01em; text-wrap: balance; }
+.gate-pc-t { margin: 0; font: 400 14px/1.5 var(--f-body); opacity: .72; text-wrap: pretty; }
+.gate-pc .gate-go { margin-top: 6px; cursor: pointer; }
+</style>
 </head>
 <body>
 <header class="topbar gutter" id="topbar">
@@ -1420,6 +1429,13 @@ table.optics td:first-child { font-family: var(--f-body); font-weight: 800; }
       <p class="gate-title" id="gateTitle">PARFOCAL</p>
       <button class="gate-go" id="gateGo" autofocus>Click, tap or press any key</button>
       <p class="gate-sub">Sound and music are on · mute them any time from the menu</p>
+      <div class="gate-pc" id="gatePc" hidden>
+        <svg class="gate-pc-ic" viewBox="0 0 48 36" aria-hidden="true"><rect x="5" y="3" width="38" height="24" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M1 32h46" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="15" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <p class="gate-pc-h">For the best experience, please use a PC browser</p>
+        <p class="gate-pc-t">Parfocal is built for a big eyepiece and a real focus knob, turned with a mouse or keyboard. On a phone the controls crowd the view and fine focus is hard to control.</p>
+        <button class="gate-go" id="gateAnyway">Play anyway</button>
+        <p class="gate-sub">Open parfocal.vercel.app on a laptop or desktop for the full game</p>
+      </div>
     </div>
   </div>
   <div class="t-word" id="tWord" aria-hidden="true"><span>BRIGHTFIELD</span></div>
@@ -9098,13 +9114,14 @@ function introTitle() {
 }
 // Start screen: one gesture unlocks the sound before the title appears.
 const gate = $("gate");
-let gateOpen = soundOn;
+// Phones and small screens see the PC notice first; "Play anyway" goes on to the game (and turns the sound on).
+const PC_NOTICE = (() => { try { return window.matchMedia("(max-width: 900px), (hover: none) and (pointer: coarse) and (max-width: 1100px)").matches; } catch (e) { return false; } })();
+let gateOpen = soundOn || PC_NOTICE;
 function closeGate(e) {
   if (!gateOpen) return;
   if (e) { e.preventDefault(); e.stopImmediatePropagation(); }
   gateOpen = false;
-  unlockAudio();
-  sfx("confirm");
+  if (soundOn) { unlockAudio(); sfx("confirm"); }
   window.removeEventListener("keydown", gateKey, true);
   gate.classList.add("out");
   setTimeout(() => { gate.hidden = true; gate.classList.remove("out"); }, prefersReduced() ? 0 : 720);
@@ -9113,9 +9130,16 @@ function closeGate(e) {
 function gateKey(e) { if (["Shift", "Control", "Alt", "Meta", "Tab"].includes(e.key)) return; closeGate(e); }
 if (gateOpen) {
   gate.hidden = false;
-  gate.addEventListener("click", closeGate);
-  window.addEventListener("keydown", gateKey, true);
-  requestAnimationFrame(() => { syncModeTabs(false); try { $("gateGo").focus({ preventScroll: true }); } catch (e) {} });
+  if (PC_NOTICE) {
+    // only the button goes on: a stray tap on the notice should not skip it
+    gate.classList.add("pc");
+    $("gateGo").hidden = true; gate.querySelector(".gate-in > .gate-sub").hidden = true; $("gatePc").hidden = false;
+    $("gateAnyway").addEventListener("click", closeGate);
+  } else {
+    gate.addEventListener("click", closeGate);
+    window.addEventListener("keydown", gateKey, true);
+  }
+  requestAnimationFrame(() => { syncModeTabs(false); try { (PC_NOTICE ? $("gateAnyway") : $("gateGo")).focus({ preventScroll: true }); } catch (e) {} });
   const fitGate = () => fitHeadline($("gateTitle"), 30);
   requestAnimationFrame(fitGate); try { document.fonts.ready.then(fitGate); } catch (e) {}
 } else introTitle();
